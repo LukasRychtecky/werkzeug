@@ -9,7 +9,7 @@ class wzk.ui.form.Input extends wzk.ui.form.Field
 
   ###*
     @constructor
-    @extends {goog.ui.Control}
+    @extends {wzk.ui.form.Field}
     @param {Object} param
       content: Text caption or DOM structure to display as the content of the control
       renderer: Renderer used to render or decorate the component, defaults to {@link wzk.ui.form.InputRenderer}
@@ -21,23 +21,7 @@ class wzk.ui.form.Input extends wzk.ui.form.Field
 
     super(params)
     {@type} = params
-    @type = 'text' unless @type?
-
-    @setHandleMouseEvents(false)
-    @setAllowTextSelection(true)
-    @setContentInternal('') unless content?
-
-  ###*
-    @param {*} val
-  ###
-  setValue: (val) ->
-    @setContent(String(val))
-
-  ###*
-    @returns {string}
-  ###
-  getValue: ->
-    @getElement().value
+    @type ?= 'text'
 
   ###*
     Clears an input's value
