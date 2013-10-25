@@ -1,11 +1,11 @@
 goog.provide 'wzk.ui.form.Input'
 
-goog.require 'goog.ui.Control'
+goog.require 'wzk.ui.Control'
 goog.require 'wzk.ui.form.InputRenderer'
 goog.require 'goog.dom.TagName'
 goog.require 'goog.dom.DomHelper'
 
-class wzk.ui.form.Input extends goog.ui.Control
+class wzk.ui.form.Input extends wzk.ui.Control
 
   ###*
     @constructor
@@ -17,10 +17,12 @@ class wzk.ui.form.Input extends goog.ui.Control
       type: A type of an input, defaults text
   ###
   constructor: (params = {}) ->
-    {content, renderer, dom, @type} = params
+    params.renderer = wzk.ui.form.InputRenderer.getInstance() unless params?.renderer?
+
+    super(params)
+    {@type} = params
+
     @type = 'text' unless @type?
-    renderer = wzk.ui.form.InputRenderer.getInstance() unless renderer?
-    super(content, renderer, dom)
     @setHandleMouseEvents(false)
     @setAllowTextSelection(true)
     @setContentInternal('') unless content?
