@@ -26,14 +26,16 @@ class wzk.ui.form.QuasiFormRenderer extends wzk.ui.ComponentRenderer
 
   ###*
     @protected
-    @param {goog.domDomHelper} dom
+    @param {goog.dom.DomHelper} dom
     @param {wzk.ui.form.Field} field
     @return {Element}
   ###
   createPairEl: (dom, field) ->
     par = dom.createDom 'p'
     label = dom.createDom 'label', 'for': field.getId()
-    dom.setTextContent label, field.caption
+    labelCaption = [field.caption]
+    labelCaption.push ' *' if field.required
+    dom.setTextContent label, labelCaption.join ' '
     par.appendChild label
     field.render par
     par
