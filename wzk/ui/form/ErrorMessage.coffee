@@ -16,7 +16,6 @@ class wzk.ui.form.ErrorMessage extends wzk.ui.Component
   constructor: (params = {}) ->
     params.renderer ?= wzk.ui.form.ErrorMessageRenderer.getInstance()
     super params
-    @addClass 'error-list'
     @lastMsg = null
     @lastMsgEl = null
 

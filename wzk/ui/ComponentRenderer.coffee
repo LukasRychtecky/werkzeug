@@ -9,20 +9,22 @@ class wzk.ui.ComponentRenderer
     @constructor
   ###
   constructor: ->
+    @tag = 'div'
+    @classes = []
 
   ###*
     @param {wzk.ui.Component}
     @return {Element}
   ###
   createDom: (component) ->
-    component.getDomHelper().createDom 'div'
+    component.getDomHelper().createDom @tag, @getClassesAsString(component)
 
   ###*
     @param {wzk.ui.Component} component
     @return {Array.<string>}
   ###
   getClassNames: (component) ->
-    component.cssClasses
+    @classes.concat component.cssClasses
 
   ###*
     @param {wzk.ui.Component} component

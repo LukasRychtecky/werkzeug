@@ -12,9 +12,9 @@ class wzk.ui.form.ErrorMessageRenderer extends wzk.ui.ComponentRenderer
     @extends {wzk.ui.ComponentRenderer}
   ###
   constructor: ->
-
-  createDom: (error) ->
-    error.getDomHelper().createDom 'ul'
+    super()
+    @tag = 'ul'
+    @classes.push 'error-list'
 
   ###*
     @param {wzk.dom.Dom} dom

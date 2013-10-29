@@ -25,7 +25,7 @@ class wzk.ui.form.FieldRenderer extends wzk.ui.ComponentRenderer
   ###
   buildAttrs: (field) ->
     attrs =
-      'class': @getClassNames(field).join(' ')
+      'class': @getClassesAsString field
       'size': field.size
       'id': field.getId()
 

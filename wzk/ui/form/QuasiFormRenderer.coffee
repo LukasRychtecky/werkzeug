@@ -13,13 +13,13 @@ class wzk.ui.form.QuasiFormRenderer extends wzk.ui.ComponentRenderer
   ###
   constructor: ->
     super()
+    @tag = 'fieldset'
 
   ###*
     @override
   ###
   createDom: (form) ->
-    fieldset = form.getDomHelper().createDom 'fieldset'
-    @createFieldsetChildren form, fieldset
+    @createFieldsetChildren form, super(form)
 
   ###*
     @param {wzk.ui.form.QuasiForm} form
