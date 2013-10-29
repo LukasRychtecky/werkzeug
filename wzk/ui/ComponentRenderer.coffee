@@ -23,3 +23,5 @@ class wzk.ui.ComponentRenderer
   ###
   getClassNames: (component) ->
     component.cssClasses
+
+goog.addSingletonGetter wzk.ui.ComponentRenderer
