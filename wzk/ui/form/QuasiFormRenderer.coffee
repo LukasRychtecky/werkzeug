@@ -18,8 +18,19 @@ class wzk.ui.form.QuasiFormRenderer extends wzk.ui.ComponentRenderer
     @override
   ###
   createDom: (form) ->
+    fieldset = form.getDomHelper().createDom 'fieldset'
+    @createFieldsetChildren form, fieldset
+
+  ###*
+    @param {wzk.ui.form.QuasiForm} form
+    @param {Element} fieldset
+    @return {Element}
+  ###
+  createFieldsetChildren: (form, fieldset) ->
     dom = form.getDomHelper()
-    fieldset = dom.createDom 'fieldset'
+    if form.legend?
+      fieldset.appendChild dom.createDom('legend', {}, form.legend)
+
     form.forEachChild (field) =>
       fieldset.appendChild @createPairEl(dom, field)
     fieldset

@@ -8,6 +8,7 @@ goog.require 'wzk.ui.form.Select'
 goog.require 'wzk.ui.form.QuasiFormRenderer'
 goog.require 'goog.events'
 goog.require 'goog.events.EventType'
+goog.require 'goog.dom.TagName'
 
 ###*
   Handles a form ability, validates and renders fields. It simulates the form behaviour, doesn't really build a form.
@@ -18,12 +19,27 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
     @constructor
     @extends {wzk.ui.Control}
     @param {Object} params
+      renderer: {@link wzk.ui.form.QuasiFormRenderer}
+      legend: a legend for the fieldset, optional
   ###
   constructor: (params = {}) ->
     params.renderer = wzk.ui.form.QuasiFormRenderer.getInstance() unless params.renderer?
     super params
     @fields = {}
     @form = null
+    {@legend} = params
+
+  ###*
+    @override
+  ###
+  canDecorate: (el) ->
+    el? and el.tagName is goog.dom.TagName.FIELDSET
+
+  ###*
+    @override
+  ###
+  decorateInternal: (el) ->
+    @setElementInternal @renderer.createFieldsetChildren(@, el)
 
   ###*
     @param {Object} params
