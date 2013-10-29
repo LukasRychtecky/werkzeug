@@ -2,6 +2,7 @@ goog.provide 'wzk.ui.Component'
 
 goog.require 'goog.ui.Component'
 goog.require 'wzk.dom.Dom'
+goog.require 'wzk.ui.ComponentRenderer'
 
 ###*
   Extended Closure components. Adds rendering and CSS classes ability.
@@ -21,6 +22,7 @@ class wzk.ui.Component extends goog.ui.Component
     @dom = params.dom
     super params.dom
     {@renderer} = params
+    @renderer ?= wzk.ui.ComponentRenderer.getInstance()
     @cssClasses = []
 
   ###*
