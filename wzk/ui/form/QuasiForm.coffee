@@ -18,12 +18,15 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
     @constructor
     @extends {wzk.ui.Control}
     @param {Object} params
+      renderer: {@link wzk.ui.form.QuasiFormRenderer}
+      legend: a legend for the fieldset, optional
   ###
   constructor: (params = {}) ->
     params.renderer = wzk.ui.form.QuasiFormRenderer.getInstance() unless params.renderer?
     super params
     @fields = {}
     @form = null
+    {@legend} = params
 
   ###*
     @param {Object} params
