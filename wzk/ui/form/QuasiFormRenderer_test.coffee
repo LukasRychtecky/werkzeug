@@ -2,6 +2,7 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
   renderer = wzk.ui.form.QuasiFormRenderer.getInstance()
   form = null
   dom = null
+  legend = 'Legend'
 
   mockDom = ->
     d =
@@ -17,17 +18,16 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
     txt: txt
     appendChild: ->
 
-  mockForm = ->
+  mockForm = (helper) ->
     getDomHelper: ->
-      dom
+      helper
     forEachChild: ->
 
   setup ->
     dom = mockDom()
-    form = mockForm()
+    form = mockForm dom
 
   test 'Should render a legend', ->
-    legend = 'Legend'
     form.legend = legend
     renderer.createDom form
     assert.equal dom.tags[1].txt, legend
@@ -35,3 +35,11 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
   test 'Should not render a legend', ->
     renderer.createDom form
     assert.equal dom.tags.length, 1
+
+  test 'Should create a legend without fieldset', ->
+    fieldset =
+      appendChild: ->
+    form.legend = legend
+    renderer.createFieldsetChildren form, fieldset
+    assert.equal dom.tags.length, 1
+    assert.equal dom.tags[0].tag, 'legend'
