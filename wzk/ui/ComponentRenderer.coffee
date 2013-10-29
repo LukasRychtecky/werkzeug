@@ -24,4 +24,11 @@ class wzk.ui.ComponentRenderer
   getClassNames: (component) ->
     component.cssClasses
 
+  ###*
+    @param {wzk.ui.Component} component
+    @return {string}
+  ###
+  getClassesAsString: (component) ->
+    @getClassNames(component).join ' '
+
 goog.addSingletonGetter wzk.ui.ComponentRenderer
