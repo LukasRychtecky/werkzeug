@@ -44,15 +44,63 @@ class wzk.ui.Component extends goog.ui.Component
   ###*
     @override
   ###
-  render: (parent) ->
-    super parent
-    @afterRendering()
+  render: (parent = null) ->
+    @render__ (el) =>
+      if parent?
+        parent.insertBefore el, null
+      else
+        @dom.getDocument().body.appendChild el
 
   ###*
     @override
   ###
   renderBefore: (sibling) ->
-    super sibling
+    @render__ (el) =>
+      if sibling?.parentNode?
+        sibling.parentNode.insertBefore el, sibling
+      else
+        @dom.getDocument().body.appendChild el
+
+  ###*
+    Renders the component after a given sibling
+
+    @param {Element} sibling
+  ###
+  renderAfter: (sibling) ->
+    @render__ (el) =>
+      @dom.insertSiblingAfter el, sibling
+
+  ###*
+    We override an origin method, because addChild etc. use the origin render_
+
+    @protected
+    @suppress {accessControls|checkTypes}
+    @param {Element} parent
+    @param {Element=} before
+  ###
+  render_: (parent, before = null) ->
+    @render__ (el) =>
+      if parent?
+        parent.insertBefore el, before
+      else
+        @dom.getDocument().body.appendChild el
+
+  ###*
+    @protected
+    @param {Function} insertion
+  ###
+  render__: (insertion) ->
+    if @isInDocument()
+      throw Error goog.ui.Component.Error.ALREADY_RENDERED
+
+    unless @getElement()?
+      @createDom()
+
+    insertion @getElement()
+
+    if not @getParent() or @getParent().isInDocument()
+      @enterDocument()
+
     @afterRendering()
 
   ###*
@@ -61,22 +109,3 @@ class wzk.ui.Component extends goog.ui.Component
     @protected
   ###
   afterRendering: ->
-
-  ###*
-    Renders the component after a given sibling
-
-    @param {Element} sibling
-  ###
-  renderAfter: (sibling) ->
-    if @isInDocument()
-      throw Error goog.ui.Component.Error.ALREADY_RENDERED
-
-    unless @getElement()?
-      @createDom()
-
-    @dom.insertSiblingAfter @getElement(), sibling
-
-    if not @getParent() or @getParent().isInDocument()
-      @enterDocument()
-
-    @afterRendering()
