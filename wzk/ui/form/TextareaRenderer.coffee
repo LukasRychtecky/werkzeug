@@ -15,7 +15,7 @@ class wzk.ui.form.TextareaRenderer extends wzk.ui.form.FieldRenderer
 
   ###*
     @protected
-    @param {wzk.ui.form.Field} input
+    @param {wzk.ui.Component} textarea
     @return {Object}
   ###
   buildAttrs: (textarea) ->

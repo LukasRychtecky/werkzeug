@@ -10,6 +10,7 @@ class wzk.ui.form.ErrorMessage extends wzk.ui.Component
 
   ###*
     @constructor
+    @extends {wzk.ui.Component}
     @param {Object} params
       renderer: {@link wzk.ui.form.ErrorMessageRenderer}
   ###
@@ -17,6 +18,9 @@ class wzk.ui.form.ErrorMessage extends wzk.ui.Component
     params.renderer ?= wzk.ui.form.ErrorMessageRenderer.getInstance()
     super params
     @lastMsg = null
+    ###*
+      @type {Element|null}
+    ###
     @lastMsgEl = null
 
   ###*

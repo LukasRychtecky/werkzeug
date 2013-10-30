@@ -12,7 +12,7 @@ module.exports = (grunt) ->
   ]
 
   appCompiledOutputPath =
-    'var/wzk/app.js'
+    'var/app.js'
 
   depsPath =
     'var/wzk/deps.js'
@@ -31,22 +31,31 @@ module.exports = (grunt) ->
   grunt.initConfig
 
     clean:
-      app:
+      all:
         options:
           force: true
         src: [
-          'var/zwk/**/*.js'
+          'var/wzk/**/*.js'
         ]
 
     coffee:
       all:
         options:
           bare: true
-        files: getCoffeeConfig()
+        files: [
+          expand: true
+          src: coffeeFiles
+          dest: 'var/'
+          ext: '.js'
+        ]
 
     coffee2closure:
-      app:
-        files: [coffeeFiles]
+      all:
+        files: [
+          expand: true
+          src: 'var/wzk/**/*.js'
+          ext: '.js'
+        ]
 
     esteDeps:
       all:
@@ -61,8 +70,9 @@ module.exports = (grunt) ->
         closureBuilderPath: closureLibDir+ '/closure/bin/build/closurebuilder.py'
         compilerPath: bowerDir + '/closure-compiler/compiler.jar'
         # needs Java 1.7+, see http://goo.gl/iS3o6
-        fastCompilation: false
-        depsPath: depsPath
+        fastCompilation: true
+        root: '<%= esteDeps.all.options.root %>'
+        depsPath: '<%= esteDeps.all.options.outputFile %>'
         compilerFlags: if grunt.option('stage') == 'debug' then [
           '--output_wrapper="(function(){%output%})();"'
           '--compilation_level="ADVANCED_OPTIMIZATIONS"'
@@ -78,19 +88,18 @@ module.exports = (grunt) ->
             '--define=goog.DEBUG=false'
           ]
 
-      app:
+      all:
         options:
-          namespace: 'wzk'
-          root: appDirs
+          namespace: '*'
           outputFilePath: appCompiledOutputPath
 
     esteUnitTests:
       options:
         basePath: closureLibDir + '/closure/goog/base.js'
-      app:
+      all:
         options:
-          depsPath: depsPath
-          prefix: depsPrefix
+          depsPath: '<%= esteDeps.all.options.outputFile %>'
+          prefix: '<%= esteDeps.all.options.prefix %>'
         src: [
           'var/wzk/**/*_test.js'
         ]
@@ -139,27 +148,27 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks 'grunt-este'
   grunt.loadNpmTasks 'grunt-este-watch'
 
-  grunt.registerTask 'build', 'Build app.', (app = 'app') ->
+  grunt.registerTask 'build', 'Build app.', ->
     tasks = [
-      "clean:#{app}"
+      "clean"
       "coffee"
-      "coffee2closure:#{app}"
+      "coffee2closure"
       "coffeelint"
       "esteDeps"
-      "esteUnitTests:#{app}"
-      "esteBuilder:#{app}"
+      "esteUnitTests"
+      "esteBuilder"
     ]
     grunt.task.run tasks
 
-  grunt.registerTask 'run', 'Build app and run watchers.', (app = 'app') ->
+  grunt.registerTask 'run', 'Build app and run watchers.', ->
     tasks = [
-      "clean:#{app}"
+      "clean"
       "coffee"
-      "coffee2closure:#{app}"
+      "coffee2closure"
       "coffeelint"
       "esteDeps"
-      "esteUnitTests:#{app}"
-      "esteWatch:#{app}"
+      "esteUnitTests"
+      "esteWatch"
     ]
     grunt.task.run tasks
 

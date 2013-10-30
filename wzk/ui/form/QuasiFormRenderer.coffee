@@ -22,7 +22,7 @@ class wzk.ui.form.QuasiFormRenderer extends wzk.ui.ComponentRenderer
     @createFieldsetChildren form, super(form)
 
   ###*
-    @param {wzk.ui.form.QuasiForm} form
+    @param {wzk.ui.Component} form
     @param {Element} fieldset
     @return {Element}
   ###

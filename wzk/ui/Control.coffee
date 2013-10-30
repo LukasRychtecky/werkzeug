@@ -7,7 +7,7 @@ class wzk.ui.Control extends goog.ui.Control
   ###*
     @constructor
     @extends {goog.ui.Control}
-    @param {Object} param
+    @param {Object} params
       content: Text caption or DOM structure to display as the content of the control
       renderer: Renderer used to render or decorate the component, defaults to {@link wzk.ui.form.InputRenderer}
       dom: DomHelper

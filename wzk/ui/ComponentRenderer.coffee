@@ -13,7 +13,7 @@ class wzk.ui.ComponentRenderer
     @classes = []
 
   ###*
-    @param {wzk.ui.Component}
+    @param {wzk.ui.Component} component
     @return {Element}
   ###
   createDom: (component) ->

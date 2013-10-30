@@ -8,7 +8,7 @@ class wzk.ui.form.Html5Validator
 
   ###*
     @constructor
-    @param {wzk.ui.form.Field}
+    @param {wzk.ui.form.Field} field
   ###
   constructor: (@field) ->
 

@@ -6,7 +6,7 @@ class wzk.ui.form.FieldRenderer extends wzk.ui.ComponentRenderer
 
   ###*
     @constructor
-    @extends {goog.ui.ControlRenderer}
+    @extends {wzk.ui.ComponentRenderer}
   ###
   constructor: ->
     super()
@@ -20,7 +20,7 @@ class wzk.ui.form.FieldRenderer extends wzk.ui.ComponentRenderer
 
   ###*
     @protected
-    @param {wzk.ui.fomr.Field} input
+    @param {wzk.ui.Component} field
     @return {Object}
   ###
   buildAttrs: (field) ->

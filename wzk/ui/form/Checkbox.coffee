@@ -18,13 +18,12 @@ class wzk.ui.form.Checkbox extends wzk.ui.form.Input
 
   ###*
     @override
-    @return {boolean}
   ###
   getValue: ->
     Boolean super()
 
   ###*
-    @param {*} val
+    @override
   ###
   setValue: (val) ->
     super Boolean(val)
