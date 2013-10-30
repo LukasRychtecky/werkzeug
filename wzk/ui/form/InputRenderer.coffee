@@ -6,7 +6,7 @@ class wzk.ui.form.InputRenderer extends wzk.ui.form.FieldRenderer
 
   ###*
     @constructor
-    @extends {goog.ui.ControlRenderer}
+    @extends {wzk.ui.form.FieldRenderer}
   ###
   constructor: ->
     super()

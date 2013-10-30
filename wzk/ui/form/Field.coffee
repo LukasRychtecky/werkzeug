@@ -28,7 +28,7 @@ class wzk.ui.form.Field extends wzk.ui.Component
     @size ?= 50
     @caption ?= ''
     @validator ?= new wzk.ui.form.Html5Validator @
-    @errorMessage ?= new wzk.ui.form.ErrorMessage()
+    @errorMessage ?= new wzk.ui.form.ErrorMessage dom: @dom
     @addChild @errorMessage
 
   ###*
@@ -45,11 +45,11 @@ class wzk.ui.form.Field extends wzk.ui.Component
     goog.dom.forms.setValue @getElement(), val if @isInDocument()
 
   ###*
-    @returns {string}
+    @returns {*}
   ###
   getValue: ->
     if @isInDocument()
-      goog.dom.forms.getValue @getElement()
+      goog.dom.forms.getValue(@getElement())
     else
       @value
 

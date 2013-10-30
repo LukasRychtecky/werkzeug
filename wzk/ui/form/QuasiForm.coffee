@@ -17,7 +17,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
 
   ###*
     @constructor
-    @extends {wzk.ui.Control}
+    @extends {wzk.ui.Component}
     @param {Object} params
       renderer: {@link wzk.ui.form.QuasiFormRenderer}
       legend: a legend for the fieldset, optional
@@ -46,7 +46,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
       name: a name of the field
       caption: a caption for a label
       required: true if the field must be filled, otherwise false
-    @return {wzk.ui.form.Input}
+    @return {wzk.ui.form.Field}
   ###
   addText: (params) ->
     params.type = 'text'
@@ -57,7 +57,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
       name: a name of the field
       caption: a caption for a label
       required: true if the field must be filled, otherwise false
-    @return {wzk.ui.form.Input}
+    @return {wzk.ui.form.Field}
   ###
   addNumber: (params) ->
     params.type = 'number'
@@ -69,7 +69,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
       type: a type of the input
       caption: a caption for a label
       required: true if the field must be filled, otherwise false
-    @return {wzk.ui.form.Input}
+    @return {wzk.ui.form.Field}
   ###
   addInput: (params) ->
     @addField new wzk.ui.form.Input(params)
@@ -79,7 +79,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
       name: a name of the field
       caption: a caption for a label
       required: true if the field must be filled, otherwise false
-    @return {wzk.ui.form.Textarea}
+    @return {wzk.ui.form.Field}
   ###
   addTextarea: (params) ->
     @addField new wzk.ui.form.Textarea(params)
@@ -89,7 +89,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
       name: a name of the field
       caption: a caption for a label
       required: true if the field must be filled, otherwise false
-    @return {wzk.ui.form.Checkbox}
+    @return {wzk.ui.form.Field}
   ###
   addCheckbox: (params) ->
     @addField new wzk.ui.form.Checkbox(params)
@@ -100,7 +100,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
       caption: a caption for a label
       required: true if the field must be filled, otherwise false
       options: Expects a key-value object, where key is a value of an option.
-    @return {wzk.ui.form.Select}
+    @return {wzk.ui.form.Field}
   ###
   addSelect: (params) ->
     @addField new wzk.ui.form.Select(params)
@@ -117,7 +117,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
   ###*
     Sets default values to fields. Expects a key-value object, where key is a field name.
 
-    @param {Object}
+    @param {Object} values
   ###
   setValues: (values) ->
     for name, field of @fields
@@ -137,7 +137,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
     true
 
   ###*
-    @return {Object<string, *>}
+    @return {Object.<string, *>}
   ###
   toJson: ->
     data = {}

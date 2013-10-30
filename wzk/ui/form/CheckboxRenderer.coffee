@@ -6,7 +6,7 @@ class wzk.ui.form.CheckboxRenderer extends wzk.ui.form.InputRenderer
 
   ###*
     @constructor
-    @extends {goog.ui.form.InputRenderer}
+    @extends {wzk.ui.form.InputRenderer}
   ###
   constructor: ->
     super()
