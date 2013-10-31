@@ -1,7 +1,7 @@
 goog.provide 'wzk.fx.DragList'
 
 goog.require 'goog.fx.DragListGroup'
-goog.require 'goog.ui.Container'
+goog.require 'wzk.ui.Container'
 goog.require 'goog.fx.DragListDirection'
 
 class wzk.fx.DragList extends goog.fx.DragListGroup
@@ -14,9 +14,11 @@ class wzk.fx.DragList extends goog.fx.DragListGroup
   ###
   constructor: (@dom, @el) ->
     super()
-    @cont = new goog.ui.Container null, null, @dom
+    @cont = new wzk.ui.Container dom: @dom
     @cont.render @el
     @addDragList @cont.getElement(), goog.fx.DragListDirection.DOWN
+    @setFunctionToGetHandleForDragItem (item) ->
+      item.querySelector '.icon-handle'
     @lookup = {}
 
   ###*
