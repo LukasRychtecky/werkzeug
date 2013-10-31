@@ -22,6 +22,8 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
     getDomHelper: ->
       helper
     forEachChild: ->
+    getId: ->
+      ''
 
   setup ->
     dom = mockDom()

@@ -17,7 +17,7 @@ class wzk.ui.ComponentRenderer
     @return {Element}
   ###
   createDom: (component) ->
-    component.getDomHelper().createDom @tag, @getClassesAsString(component)
+    component.getDomHelper().createDom @tag, @buildAttrs(component)
 
   ###*
     @param {wzk.ui.Component} component
@@ -32,5 +32,14 @@ class wzk.ui.ComponentRenderer
   ###
   getClassesAsString: (component) ->
     @getClassNames(component).join ' '
+
+  ###*
+    @protected
+    @param {wzk.ui.Component} component
+    @return {Object}
+  ###
+  buildAttrs: (component) ->
+    'id': component.getId()
+    'class': @getClassesAsString(component)
 
 goog.addSingletonGetter wzk.ui.ComponentRenderer
