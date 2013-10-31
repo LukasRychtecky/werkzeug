@@ -1,13 +1,13 @@
 goog.provide 'wzk.fx.Handlebar'
 
-goog.require 'wzk.ui.Control'
+goog.require 'wzk.ui.Component'
 goog.require 'wzk.fx.HandlebarRenderer'
 
-class wzk.fx.Handlebar extends wzk.ui.Control
+class wzk.fx.Handlebar extends wzk.ui.Component
 
   ###*
     @constructor
-    @extends {wzk.ui.Control}
+    @extends {wzk.ui.Component}
     @param {Object} params
   ###
   constructor: (params) ->

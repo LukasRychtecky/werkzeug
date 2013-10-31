@@ -1,12 +1,12 @@
 goog.provide 'wzk.fx.HandlebarRenderer'
 
-goog.require 'goog.ui.ControlRenderer'
+goog.require 'wzk.ui.ComponentRenderer'
 
-class wzk.fx.HandlebarRenderer extends goog.ui.ControlRenderer
+class wzk.fx.HandlebarRenderer extends wzk.ui.ComponentRenderer
 
   ###*
     @constructor
-    @extends {goog.ui.ControlRenderer}
+    @extends {wzk.ui.ComponentRenderer}
   ###
   constructor: ->
     super
@@ -14,16 +14,17 @@ class wzk.fx.HandlebarRenderer extends goog.ui.ControlRenderer
   ###*
     @override
   ###
-  createDom: (control) ->
-    el = super control
-    el.appendChild @buildHandler(control)
+  createDom: (component) ->
+    el = super component
+    el.appendChild @buildHandler(component)
     el
 
   ###*
     @protected
-    @param {goog.ui.Control} control
+    @param {wzk.ui.Component} component
+    @return {Element}
   ###
-  buildHandler: (control) ->
-    control.getDomHelper().createDom 'span', 'icon-handle'
+  buildHandler: (component) ->
+    component.getDomHelper().createDom 'span', 'icon-handle'
 
 goog.addSingletonGetter wzk.fx.HandlebarRenderer
