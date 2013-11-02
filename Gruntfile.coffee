@@ -114,14 +114,14 @@ module.exports = (grunt) ->
 
       coffee: (filepath) ->
         config = getCoffeeConfig(filepath)
-        grunt.config ['coffee', 'app', 'files'], config
-        grunt.config ['coffee2closure', 'app', 'files'], config
-        ['coffee:app', 'coffee2closure:app']
+        grunt.config ['coffee', 'all', 'files'], config
+        grunt.config ['coffee2closure', 'all', 'files'], config
+        ['coffee', 'coffee2closure']
 
       js: (filepath) ->
         grunt.config ['esteDeps', 'all', 'src'], filepath
-        grunt.config ['esteUnitTests', 'app', 'src'], filepath
-        ['esteDeps:all', 'esteUnitTests:app']
+        grunt.config ['esteUnitTests', 'all', 'src'], filepath
+        ['esteDeps', 'esteUnitTests']
 
     coffeelint:
       options:
@@ -172,6 +172,6 @@ module.exports = (grunt) ->
     ]
     grunt.task.run tasks
 
-  grunt.registerTask 'default', 'run:app'
+  grunt.registerTask 'default', 'run'
 
-  grunt.registerTask 'test', 'build:app'
+  grunt.registerTask 'test', 'build'
