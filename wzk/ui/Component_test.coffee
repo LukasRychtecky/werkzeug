@@ -73,3 +73,8 @@ suite 'wzk.ui.Component', ->
 
     test 'Should call a callback after rendering', (done) ->
       buildComp(done).renderAfter sibling
+
+  suite '#enterDocument', ->
+
+    test 'Should call a callback after rendering', (done) ->
+      buildComp(done).enterDocument()
