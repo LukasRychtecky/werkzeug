@@ -101,6 +101,11 @@ class wzk.ui.Component extends goog.ui.Component
     if not @getParent() or @getParent().isInDocument()
       @enterDocument()
 
+  ###*
+    @override
+  ###
+  enterDocument: ->
+    super()
     @afterRendering()
 
   ###*
