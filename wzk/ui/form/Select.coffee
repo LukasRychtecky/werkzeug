@@ -18,3 +18,10 @@ class wzk.ui.form.Select extends wzk.ui.form.Field
     {@multiple, @options} = params
     @multiple ?= false
     @options ?= {}
+
+  ###*
+    @override
+  ###
+  setValue: (val) ->
+    # a value must be a string, otherwise {@link goog.dom.forms.setValue} won't match an option
+    super String(val)
