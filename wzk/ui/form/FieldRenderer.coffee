@@ -30,6 +30,7 @@ class wzk.ui.form.FieldRenderer extends wzk.ui.ComponentRenderer
       'id': field.getId()
 
     attrs['required'] = 'required' if field.required
+    attrs['placeholder'] = field.placeholder if field.placeholder?
     attrs
 
 goog.addSingletonGetter wzk.ui.form.FieldRenderer
