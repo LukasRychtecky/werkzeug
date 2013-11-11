@@ -127,3 +127,10 @@ class wzk.ui.Component extends goog.ui.Component
     @protected
   ###
   beforeRendering: ->
+
+  ###*
+    Exits the DOM and remove the element from DOM
+  ###
+  destroy: ->
+    @exitDocument()
+    @getElement()?.remove()
