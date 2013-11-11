@@ -30,6 +30,7 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
     @form = null
     {@legend, @renderFieldset} = params
     @renderFieldset ?= true
+    @renderChildrenInternally = false
 
   ###*
     @override

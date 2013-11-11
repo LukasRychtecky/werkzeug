@@ -97,3 +97,18 @@ suite 'wzk.ui.Component', ->
 
     test 'Should call a callback after rendering', (done) ->
       buildComp(done).enterDocument()
+
+  suite '#createDom', ->
+
+    mockChild = (done) ->
+      getParent: ->
+      getId: ->
+        ''
+      setParent: ->
+      render: ->
+        done()
+
+    test 'Should render also children', (done) ->
+      comp = buildComp()
+      comp.addChild mockChild(done)
+      comp.createDom()
