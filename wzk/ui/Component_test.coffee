@@ -10,7 +10,7 @@ suite 'wzk.ui.Component', ->
       super params
 
     afterRendering: ->
-      @done()
+      @done() if @done?
 
   class BeforeRendering extends wzk.ui.Component
 
@@ -24,7 +24,7 @@ suite 'wzk.ui.Component', ->
     afterRendering: ->
       @count++
 
-  buildComp = (done) ->
+  buildComp = (done = null) ->
     component = new ExtComp {}, done
 
   buildbeforeRenderingComp = (done) ->
@@ -112,3 +112,16 @@ suite 'wzk.ui.Component', ->
       comp = buildComp()
       comp.addChild mockChild(done)
       comp.createDom()
+
+  suite '#destroy', ->
+
+    test 'Should destroy a component', (done) ->
+      exited = false
+      comp = buildComp()
+      comp.enterDocument()
+      comp.exitDocument = ->
+        exited = true
+      comp.getElement = ->
+        remove: ->
+          done() if exited
+      comp.destroy()
