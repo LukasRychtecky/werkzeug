@@ -24,6 +24,7 @@ class wzk.ui.Component extends goog.ui.Component
     {@renderer} = params
     @renderer ?= wzk.ui.ComponentRenderer.getInstance()
     @cssClasses = []
+    @renderChildrenInternally = true
 
   ###*
     @param {string} klass
@@ -40,6 +41,10 @@ class wzk.ui.Component extends goog.ui.Component
       @setElementInternal el
     else
       super()
+
+    if @renderChildrenInternally
+      @forEachChild (child) =>
+        child.render @getElement()
 
   ###*
     @override
