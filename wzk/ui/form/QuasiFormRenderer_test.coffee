@@ -24,6 +24,7 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
     forEachChild: ->
     getId: ->
       ''
+    renderFieldset: true
 
   setup ->
     dom = mockDom()
@@ -45,3 +46,9 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
     renderer.createFieldsetChildren form, fieldset
     assert.equal dom.tags.length, 1
     assert.equal dom.tags[0].tag, 'legend'
+
+  test 'Should not render a fieldset and legend', ->
+    form.legend = legend
+    form.renderFieldset = false
+    renderer.createDom form
+    assert.equal dom.tags[0].tag, 'div'
