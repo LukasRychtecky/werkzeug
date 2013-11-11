@@ -64,3 +64,16 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   prependChild: (parent, child) ->
     @insertChildAt parent, child, 0
+
+  ###*
+    Returns last sibling if exists
+
+    @param {Element} el
+    @return {Element}
+  ###
+  getLastSibling: (el) ->
+    parent = @getParentElement(el)
+    last = null
+    last = @getLastElementChild parent if parent?
+    last = null if last is undefined
+    last

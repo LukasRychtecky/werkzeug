@@ -50,3 +50,21 @@ suite 'wzk.dom.Dom', ->
 
     test 'Should not be a Node', ->
       assert.isFalse dom.isNode(null)
+
+  suite '#getLastSibling', ->
+
+    parent = null
+
+    setup ->
+      parent =
+        nodeType: goog.dom.NodeType.ELEMENT
+        lastElementChild: null
+
+    test 'Should return last sibling', ->
+      parent.lastElementChild = 'class': 'last'
+
+      last = dom.getLastSibling parentNode: parent
+      assert.equal last['class'], 'last'
+
+    test 'Last sibling should not exists', ->
+      assert.isNull dom.getLastSibling(parentNode: parent)
