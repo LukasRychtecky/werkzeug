@@ -21,13 +21,15 @@ class wzk.ui.form.QuasiForm extends wzk.ui.Component
     @param {Object} params
       renderer: {@link wzk.ui.form.QuasiFormRenderer}
       legend: a legend for the fieldset, optional
+      renderFieldset: true by default
   ###
   constructor: (params = {}) ->
     params.renderer = wzk.ui.form.QuasiFormRenderer.getInstance() unless params.renderer?
     super params
     @fields = {}
     @form = null
-    {@legend} = params
+    {@legend, @renderFieldset} = params
+    @renderFieldset ?= true
 
   ###*
     @override

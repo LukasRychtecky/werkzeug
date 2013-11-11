@@ -19,6 +19,7 @@ class wzk.ui.form.QuasiFormRenderer extends wzk.ui.ComponentRenderer
     @override
   ###
   createDom: (form) ->
+    @tag = 'div' unless form.renderFieldset
     @createFieldsetChildren form, super(form)
 
   ###*
@@ -28,7 +29,7 @@ class wzk.ui.form.QuasiFormRenderer extends wzk.ui.ComponentRenderer
   ###
   createFieldsetChildren: (form, fieldset) ->
     dom = form.getDomHelper()
-    if form.legend?
+    if form.renderFieldset and form.legend?
       fieldset.appendChild dom.createDom('legend', {}, form.legend)
 
     form.forEachChild (field) =>
