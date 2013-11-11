@@ -9,7 +9,7 @@ class wzk.fx.HandlebarRenderer extends wzk.ui.ComponentRenderer
     @extends {wzk.ui.ComponentRenderer}
   ###
   constructor: ->
-    super
+    super()
 
   ###*
     @override
