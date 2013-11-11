@@ -66,14 +66,32 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     @insertChildAt parent, child, 0
 
   ###*
+    Calls a given callback with a given element, forces to return an Element instance or null.
+
+    @protected
+    @param {function(Element)} clb
+    @param {Element} el
+    @return {Element}
+  ###
+  elementOrNull: (clb, el) ->
+    wanted = clb el if el?
+    wanted = null if wanted is undefined
+    wanted
+
+  ###*
+    Returns first sibling if exists
+
+    @param {Element} el
+    @return {Element}
+  ###
+  getFirstSibling: (el) ->
+    @elementOrNull @getFirstElementChild, @getParentElement(el)
+
+  ###*
     Returns last sibling if exists
 
     @param {Element} el
     @return {Element}
   ###
   getLastSibling: (el) ->
-    parent = @getParentElement(el)
-    last = null
-    last = @getLastElementChild parent if parent?
-    last = null if last is undefined
-    last
+    @elementOrNull @getLastElementChild, @getParentElement(el)
