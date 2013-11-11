@@ -20,10 +20,11 @@ class wzk.ui.form.Field extends wzk.ui.Component
       value: a value of a field
       validator: {@link wzk.ui.form.Html5Validator}
       errorMessage: a message handler {@link wzk.ui.form.ErrorMessage}
+      placeholder: HTML5 placeholder
   ###
   constructor: (params = {}) ->
     super params
-    {@name, @required, @size, @value, @caption, @validator, @errorMessage} = params
+    {@name, @required, @size, @value, @caption, @validator, @errorMessage, @placeholder} = params
     @required ?= false
     @size ?= 50
     @caption ?= ''
