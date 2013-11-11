@@ -12,8 +12,23 @@ suite 'wzk.ui.Component', ->
     afterRendering: ->
       @done()
 
+  class BeforeRendering extends wzk.ui.Component
+
+    constructor: (params, @done) ->
+      super params
+      @count = 0
+
+    beforeRendering: ->
+      @done() if @count is 0
+
+    afterRendering: ->
+      @count++
+
   buildComp = (done) ->
     component = new ExtComp {}, done
+
+  buildbeforeRenderingComp = (done) ->
+    component = new BeforeRendering {}, done
 
   setup ->
     component = new wzk.ui.Component()
@@ -56,6 +71,10 @@ suite 'wzk.ui.Component', ->
     test 'Should call a callback after rendering', (done) ->
       mockParent()
       buildComp(done).renderBefore sibling
+
+    test 'Should call a callback before rendering', (done) ->
+      mockParent()
+      buildbeforeRenderingComp(done).renderBefore sibling
 
   suite '#renderAfter', ->
 

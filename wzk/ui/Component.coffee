@@ -105,12 +105,20 @@ class wzk.ui.Component extends goog.ui.Component
     @override
   ###
   enterDocument: ->
+    @beforeRendering()
     super()
     @afterRendering()
 
   ###*
-    An useful call back, which is called after rendering
+    A callback, which is called after rendering
 
     @protected
   ###
   afterRendering: ->
+
+  ###*
+    A callback, which is called after rendering
+
+    @protected
+  ###
+  beforeRendering: ->
