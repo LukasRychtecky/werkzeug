@@ -1,6 +1,6 @@
 {
     "name": "werkzeug",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "dependencies": {
         "closure-compiler": "http://closure-compiler.googlecode.com/files/compiler-latest.zip",
         "closure-library": "git://github.com/steida/google-closure-library.git"
