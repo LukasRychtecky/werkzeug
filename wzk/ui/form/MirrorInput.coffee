@@ -41,10 +41,10 @@ class wzk.ui.form.MirrorInput extends wzk.ui.form.Input
     field = @lookupField()
     E = goog.events.EventType
 
-    listener = goog.events.listen field, E.KEYPRESS, =>
+    listener = goog.events.listen field, E.KEYUP, =>
       @setValue @filterValue(@getTargetValue())
 
-    goog.events.listen @getElement(), E.KEYPRESS, =>
+    goog.events.listen @getElement(), E.KEYUP, =>
       goog.events.unlistenByKey listener
     undefined
 

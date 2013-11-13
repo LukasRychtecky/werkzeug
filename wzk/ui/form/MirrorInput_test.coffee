@@ -29,7 +29,7 @@ suite 'wzk.ui.form.MirrorInput', ->
 
   type = (el, val) ->
     el.value += val
-    el.events['keypress']?()
+    el.events['keyup']?()
 
   setup ->
     elements =
