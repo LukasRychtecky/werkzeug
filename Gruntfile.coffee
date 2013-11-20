@@ -141,6 +141,18 @@ module.exports = (grunt) ->
           ext: '.js'
         ]
 
+    bump:
+      options:
+        bump: true
+        files: ['package.json', 'bower.json']
+        commitFiles: ['-a']
+        commit: true
+        tagName: '%VERSION%'
+        tagMessage: 'Release %VERSION%'
+        commitMessage: '%VERSION%'
+        pushTo: 'origin'
+
+  grunt.loadNpmTasks 'grunt-bump'
   grunt.loadNpmTasks 'grunt-contrib-clean'
   grunt.loadNpmTasks 'grunt-contrib-coffee'
   grunt.loadNpmTasks 'grunt-este-watch'
