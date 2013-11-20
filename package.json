@@ -1,6 +1,11 @@
 {
     "name": "werkzeug",
     "version": "0.2.2",
+    "author": "Lukas Rychtecky <lukas.rychtecky@gmail.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/LukasRychtecky/werkzeug.git"
+    },
     "devDependencies": {
         "grunt": "~0.4.1",
         "grunt-contrib-clean": "~0.5.0",
