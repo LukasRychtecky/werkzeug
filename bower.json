@@ -2,7 +2,7 @@
     "name": "werkzeug",
     "version": "0.2.2",
     "dependencies": {
-        "closure-compiler": "http://closure-compiler.googlecode.com/files/compiler-latest.zip",
+        "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
         "closure-library": "git://github.com/steida/google-closure-library.git"
     }
 }
