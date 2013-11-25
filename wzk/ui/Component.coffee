@@ -42,9 +42,8 @@ class wzk.ui.Component extends goog.ui.Component
     else
       super()
 
-    if @renderChildrenInternally
-      @forEachChild (child) =>
-        child.render @getElement()
+    @forEachChild (child) =>
+      child.createDom()
 
   ###*
     @override
@@ -103,8 +102,11 @@ class wzk.ui.Component extends goog.ui.Component
 
     insertion @getElement()
 
-    if not @getParent() or @getParent().isInDocument()
-      @enterDocument()
+    if @renderChildrenInternally
+      @forEachChild (child) =>
+        child.render @getElement()
+
+    @enterDocument()
 
   ###*
     @override
