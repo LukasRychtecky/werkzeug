@@ -30,7 +30,13 @@ class wzk.ui.form.Field extends wzk.ui.Component
     @caption ?= ''
     @validator ?= new wzk.ui.form.Html5Validator @
     @errorMessage ?= new wzk.ui.form.ErrorMessage dom: @dom
-    @addChild @errorMessage
+
+  ###*
+    AddChild is overridden, because we do not want to render an error message as a child of the field.
+
+    @override
+  ###
+  addChild: ->
 
   ###*
     @override
