@@ -30,6 +30,21 @@ suite 'wzk.ui.Component', ->
   buildbeforeRenderingComp = (done) ->
     component = new BeforeRendering {}, done
 
+  mockChild = (onCreate, onRender = ->) ->
+    getParent: ->
+    getId: ->
+      ''
+    setParent: ->
+    createDom: ->
+      onCreate()
+    render: ->
+      onRender()
+    isInDocument: ->
+      false
+    getElement: ->
+      {}
+    enterDocument: ->
+
   setup ->
     component = new wzk.ui.Component()
     parent =
@@ -57,6 +72,19 @@ suite 'wzk.ui.Component', ->
 
     test 'Should call a callback after rendering', (done) ->
       buildComp(done).render parent
+
+    test 'Should render children', (done) ->
+      comp = buildComp()
+      comp.addChild mockChild(done)
+      comp.render parent
+
+    test 'Should not render children', ->
+      comp = buildComp()
+      comp.renderChildrenInternally = false
+      nothing = ->
+      comp.addChild mockChild(nothing, assert.fail)
+      comp.render parent
+      assert.equal comp.getChildCount(), 1
 
   suite '#renderBefore', ->
 
@@ -100,17 +128,9 @@ suite 'wzk.ui.Component', ->
 
   suite '#createDom', ->
 
-    mockChild = (done) ->
-      getParent: ->
-      getId: ->
-        ''
-      setParent: ->
-      render: ->
-        done()
-
     test 'Should render also children', (done) ->
       comp = buildComp()
-      comp.addChild mockChild(done)
+      comp.addChild mockChild done, assert.fail
       comp.createDom()
 
   suite '#destroy', ->
