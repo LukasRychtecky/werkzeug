@@ -133,6 +133,13 @@ suite 'wzk.ui.Component', ->
       comp.addChild mockChild done, assert.fail
       comp.createDom()
 
+    test 'Should not create an element if a component is in DOM', ->
+      parent.insertBefore = ->
+      component.render parent
+      component.setElementInternal = ->
+        assert.fail 'Element should not be build again'
+      component.createDom()
+
   suite '#destroy', ->
 
     test 'Should destroy a component', (done) ->
