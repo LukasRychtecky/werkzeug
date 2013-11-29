@@ -36,6 +36,7 @@ class wzk.ui.Component extends goog.ui.Component
     @override
   ###
   createDom: ->
+    return if @isInDocument()
     if @renderer?
       el = @renderer.createDom @
       @setElementInternal el
