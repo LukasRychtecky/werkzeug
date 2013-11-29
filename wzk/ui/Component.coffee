@@ -43,6 +43,8 @@ class wzk.ui.Component extends goog.ui.Component
     else
       super()
 
+    return unless @renderChildrenInternally
+
     @forEachChild (child) =>
       child.createDom()
 
