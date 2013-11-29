@@ -29,5 +29,5 @@ class wzk.ui.form.Select extends wzk.ui.form.Field
     super String(val) if val isnt undefined
 
   setOptions: (opts) ->
-    @setValue goog.object.getAnyKey(opts)
+    @setValue goog.object.getAnyKey(opts) unless @value?
     @options = opts

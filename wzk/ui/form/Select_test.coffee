@@ -23,3 +23,10 @@ suite 'wzk.ui.form.Select', ->
     select = new wzk.ui.form.Select()
     select.setOptions foo: 'bar'
     assert.equal select.getValue(), 'foo'
+
+  test 'Should select an option with a current value', ->
+    select = new wzk.ui.form.Select value: 2
+    select.setOptions
+      "1": 1
+      "2": 2
+    assert.equal select.getValue(), "2"
