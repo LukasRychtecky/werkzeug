@@ -5,6 +5,7 @@ goog.require 'goog.dom.forms'
 goog.require 'wzk.ui.form.Html5Validator'
 goog.require 'wzk.ui.form.ErrorMessage'
 goog.require 'goog.testing.events'
+goog.require 'goog.json'
 
 ###*
   Represents an input with a validation and an error handling.
@@ -24,7 +25,9 @@ class wzk.ui.form.Field extends wzk.ui.Component
   ###
   constructor: (params = {}) ->
     super params
-    {@name, @required, @size, @value, @caption, @validator, @errorMessage, @placeholder} = params
+    {@name, @required, @size, @caption, @validator, @errorMessage, @placeholder} = params
+    params.value = goog.json.serialize(params.value) if goog.isObject params.value
+    @setValue params.value
     @required ?= false
     @size ?= 50
     @caption ?= ''
