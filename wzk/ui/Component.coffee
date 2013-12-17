@@ -138,4 +138,4 @@ class wzk.ui.Component extends goog.ui.Component
   ###
   destroy: ->
     @exitDocument()
-    @getElement()?.remove()
+    @dom.removeNode @getElement()

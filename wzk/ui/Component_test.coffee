@@ -151,11 +151,13 @@ suite 'wzk.ui.Component', ->
 
     test 'Should destroy a component', (done) ->
       exited = false
+      parent =
+        removeChild: ->
+          done()
       comp = buildComp()
       comp.enterDocument()
       comp.exitDocument = ->
         exited = true
       comp.getElement = ->
-        remove: ->
-          done() if exited
+        parentNode: parent
       comp.destroy()
