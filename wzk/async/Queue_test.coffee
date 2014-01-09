@@ -31,3 +31,6 @@ suite 'wzk.async.Queue', ->
     queue.exec ->
       assert.isFalse queue.isOnCall()
     assert.isTrue queue.isOnCall()
+
+  test 'Should execute a callback when a queue is empty', (done) ->
+    queue.exec done
