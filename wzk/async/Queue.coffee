@@ -64,6 +64,8 @@ class wzk.async.Queue
   exec: (onDone = null) ->
     @onDone = onDone if onDone?
 
+    return @onDone() if @jobs.length is 0
+
     @onCallCounter = @jobs.length
 
     done = =>
