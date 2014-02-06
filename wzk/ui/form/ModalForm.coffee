@@ -20,7 +20,7 @@ class wzk.ui.form.ModalForm extends goog.events.EventTarget
     @param {wzk.dom.Dom} dom
     @param {wzk.resource.Client} client
     @param {string} url
-    @param {wzk.wzk.App} appInstance
+    @param {wzk.app.App} appInstance
   ###
   constructor: (@dom, @client, @url, @appInstance) ->
     super()

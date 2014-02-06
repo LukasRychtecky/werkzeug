@@ -5,6 +5,7 @@ goog.require 'wzk.ui.form.RestForm'
 goog.require 'wzk.ui.form.ModalForm'
 goog.require 'goog.dom.forms'
 goog.require 'wzk.resource.Client'
+goog.require 'wzk.ui.form.RemoteButton'
 
 ###*
   @param {Element} form
@@ -45,7 +46,7 @@ wzk.ui.form.ajaxifyForm = (form, dom, xhrFac) ->
   @param {Element} el
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
-  @param {wzk.wzk.App} appInstance
+  @param {wzk.app.App} appInstance
 ###
 wzk.ui.form.openFormInModal = (el, dom, xhrFac, appInstance) ->
   url = goog.dom.dataset.get el, 'modal'
@@ -55,3 +56,17 @@ wzk.ui.form.openFormInModal = (el, dom, xhrFac, appInstance) ->
 
   goog.events.listen el, goog.events.EventType.CLICK, ->
     modal.open()
+
+###*
+  @param {Element} el
+  @param {wzk.dom.Dom} dom
+  @param {wzk.net.XhrFactory} xhrFac
+###
+wzk.ui.form.buildRemoteButton = (el, dom, xhrFac) ->
+  btn = new wzk.ui.form.RemoteButton null, null, dom
+  btn.decorate el
+  btn.listen goog.ui.Component.EventType.ACTION, ->
+    client = new wzk.resource.Client xhrFac
+    url = String(goog.dom.dataset.get(el, 'url'))
+    method = String(goog.dom.dataset.get(el, 'method'))
+    btn.call client, url, method, {}
