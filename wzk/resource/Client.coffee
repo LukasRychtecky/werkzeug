@@ -12,9 +12,9 @@ class wzk.resource.Client
   ###*
     @constructor
     @param {wzk.net.XhrFactory} xhrFac
-    @param {string} context
+    @param {string=} context
   ###
-  constructor: (@xhrFac, @context) ->
+  constructor: (@xhrFac, @context = '') ->
     @headers = {}
     @headers[goog.net.XhrIo.CONTENT_TYPE_HEADER] = 'application/json'
     @headers['Accept'] = 'application/json'
