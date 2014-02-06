@@ -30,5 +30,5 @@ class wzk.ui.form.RemoteButton extends goog.ui.Button
   ###
   call: (client, url, method, content) ->
     @setEnabled false
-    client.request url, method, content, ->
+    client.request url, method, content, =>
       @setEnabled true
