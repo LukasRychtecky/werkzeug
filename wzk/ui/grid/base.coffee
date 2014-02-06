@@ -2,7 +2,6 @@ goog.provide 'wzk.ui.grid'
 
 goog.require 'wzk.resource.Client'
 goog.require 'wzk.ui.grid.Grid'
-goog.require 'wzk.ui.grid.Grid.EventType'
 goog.require 'wzk.ui.grid.ArgsExtractor'
 goog.require 'wzk.ui.grid.Repository'
 goog.require 'goog.dom.dataset'

@@ -1,6 +1,3 @@
-goog.provide 'wzk.ui.grid.Grid'
-goog.provide 'wzk.ui.grid.Grid.EventType'
-
 goog.require 'goog.dom.DomHelper'
 goog.require 'goog.object'
 goog.require 'goog.ui.Dialog'
@@ -9,13 +6,13 @@ goog.require 'goog.ui.Component.EventType'
 goog.require 'goog.ui.Dialog'
 goog.require 'goog.ui.Dialog.EventType'
 goog.require 'goog.ui.Dialog.DefaultButtonKeys'
-goog.require 'wzk.ui.Component'
 goog.require 'goog.events'
 goog.require 'goog.events.Event'
 goog.require 'goog.string.format'
 goog.require 'wzk.ui.grid.Paginator'
 goog.require 'wzk.ui.grid.Sorter'
 goog.require 'wzk.ui.ButtonRenderer'
+goog.require 'wzk.ui.Link'
 
 class wzk.ui.grid.Grid extends wzk.ui.Component
 
@@ -26,8 +23,6 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     DELETE_ITEM: 'delete-item'
 
   ###*
-    @constructor
-    @extends {wzk.ui.Component}
     @param {wzk.dom.Dom} dom
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
@@ -196,11 +191,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Element} cell
   ###
   buildWebAction: (action, model, cell) ->
-    el = @dom.createDom 'a', 'href': model['_web_links'][action['name']], 'class': (action['class_name'] or action['name'])
-    span = @dom.createDom 'span', {}, el
-    @dom.setTextContent span, action['verbose_name']
-    el.appendChild span
-    cell.appendChild el
+    link = new wzk.ui.Link dom: @dom, href: model['_web_links'][action['name']], caption: action['verbose_name']
+    link.addClass(action['class_name'] or action['name'])
+    link.render cell
 
   ###*
     @protected
