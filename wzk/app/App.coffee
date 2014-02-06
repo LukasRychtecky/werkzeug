@@ -15,22 +15,30 @@ class wzk.app.App
     @reg = new wzk.app.Register()
     @proc.add @reg.process
     @regOnce = new wzk.app.Register()
+    @xhrFac = null
+    @doc = null
+    @opts = app: @
 
   ###*
     @param {Window} win
     @param {Object=} msgs
   ###
   run: (win, msgs = {}) ->
-
     dom = new wzk.dom.Dom win.document
     flash = new wzk.ui.Flash dom: dom
-    xhrFac = new wzk.net.XhrFactory flash, msgs
+    @xhrFac = new wzk.net.XhrFactory flash, msgs
 
     @registerStandardComponents flash
 
-    doc = win.document
-    @proc.once @regOnce.process, doc, doc, xhrFac
-    @proc.process doc, doc, xhrFac
+    @doc = win.document
+    @proc.once @regOnce.process, @doc, @doc, @xhrFac
+    @proc.process @doc, @doc, @xhrFac, @opts
+
+  ###*
+    @param {Element} el
+  ###
+  process: (el) ->
+    @proc.process el, @doc, @xhrFac, @opts
 
   ###*
     @param {string} selector
