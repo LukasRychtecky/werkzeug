@@ -206,6 +206,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   buildButton: (caption, className, model, cell, row) ->
     btn = new goog.ui.Button caption, wzk.ui.ButtonRenderer.getInstance(), @dom
+    btn.addClassName 'btn-danger'
     @setupButton model, caption, className, btn
     btn.render(cell)
     @buildButtonModel(btn, row, model)

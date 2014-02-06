@@ -16,12 +16,12 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###
   @CLASSES:
     ACTIVE: 'active'
-    INACTIVE: 'inactive'
+    INACTIVE: 'disabled'
     PREV: 'prev'
     NEXT: 'next'
     PAGES: 'pages'
     RESULT: 'result'
-    PAGING: 'paging'
+    PAGING: 'pagination'
     BASE_SWITCHER: 'base-switcher'
 
   ###*
@@ -184,7 +184,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {string} klass
   ###
   createPagesEl: (parent, dom, klass) ->
-    el = dom.createDom 'div', {'class': klass}
+    el = dom.createDom 'li', {'class': klass}
     parent.appendChild el
 
   ###*
