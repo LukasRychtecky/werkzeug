@@ -45,7 +45,7 @@ wzk.ui.form.ajaxifyForm = (form, dom, xhrFac) ->
   @param {Element} el
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
-  @param {wzk.wzk.App} appInstance
+  @param {wzk.app.App} appInstance
 ###
 wzk.ui.form.openFormInModal = (el, dom, xhrFac, appInstance) ->
   url = goog.dom.dataset.get el, 'modal'
