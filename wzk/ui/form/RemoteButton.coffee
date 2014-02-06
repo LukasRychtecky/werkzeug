@@ -24,10 +24,11 @@ class wzk.ui.form.RemoteButton extends goog.ui.Button
     Sends a request on a given model with a given method
 
     @param {wzk.resource.Client} client
+    @param {string} url
     @param {string} method
     @param {Object|null|string=} content
   ###
-  call: (client, method, content) ->
+  call: (client, url, method, content) ->
     @setEnabled false
-    client.request method, content, ->
+    client.request url, method, content, ->
       @setEnabled true
