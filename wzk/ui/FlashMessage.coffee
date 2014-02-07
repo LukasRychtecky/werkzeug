@@ -27,22 +27,38 @@ class wzk.ui.FlashMessage extends wzk.ui.Component
     {@msg, @severity, @fadeOut, @closable} = params
     @fadeout ?= true
     @closable ?= true
-    @addClass 'flash'
-    if @severity?
-      @addClass @severity
 
   ###*
     @override
   ###
   createDom: ->
     super()
-    @decorateInternal @getElement()
+
+    if @closable
+      @decorateClosable @getElement()
+
+    if @fadeOut
+      @decorateFadeOut @getElement()
+
+    @decorateSeverity @getElement()
 
   ###*
     @override
   ###
   canDecorate: (el) ->
-    el? and goog.dom.classes.has el, 'flash'
+    el? and goog.dom.classes.has el, wzk.ui.FlashMessageRenderer.CLASSES.FLASH
+
+  ###*
+    @protected
+    @param {Element} el
+  ###
+  decorateClosable: (el) ->
+    icon = new wzk.ui.CloseIcon dom: @dom
+    icon.listen goog.ui.Component.EventType.ACTION, =>
+      @destroy()
+    icon.createDom()
+    el.appendChild icon.getElement()
+    icon.enterDocument()
 
   ###*
     @override
@@ -50,23 +66,29 @@ class wzk.ui.FlashMessage extends wzk.ui.Component
   decorateInternal: (el) ->
     super el
 
-    if @closable
-      icon = new wzk.ui.CloseIcon dom: @dom
-      icon.listen goog.ui.Component.EventType.ACTION, =>
-        @destroy()
-      icon.createDom()
-      @getElement().appendChild icon.getElement()
-      icon.enterDocument()
+    @renderer.decorate el
 
-    if @fadeOut
-      @setDiswzkearTrigger()
+    if @renderer.isClosable el
+      @decorateClosable el
+
+    if @renderer.isFadeOut el
+      @decorateFadeOut el
 
   ###*
     @protected
+    @param {Element} el
   ###
-  setDiswzkearTrigger: ->
+  decorateSeverity: (el) ->
+    if @severity?
+      @renderer.mark el, @severity
+
+  ###*
+    @protected
+    @param {Element} el
+  ###
+  decorateFadeOut: (el) ->
     trigger = =>
-      anim = new goog.fx.dom.FadeOutAndHide @getElement(), 1000
+      anim = new goog.fx.dom.FadeOutAndHide el, 1000
       anim.listen goog.fx.Transition.EventType.END, =>
         @destroy()
       anim.play()

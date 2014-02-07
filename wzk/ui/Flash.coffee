@@ -15,7 +15,6 @@ class wzk.ui.Flash extends wzk.ui.Component
   constructor: (params) ->
     params.renderer ?= wzk.ui.FlashRenderer.getInstance()
     super params
-    @addClass 'sticky'
 
   ###*
     @param {string|Array.<string>} text
@@ -25,9 +24,9 @@ class wzk.ui.Flash extends wzk.ui.Component
     @return {Array.<wzk.ui.FlashMessage>}
   ###
   addMessage: (text, severity = 'info', fadeOut = undefined, closable = undefined) ->
-    severityIsNotError = not (severity is 'error')
-    fadeOut = severityIsNotError if fadeOut is undefined
-    closable = severityIsNotError if closable is undefined
+    notError = severity isnt 'error'
+    fadeOut = notError if fadeOut is undefined
+    closable = notError if closable is undefined
 
     msgs = if goog.isArray(text) then text else [text]
     flashes = []
@@ -64,7 +63,7 @@ class wzk.ui.Flash extends wzk.ui.Component
     @override
   ###
   canDecorate: (el) ->
-    el? and goog.dom.classes.has el, 'sticky'
+    el? and goog.dom.classes.has el, wzk.ui.FlashRenderer.CLASSES.FLASH
 
   ###*
     @override
@@ -73,12 +72,9 @@ class wzk.ui.Flash extends wzk.ui.Component
   decorateInternal: (el) ->
     super el
 
-    for li in @getElement().querySelectorAll '.flash'
-      closable = not goog.dom.classes.has li, 'error'
-      fadeOut = not goog.dom.classes.has li, 'no-hide'
-
-      flash = new wzk.ui.FlashMessage dom: @dom, fadeOut: fadeOut, closable: closable
-      flash.decorate li
+    for msg in @dom.getChildren el
+      flash = new wzk.ui.FlashMessage dom: @dom
+      flash.decorate msg
 
   ###*
     @override
@@ -91,8 +87,7 @@ class wzk.ui.Flash extends wzk.ui.Component
     @param {Element} el
   ###
   decorateOrRender: (el) ->
-    flashEl = el.querySelector '.sticky'
-    if flashEl?
-      @decorate flashEl
+    if @dom.hasChildren el
+      @decorate el
     else
       @render el
