@@ -14,6 +14,6 @@ class wzk.ui.CloseIconRenderer extends wzk.ui.ComponentRenderer
     @override
   ###
   createDom: (icon) ->
-    icon.getDomHelper().createDom 'span', 'class': 'goog-icon-remove'
+    icon.getDomHelper().el 'button', {'class': 'goog-icon-remove close'}, '×'
 
 goog.addSingletonGetter wzk.ui.CloseIconRenderer
