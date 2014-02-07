@@ -29,7 +29,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
     @param {Object} actions
-    @param {wzk.ui.Dialog} dialog
+    @param {wzk.ui.ConfirmDialog} dialog
   ###
   constructor: (@dom, @repo, @cols, @actions, @dialog) ->
     super()

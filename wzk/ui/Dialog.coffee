@@ -15,7 +15,6 @@ class wzk.ui.Dialog extends goog.ui.Dialog
   ###
   constructor: (klass, useIframeMask, dom) ->
     super klass, useIframeMask, dom
-    @confirm = 'Do you really want to delete %s?'
     @setButtonSet goog.ui.Dialog.ButtonSet.createYesNo()
 
   ###*
@@ -28,10 +27,3 @@ class wzk.ui.Dialog extends goog.ui.Dialog
       btnSet.set goog.ui.Dialog.DefaultButtonKeys.YES, captYes
     if captNo?
       btnSet.set goog.ui.Dialog.DefaultButtonKeys.NO, captNo
-
-  ###*
-    @param {string} txt
-  ###
-  formatContent: (txt) ->
-    @setContent(goog.string.format(@confirm, ['"', txt, '"'].join('')))
-
