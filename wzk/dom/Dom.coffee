@@ -95,3 +95,10 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   getLastSibling: (el) ->
     @elementOrNull @getLastElementChild, @getParentElement(el)
+
+  ###*
+    @param {Element} el
+    @return {boolean}
+  ###
+  hasChildren: (el) ->
+    el.children? and el.children.length > 0
