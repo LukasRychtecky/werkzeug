@@ -27,3 +27,6 @@ class wzk.ui.Dialog extends goog.ui.Dialog
       btnSet.set goog.ui.Dialog.DefaultButtonKeys.YES, captYes
     if captNo?
       btnSet.set goog.ui.Dialog.DefaultButtonKeys.NO, captNo
+
+  open: ->
+    @setVisible true
