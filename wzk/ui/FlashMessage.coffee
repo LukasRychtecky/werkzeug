@@ -9,7 +9,7 @@ goog.require 'goog.dom.classes'
 
 class wzk.ui.FlashMessage extends wzk.ui.Component
 
-  @DISwzkEAR_TIME = 10000
+  @DISAPPEAR_TIME = 10000
 
   ###*
     @constructor
@@ -71,4 +71,4 @@ class wzk.ui.FlashMessage extends wzk.ui.Component
         @destroy()
       anim.play()
 
-    setTimeout trigger, wzk.ui.FlashMessage.DISwzkEAR_TIME
+    setTimeout trigger, wzk.ui.FlashMessage.DISAPPEAR_TIME
