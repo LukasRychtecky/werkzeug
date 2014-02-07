@@ -5,7 +5,7 @@ goog.require 'wzk.ui.grid.Grid'
 goog.require 'wzk.ui.grid.ArgsExtractor'
 goog.require 'wzk.ui.grid.Repository'
 goog.require 'goog.dom.dataset'
-goog.require 'wzk.ui.ConfirmDialog'
+goog.require 'wzk.ui.dialog.ConfirmDialog'
 goog.require 'wzk.resource.AttrParser'
 
 ###*
@@ -31,7 +31,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   extractor = new wzk.ui.grid.ArgsExtractor table
   repo = new wzk.ui.grid.Repository client, parser.parseResource(table)
 
-  dialog = new wzk.ui.ConfirmDialog undefined, undefined, dom
+  dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
   dialog.confirm = extractor.parseConfirm()
   dialog.setYesNoCaptions goog.dom.dataset.get(table, 'btnYes'), goog.dom.dataset.get(table, 'btnNo')
 

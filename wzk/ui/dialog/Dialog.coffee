@@ -1,11 +1,13 @@
-goog.provide 'wzk.ui.Dialog'
+goog.provide 'wzk.ui.dialog.Dialog'
 
-goog.require 'goog.ui.Dialog.ButtonSet'
+goog.require 'wzk.ui.dialog.ButtonSet'
 goog.require 'goog.string'
 goog.require 'goog.ui.Dialog.DefaultButtonKeys'
 goog.require 'wzk.ui.CloseIcon'
+goog.require 'goog.dom.classes'
+goog.require 'goog.dom.safe'
 
-class wzk.ui.Dialog extends goog.ui.Dialog
+class wzk.ui.dialog.Dialog extends goog.ui.Dialog
 
   ###*
     @constructor
@@ -16,7 +18,7 @@ class wzk.ui.Dialog extends goog.ui.Dialog
   ###
   constructor: (klass, useIframeMask, dom) ->
     super klass, useIframeMask, dom
-    @setButtonSet goog.ui.Dialog.ButtonSet.createYesNo()
+    @setButtonSet wzk.ui.dialog.ButtonSet.createYesNo()
 
   ###*
     @param {string|null} captYes
@@ -32,16 +34,20 @@ class wzk.ui.Dialog extends goog.ui.Dialog
   open: ->
     @setVisible true
 
+  hide: ->
+    @setVisible false
+
   ###*
     @override
   ###
   setVisible: (visible) ->
     super visible
-    goog.style.setStyle @getElement(), 'display', 'block'
+    goog.style.setStyle @getElement(), 'display', (if visible then 'block' else 'none')
     goog.style.setElementShown @contentWrapperEl, visible
 
   ###*
     @protected
+    @suppress {visibility}
   ###
   buildHeader: ->
     @titleTextEl_ = @dom_.createDom('h4', 'modal-title', @title_)
@@ -56,6 +62,7 @@ class wzk.ui.Dialog extends goog.ui.Dialog
 
   ###*
     @protected
+    @suppress {visibility}
   ###
   buildFooter: ->
     @buttonEl_ = @dom_.createDom 'div', 'modal-footer'
@@ -66,6 +73,7 @@ class wzk.ui.Dialog extends goog.ui.Dialog
 
   ###*
     @protected
+    @suppress {visibility}
   ###
   decorateAria: ->
     goog.a11y.aria.setRole @contentWrapperEl, @getPreferredAriaRole()
@@ -73,6 +81,7 @@ class wzk.ui.Dialog extends goog.ui.Dialog
 
   ###*
     @protected
+    @suppress {visibility}
   ###
   manageBgMask: ->
     @manageBackgroundDom_()
@@ -81,33 +90,46 @@ class wzk.ui.Dialog extends goog.ui.Dialog
 
   ###*
     @protected
+    @suppress {visibility}
   ###
   applyContent: ->
-    # If setContent() was called before createDom(), make sure the inner HTML of
-    # the content element is initialized.
-    if @content_
-      @contentEl_.innerHTML = @content_
+    if @content_ and @contentEl_
+      goog.dom.safe.setInnerHtml @contentEl_, @content_
+
+  ###*
+    @protected
+    @suppress {visibility}
+  ###
+  buildContent: ->
+    @contentEl_ = @dom_.createDom 'div', 'modal-body'
+
+  ###*
+    @protected
+    @param {Element} main
+  ###
+  buildContentWrapper: (main) ->
+    @contentWrapperEl = @dom_.el 'div', 'modal-content', main
+
+    goog.dom.classes.add @contentWrapperEl, @getCssClass()
+    goog.dom.setFocusableTabIndex @contentWrapperEl, true
+    goog.style.setElementShown @contentWrapperEl, false
 
   ###*
     @override
+    @suppress {visibility}
   ###
   createDom: ->
-    dom = @getDomHelper()
-    @element_ = dom.el 'div', 'modal fade in'
-    main = dom.el 'div', 'modal-dialog', @element_
-    @contentWrapperEl = el = dom.el 'div', 'modal-content', main
-
-    goog.dom.classes.add el, @getCssClass()
-    goog.dom.setFocusableTabIndex el, true
-    goog.style.setElementShown el, false
+    @element_ = @dom_.el 'div', 'modal fade in'
+    main = @dom_.el 'div', 'modal-dialog', @element_
+    @buildContentWrapper main
   
     @manageBgMask()
 
     @buildHeader()
-    @contentEl_ = dom.createDom 'div', 'modal-body'
+    @buildContent()
     @buildFooter()
 
-    goog.dom.append el, @titleEl_, @contentEl_, @buttonEl_
+    goog.dom.append @contentWrapperEl, @titleEl_, @contentEl_, @buttonEl_
 
     @decorateAria()
     @applyContent()

@@ -1,6 +1,9 @@
-goog.provide 'wzk.ui.ConfirmDialog'
+goog.provide 'wzk.ui.dialog.ConfirmDialog'
 
-class wzk.ui.ConfirmDialog extends wzk.ui.Dialog
+goog.require 'wzk.ui.dialog.Dialog'
+goog.require 'goog.string.format'
+
+class wzk.ui.dialog.ConfirmDialog extends wzk.ui.dialog.Dialog
 
   ###*
     @param {string=} klass
@@ -15,4 +18,4 @@ class wzk.ui.ConfirmDialog extends wzk.ui.Dialog
     @param {string} txt
   ###
   formatContent: (txt) ->
-    @setContent(goog.string.format(@confirm, ['"', txt, '"'].join('')))
+    @setContent goog.string.format(@confirm, ['"', txt, '"'].join(''))
