@@ -1,3 +1,5 @@
+goog.provide 'wzk.ui.grid.Grid'
+
 goog.require 'goog.dom.DomHelper'
 goog.require 'goog.object'
 goog.require 'goog.ui.Dialog'
@@ -27,7 +29,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
     @param {Object} actions
-    @param {wzk.ui.Dialog} dialog
+    @param {wzk.ui.dialog.ConfirmDialog} dialog
   ###
   constructor: (@dom, @repo, @cols, @actions, @dialog) ->
     super()
@@ -75,7 +77,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @param {Element} el
+    @param {Element|undefined} el
     @param {number} total
     @param {number} count
   ###
