@@ -32,7 +32,8 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   repo = new wzk.ui.grid.Repository client, parser.parseResource(table)
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
-  dialog.confirm = extractor.parseConfirm()
+  dialog.setConfirm extractor.parseConfirm()
+  dialog.setTitle extractor.parseTitle()
   dialog.setYesNoCaptions goog.dom.dataset.get(table, 'btnYes'), goog.dom.dataset.get(table, 'btnNo')
 
   grid = new ctor dom, repo, extractor.parseColumns(), extractor.parseActions(), dialog

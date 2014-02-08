@@ -33,11 +33,17 @@ class wzk.ui.grid.ArgsExtractor
     @getAttr 'confirm'
 
   ###*
+    @return {string}
+  ###
+  parseTitle: ->
+    @getAttr 'confirmTitle'
+
+  ###*
     @protected
     @return {string}
   ###
   getAttr: (attr) ->
-    String(goog.dom.dataset.get @table, attr ? '')
+    String(goog.dom.dataset.get(@table, attr) ? '')
 
   ###*
     @protected
