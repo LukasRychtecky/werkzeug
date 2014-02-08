@@ -19,3 +19,8 @@ class wzk.ui.dialog.ConfirmDialog extends wzk.ui.dialog.Dialog
   ###
   formatContent: (txt) ->
     @setContent goog.string.format(@confirm, ['"', txt, '"'].join(''))
+
+  ###*
+    @param {string} confirm
+  ###
+  setConfirm: (@confirm) ->
