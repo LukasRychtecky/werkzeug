@@ -1,7 +1,6 @@
 goog.provide 'wzk.app.App'
 
 goog.require 'wzk.app.Register'
-goog.require 'wzk.dom.Dom'
 goog.require 'wzk.net.XhrFactory'
 goog.require 'wzk.ui.Flash'
 goog.require 'wzk.ui.grid'
@@ -21,14 +20,11 @@ class wzk.app.App
 
   ###*
     @param {Window} win
+    @param {wzk.ui.Flash} flash
     @param {Object=} msgs
   ###
-  run: (win, msgs = {}) ->
-    dom = new wzk.dom.Dom win.document
-    flash = new wzk.ui.Flash dom: dom
+  run: (win, flash, msgs = {}) ->
     @xhrFac = new wzk.net.XhrFactory flash, msgs
-
-    @registerStandardComponents flash
 
     @doc = win.document
     @proc.once @regOnce.process, @doc, @doc, @xhrFac
@@ -55,11 +51,10 @@ class wzk.app.App
     @regOnce.register selector, filter
 
   ###*
-    @protected
     @param {wzk.ui.Flash} flash
   ###
   registerStandardComponents: (flash) ->
-    @once '#sticky-flash', (el) ->
+    @once '.flash', (el) ->
       flash.decorateOrRender el
 
     @on 'table.grid', (table, dom, xhrFac) ->
