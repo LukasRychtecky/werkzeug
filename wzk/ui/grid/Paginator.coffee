@@ -1,6 +1,3 @@
-goog.provide 'wzk.ui.grid.Paginator'
-
-goog.require 'wzk.ui.Component'
 goog.require 'wzk.ui.grid.PaginatorRenderer'
 goog.require 'goog.events.Event'
 goog.require 'goog.dom.classes'
@@ -16,8 +13,6 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     GO_TO: 'go-to'
 
   ###*
-    @constructor
-    @extends {wzk.ui.Component}
     @param {Object} params
       renderer: {@link wzk.ui.grid.PaginatorRenderer}
       total: {number}
@@ -41,6 +36,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @listeners = []
     @switcher = null
     @bases = null
+    @defBases = [10, 25, 50, 100, 500, 1000]
 
   ###*
     @protected
@@ -53,13 +49,13 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @override
   ###
   canDecorate: (el) ->
-    el? and goog.dom.classes.has el, 'paginator'
+    el? and goog.dom.classes.has el, wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATOR
 
   ###*
     @override
   ###
   afterRendering: ->
-    @hangPageListener @getElement()
+    @hangPageListener()
     @hangBaseSwitcherListener @getElement()
 
   ###*
@@ -113,8 +109,9 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @override
   ###
   decorateInternal: (el) ->
-    switcherEl = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.BASE_SWITCHER
-    @parseBases switcherEl
+    unless @bases
+      switcherEl = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.BASE_SWITCHER
+      @parseBases switcherEl
 
     @renderer.decorate @, el
     @setElementInternal el
@@ -132,20 +129,23 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
       if goog.isArray(bases) and bases.length > 0
         @bases = bases
 
+    unless @bases
+      @bases = @defBases
+
   ###*
     @return {Array.<number>}
   ###
   getBases: ->
-    @bases ? [10, 25, 50, 100, 500, 1000]
+    @bases ? @defBases
 
   ###*
     @protected
-    @param {Element} el
   ###
-  hangPageListener: (el) ->
-    paging = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.PAGING
+  hangPageListener: ->
+    paging = @renderer.getPagination @
     listener = goog.events.listen paging, goog.events.EventType.CLICK, (e) =>
-      page = goog.dom.dataset.get e.target, 'p'
+      page = @renderer.getPage e.target, @dom
+      console.log page
       if page?
         @page = parseInt page, 10
         @offset = @offsetFromPage()
@@ -182,7 +182,6 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   clone: ->
     clone = @getElement().cloneNode true
     @selectBase clone
-    @hangPageListener clone
     @hangBaseSwitcherListener clone
     clone
 
