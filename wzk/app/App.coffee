@@ -55,11 +55,10 @@ class wzk.app.App
     @regOnce.register selector, filter
 
   ###*
-    @protected
     @param {wzk.ui.Flash} flash
   ###
   registerStandardComponents: (flash) ->
-    @once '#sticky-flash', (el) ->
+    @once '.flash', (el) ->
       flash.decorateOrRender el
 
     @on 'table.grid', (table, dom, xhrFac) ->
