@@ -102,7 +102,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {Element} el
   ###
   selectBase: (el) ->
-    @getRenderer().setSelectBase( @base )
+    @renderer.setSelectBase( @base )
 
   # setter with callback that handles change
   setBase: (base) ->

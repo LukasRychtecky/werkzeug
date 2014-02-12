@@ -17,8 +17,8 @@ class wzk.ui.menu.Menu extends goog.ui.Menu
   setVisible: (visibility) ->
     super(visibility)
 
+    console.log('Menu set visible: ' + visibility)
+
     if @getElement()?
-      if visibility is true
-        goog.style.setElementShown @getElement(), true
-      else
-        goog.style.setElementShown @getElement(), false
+      @getElement().style.display = if visibility then 'block' else 'none'
+      console.log( @getElement().style.display )
