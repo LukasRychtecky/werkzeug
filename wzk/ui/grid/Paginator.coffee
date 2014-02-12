@@ -102,8 +102,13 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {Element} el
   ###
   selectBase: (el) ->
-    select = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.BASE_SWITCHER + ' select'
-    goog.dom.forms.setValue select, String(@base)
+    @getRenderer().setSelectBase( @base )
+
+  # setter with callback that handles change
+  setBase: (base) ->
+    @base = base
+    @calculatePageCount()
+    @dispatchGoToPage()
 
   ###*
     @override
