@@ -6,10 +6,6 @@ goog.require 'goog.json'
 goog.require 'goog.dom.forms'
 goog.require 'goog.style'
 
-goog.require 'wzk.ui.menu.Menu'
-goog.require 'wzk.ui.menu.MenuItemRenderer'
-goog.require 'goog.dom'
-
 class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
 
   ###*
@@ -322,8 +318,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Element}
   ###
   createSwitcher: (paginator, dom) ->
-    container = dom.createDom 'div','dropdown' # menu-container
-    select = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dopdown-menu button
+    container = dom.createDom 'div', 'dropdown' # menu-container
+    select = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dropdown-menu button
 
     # set default base
     @setSelectBase select, paginator.base
@@ -335,41 +331,38 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     menu.setVisible(false)
 
     # set menu tag to be ul
-    menu.setRenderer( new wzk.ui.menu.MenuRenderer() )
+    menu.setRenderer new wzk.ui.menu.MenuRenderer()
 
     # create and add MenuItems
     for base in paginator.getBases()
-      menuItem = new goog.ui.MenuItem( goog.string.format(@switcherPattern, base) )
+      menuItem = new goog.ui.MenuItem goog.string.format(@switcherPattern, base)
       menuItem.base = base
-      menuItem.setRenderer( new wzk.ui.menu.MenuItemRenderer() )
+      menuItem.setRenderer new wzk.ui.menu.MenuItemRenderer()
       menu.addItem menuItem
 
     # do menu action on click of menu item
-    goog.events.listen menu, 'action', (event) =>
+    menu.listen 'action', (event) =>
       base = event.target.base
       menu.setVisible false
       dom.appendChild container,select  # destroy menu and append select again
       @setSelectBase select, base
 
       # save selected base to paginator
-      paginator.setBase base #
+      paginator.setBase base
 
     menu.render container
 
     # show menu on click
     goog.events.listen select, goog.events.EventType.CLICK, (event) ->
-      if menu.isVisible() == true
-        menu.setVisible(false)
-      else
-        menu.setVisible(true)
+      menu.setVisible not menu.isVisible
 
     # menu disapperas when clicked outside menu
-    body = goog.dom.getElementsByTagNameAndClass('body')[0]
+    body = @dom.getDocument().body
     handler = (event) ->
-      if menu.isVisible() == true
-        menu.setVisible(false)
+      if menu.isVisible()
+        menu.setVisible false
 
-    goog.events.listen(body, goog.events.EventType.CLICK, handler ,true)
+    goog.events.listen body, goog.events.EventType.CLICK, handler, true
 
     container
 
@@ -378,7 +371,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###
   setSelectBase: (select, base) ->
     caret = '<span class="caret"></span>'
-    select.innerHTML = goog.string.format(@switcherPattern, base) + ' ' + caret
+    select.innerHTML = [goog.string.format(@switcherPattern, base), caret].join
 
   ###*
     @param {wzk.ui.Component} paginator
