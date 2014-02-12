@@ -5,11 +5,11 @@ goog.require 'wzk.ui.menu.MenuRenderer'
 ###
 class wzk.ui.menu.Menu extends goog.ui.Menu
 
-  construct: (opt_domHelper, opt_renderer) ->
-    super(opt_domHelper, opt_renderer)
+  construct: (dom, renderer) ->
+    super dom, renderer
 
     # sets default renderer to be UL renderer
-    setRenderer( new wzk.ui.menu.MenuRenderer() )
+    @setRenderer new wzk.ui.menu.MenuRenderer()
 
   ###
     @override
@@ -17,8 +17,5 @@ class wzk.ui.menu.Menu extends goog.ui.Menu
   setVisible: (visibility) ->
     super(visibility)
 
-    if @getElement() != null
-      if visibility == true
-        @getElement().style.display = 'block'
-      else
-        @getElement().style.display = 'none'
+    if @getElement()?
+      @getElement().style.display = if visibility then 'block' else 'none'
