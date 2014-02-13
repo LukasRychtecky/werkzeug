@@ -15,7 +15,8 @@ class wzk.ui.menu.Menu extends goog.ui.Menu
     @override
   ###
   setVisible: (visibility) ->
-    super(visibility)
 
+    super visibility
     if @getElement()?
       @getElement().style.display = if visibility then 'block' else 'none'
+    super visibility
