@@ -394,7 +394,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     PAGE = wzk.ui.grid.PaginatorRenderer.DATA.PAGE
     PAGINATION = wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATION
     while true
-      if goog.dom.classes.has el, PAGINATION
+      if not el or goog.dom.classes.has el, PAGINATION
         return null
       if el.tagName is @itemTag and goog.dom.dataset.has el, PAGE
         return goog.dom.dataset.get el, PAGE
