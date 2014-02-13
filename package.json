@@ -14,6 +14,6 @@
         "grunt-este-watch": "~0.1.1",
         "grunt-coffeelint": "*",
         "grunt-bump": "0.0.11",
-        "grunt-zuckrig-closure": "0.1.1"
+        "grunt-zuckrig-closure": "git://github.com/LukasRychtecky/grunt-zuckrig-closure.git#0.1.2"
     }
 }
