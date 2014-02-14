@@ -8,7 +8,11 @@ goog.require 'goog.style'
 
 goog.require 'wzk.ui.menu.Menu'
 goog.require 'wzk.ui.menu.MenuItemRenderer'
+<<<<<<< HEAD
 goog.require 'goog.dom'
+=======
+goog.require 'wzk.ui.menu.MenuRenderer'
+>>>>>>> origin/master
 
 class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
 
@@ -322,8 +326,13 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Element}
   ###
   createSwitcher: (paginator, dom) ->
+<<<<<<< HEAD
     container = dom.createDom 'div','dropdown' # menu-container
     select = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dopdown-menu button
+=======
+    container = dom.createDom 'div', 'dropdown' # menu-container
+    select = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dropdown-menu button
+>>>>>>> origin/master
 
     # set default base
     @setSelectBase select, paginator.base
@@ -332,6 +341,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     dom.appendChild container, select
 
     menu = new wzk.ui.menu.Menu()
+<<<<<<< HEAD
     menu.setVisible(false)
 
     # set menu tag to be ul
@@ -343,21 +353,43 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
       menuItem.base = base
       menuItem.setRenderer( new wzk.ui.menu.MenuItemRenderer() )
       menu.addItem menuItem
+=======
+    menu.setVisible false
+
+    # set menu tag to be ul
+    menu.setRenderer new wzk.ui.menu.MenuRenderer()
+
+    # create and add MenuItems
+    for base in paginator.getBases()
+      menuItem = new goog.ui.MenuItem goog.string.format(@switcherPattern, base), null, @dom
+      menuItem.base = base
+      menuItem.setRenderer new wzk.ui.menu.MenuItemRenderer()
+      menu.addChild menuItem, true
+>>>>>>> origin/master
 
     # do menu action on click of menu item
     goog.events.listen menu, 'action', (event) =>
       base = event.target.base
       menu.setVisible false
+<<<<<<< HEAD
       dom.appendChild container,select  # destroy menu and append select again
       @setSelectBase select, base
 
       # save selected base to paginator
       paginator.setBase base #
+=======
+      dom.appendChild container, select  # destroy menu and append select again
+      @setSelectBase select, base
+
+      # save selected base to paginator
+      paginator.setBase base
+>>>>>>> origin/master
 
     menu.render container
 
     # show menu on click
     goog.events.listen select, goog.events.EventType.CLICK, (event) ->
+<<<<<<< HEAD
       if menu.isVisible() == true
         menu.setVisible(false)
       else
@@ -370,6 +402,18 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
         menu.setVisible(false)
 
     goog.events.listen(body, goog.events.EventType.CLICK, handler ,true)
+=======
+      menu.setVisible not menu.isVisible()
+
+
+    # menu disapperas when clicked outside menu
+    body = dom.getDocument().body
+    handler = (event) ->
+      if menu.isVisible()
+        menu.setVisible false
+
+    goog.events.listen body, goog.events.EventType.CLICK, handler, true
+>>>>>>> origin/master
 
     container
 
@@ -377,8 +421,14 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @protected
   ###
   setSelectBase: (select, base) ->
+<<<<<<< HEAD
     caret = '<span class="caret"></span>'
     select.innerHTML = goog.string.format(@switcherPattern, base) + ' ' + caret
+=======
+    if base?
+      caret = '<span class="caret"></span>'
+      select.innerHTML = [goog.string.format(@switcherPattern, base), caret].join('')
+>>>>>>> origin/master
 
   ###*
     @param {wzk.ui.Component} paginator
@@ -395,7 +445,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     PAGE = wzk.ui.grid.PaginatorRenderer.DATA.PAGE
     PAGINATION = wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATION
     while true
-      if goog.dom.classes.has el, PAGINATION
+      if not el or goog.dom.classes.has el, PAGINATION
         return null
       if el.tagName is @itemTag and goog.dom.dataset.has el, PAGE
         return goog.dom.dataset.get el, PAGE

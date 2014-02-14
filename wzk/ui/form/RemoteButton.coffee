@@ -1,6 +1,4 @@
-goog.provide 'wzk.ui.form.RemoteButton'
-
-goog.require 'goog.ui.Button'
+goog.require 'wzk.ui.ButtonRenderer'
 
 ###*
   A button that allows an Ajax call.
@@ -8,17 +6,13 @@ goog.require 'goog.ui.Button'
 class wzk.ui.form.RemoteButton extends goog.ui.Button
 
   ###*
-    @constructor
-    @extends {goog.ui.Button}
     @param {goog.ui.ControlContent=} content
     @param {goog.ui.ButtonRenderer=} renderer
     @param {goog.dom.DomHelper=} dom
   ###
   constructor: (content, renderer, dom) ->
+    renderer ?= wzk.ui.ButtonRenderer.getInstance()
     super content, renderer, dom
-    @url = null
-    @method = null
-    @addClassName 'remote-button'
 
   ###*
     Sends a request on a given model with a given method
@@ -32,3 +26,10 @@ class wzk.ui.form.RemoteButton extends goog.ui.Button
     @setEnabled false
     client.request url, method, content, =>
       @setEnabled true
+
+  ###*
+    @override
+  ###
+  createDom: ->
+    @addClassName 'remote-button'
+    super()

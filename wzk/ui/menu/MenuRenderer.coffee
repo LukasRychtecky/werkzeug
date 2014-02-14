@@ -1,5 +1,18 @@
+<<<<<<< HEAD
 class wzk.ui.menu.MenuRenderer extends goog.ui.MenuRenderer
 
+=======
+###
+  Renders menu as ul with class 'dropdown-menu'
+  is intended to be used with bootstrap
+  is default renderer to wzk.ui.menu.Menu
+###
+class wzk.ui.menu.MenuRenderer extends goog.ui.MenuRenderer
+
+  ###*
+    @enum {string}
+  ###
+>>>>>>> origin/master
   @RENDER:
     TAG: 'ul'
     CLASS: 'dropdown-menu'
@@ -10,4 +23,8 @@ class wzk.ui.menu.MenuRenderer extends goog.ui.MenuRenderer
   createDom: (container) ->
     ul = container.getDomHelper().createDom(wzk.ui.menu.MenuRenderer.RENDER.TAG)
     ul.setAttribute('class', wzk.ui.menu.MenuRenderer.RENDER.CLASS)
+<<<<<<< HEAD
     ul
+=======
+    ul
+>>>>>>> origin/master

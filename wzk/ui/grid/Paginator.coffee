@@ -55,7 +55,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @override
   ###
   afterRendering: ->
-    @hangPageListener()
+    @hangPageListener @renderer.getPagination(@)
     @hangBaseSwitcherListener @getElement()
 
   ###*
@@ -99,10 +99,14 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
 
   ###*
     @protected
-    @param {Element} el
   ###
+<<<<<<< HEAD
   selectBase: (el) ->
     @getRenderer().setSelectBase( @base )
+=======
+  selectBase: ->
+    @renderer.setSelectBase @base
+>>>>>>> origin/master
 
   # setter with callback that handles change
   setBase: (base) ->
@@ -146,11 +150,9 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###*
     @protected
   ###
-  hangPageListener: ->
-    paging = @renderer.getPagination @
+  hangPageListener: (paging) ->
     listener = goog.events.listen paging, goog.events.EventType.CLICK, (e) =>
       page = @renderer.getPage e.target, @dom
-      console.log page
       if page?
         @page = parseInt page, 10
         @offset = @offsetFromPage()
@@ -186,7 +188,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###
   clone: ->
     clone = @getElement().cloneNode true
-    @selectBase clone
+    @hangPageListener clone
     @hangBaseSwitcherListener clone
     clone
 

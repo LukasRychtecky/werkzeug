@@ -140,10 +140,15 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @param {string} text
+    @param {Array|string} item
     @param {Element} row
   ###
-  buildCell: (text, row) ->
+  buildCell: (item, row) ->
+    if goog.isArray item
+      text = (obj['_obj_name'] for obj in item).join(', ')
+    else
+      text = item
+
     cell = @dom.createDom('td')
     @dom.setTextContent(cell, text)
     row.appendChild(cell)
