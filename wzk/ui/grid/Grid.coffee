@@ -15,6 +15,7 @@ goog.require 'wzk.ui.grid.Paginator'
 goog.require 'wzk.ui.grid.Sorter'
 goog.require 'wzk.ui.ButtonRenderer'
 goog.require 'wzk.ui.Link'
+goog.require 'wzk.ui.grid.CellFormatter'
 
 class wzk.ui.grid.Grid extends wzk.ui.Component
 
@@ -39,6 +40,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @tbody = null
     @sorter = null
     @lastQuery = {}
+    @formatter = new wzk.ui.grid.CellFormatter()
 
   ###*
     @param {Element} table
@@ -134,23 +136,19 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     row = @dom.createDom('tr')
     frag.appendChild(row)
     for col in @cols
-      @buildCell(model[col], row)
+      @buildCell(model, col, row)
 
     @buildActionsCell(row, model)
 
   ###*
     @protected
-    @param {Array|string} item
+    @param {Object} model
+    @param {string} col
     @param {Element} row
   ###
-  buildCell: (item, row) ->
-    if goog.isArray item
-      text = (obj['_obj_name'] for obj in item).join(', ')
-    else
-      text = item
-
-    cell = @dom.createDom('td')
-    @dom.setTextContent(cell, text)
+  buildCell: (model, col, row) ->
+    cell = @dom.createDom 'td'
+    @dom.setTextContent cell, @formatter.format(model, col)
     row.appendChild(cell)
 
   ###*
