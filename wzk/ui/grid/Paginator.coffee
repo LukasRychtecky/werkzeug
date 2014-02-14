@@ -100,8 +100,13 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###*
     @protected
   ###
+<<<<<<< HEAD
+  selectBase: (el) ->
+    @getRenderer().setSelectBase( @base )
+=======
   selectBase: ->
     @renderer.setSelectBase @base
+>>>>>>> origin/master
 
   # setter with callback that handles change
   setBase: (base) ->
