@@ -1,14 +1,7 @@
-goog.provide 'wzk.ui.ButtonRenderer'
-
-goog.require 'goog.ui.NativeButtonRenderer'
 goog.require 'goog.dom.classes'
 
-class wzk.ui.ButtonRenderer extends goog.ui.NativeButtonRenderer
+class wzk.ui.ButtonRenderer extends goog.ui.ButtonRenderer
 
-  ###*
-    @constructor
-    @extends {goog.ui.NativeButtonRenderer}
-  ###
   constructor: ->
     super()
 
