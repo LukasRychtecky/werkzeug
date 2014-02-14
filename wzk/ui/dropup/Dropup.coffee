@@ -9,6 +9,7 @@ class wzk.ui.dropup.Dropup
     BUTTON_TAG: 'li',
     BUTTON_CLASS: 'dropup-button',
     TARGET_ATTRIBUTE: 'target',
+    CARET: 'caret-marker', # do not set to 'caret', as it is would add another arrow
     ARROW_UP: 'fa-angle-up',
     ARROW_LEFT: 'fa-angle-left'
 
@@ -19,7 +20,7 @@ class wzk.ui.dropup.Dropup
     DURATION: 500
 
   ###*
-    @param {wzk.dom.Dom}
+    @param {wzk.dom.Dom} dom
   ###
   constructor: (@dom)->
 
@@ -28,7 +29,7 @@ class wzk.ui.dropup.Dropup
   ###
   decorate: (@dropupButton) ->
     # arrow span, allowing change of icon according to state
-    @arrowSpan = @dropupButton.querySelector 'span.fa'
+    @caretElement = @dropupButton.querySelector ".#{wzk.ui.dropup.Dropup.CSS.CARET}"
 
     # id of tag to dropup
     dropupId = goog.dom.dataset.get @dropupButton, wzk.ui.dropup.Dropup.CSS.TARGET_ATTRIBUTE
@@ -93,12 +94,13 @@ class wzk.ui.dropup.Dropup
     @protected
   ###
   swapClasses: ->
-    if goog.dom.classes.has @arrowSpan, wzk.ui.dropup.Dropup.CSS.ARROW_LEFT
-      goog.dom.classes.add @arrowSpan, wzk.ui.dropup.Dropup.CSS.ARROW_UP
-      goog.dom.classes.remove @arrowSpan, wzk.ui.dropup.Dropup.CSS.ARROW_LEFT
-    else
-      goog.dom.classes.add @arrowSpan, wzk.ui.dropup.Dropup.CSS.ARROW_LEFT
-      goog.dom.classes.remove @arrowSpan, wzk.ui.dropup.Dropup.CSS.ARROW_UP
+    C = wzk.ui.dropup.Dropup.CSS
+
+    if @caretElement?
+      if goog.dom.classes.has @caretElement, C.ARROW_LEFT
+        goog.dom.classes.addRemove @caretElement, C.ARROW_LEFT, C.ARROW_UP
+      else
+        goog.dom.classes.addRemove @caretElement, C.ARROW_UP, C.ARROW_LEFT
 
   ###*
     Gets animation object and set's starting height and ending height
