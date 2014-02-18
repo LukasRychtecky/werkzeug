@@ -1,3 +1,6 @@
+goog.require 'wzk.resource.Model'
+goog.require 'wzk.resource.ModelBuilder'
+
 class wzk.ui.grid.CellFormatter
 
   constructor: ->
@@ -17,16 +20,25 @@ class wzk.ui.grid.CellFormatter
 
   ###*
     @protected
-    @param {Array.<Object>|string} value
+    @param {Array.<wzk.resource.Model>|string} value
     @return {string}
   ###
   flat: (value) ->
     text = ''
     if goog.isArray value
-      text = (obj['_obj_name'] for obj in value).join(', ')
+      text = (@toStr obj for obj in value).join(', ')
     else
-      text = String value
+      text = @toStr value
     text
+
+  ###*
+    @protected
+    @param {*} value
+    @return {string}
+  ###
+  toStr: (value) ->
+    value = new wzk.resource.Model value if goog.isObject value
+    String value
 
   ###*
     @protected
