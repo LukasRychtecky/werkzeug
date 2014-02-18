@@ -6,7 +6,7 @@ suite 'wzk.ui.grid.CellFormatter', ->
 
   setup ->
     formatter = new CellFormatter()
-    model =
+    json =
       contacts: [
         {_obj_name: 'Foo'},
         {_obj_name: 'Bar'}
@@ -18,6 +18,7 @@ suite 'wzk.ui.grid.CellFormatter', ->
           {_obj_name: 'Foo'},
           {_obj_name: 'Bar'}
         ]
+    model = new wzk.resource.ModelBuilder().build json
 
   test 'Should concat value items', ->
     actual = formatter.format model, 'contacts'
