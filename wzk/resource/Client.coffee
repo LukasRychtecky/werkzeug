@@ -6,6 +6,8 @@ goog.require 'goog.json'
 goog.require 'goog.net.XhrIo'
 goog.require 'goog.object'
 goog.require 'wzk.resource.UrlExpert'
+goog.require 'wzk.resource.Model'
+goog.require 'wzk.resource.ModelBuilder'
 
 class wzk.resource.Client
 
@@ -19,6 +21,7 @@ class wzk.resource.Client
     @headers[goog.net.XhrIo.CONTENT_TYPE_HEADER] = 'application/json'
     @headers['Accept'] = 'application/json'
     @expert = new wzk.resource.UrlExpert()
+    @builder = new wzk.resource.ModelBuilder()
 
   ###*
     @protected
@@ -45,7 +48,7 @@ class wzk.resource.Client
       if onSuccess?
         result =
           total: parseInt xhr.getResponseHeader('X-Total'), 10
-        onSuccess xhr.getResponseJson(), result
+        onSuccess @builder.build(xhr.getResponseJson()), result
 
     @listenOnError xhr, onError
 
@@ -90,7 +93,7 @@ class wzk.resource.Client
     xhr = @xhrFac.build()
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
-      onFetch xhr.getResponseJson()
+      onFetch @builder.build(xhr.getResponseJson())
 
     @listenOnError xhr, onError
 
