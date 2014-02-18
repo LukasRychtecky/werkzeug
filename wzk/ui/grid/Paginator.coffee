@@ -3,6 +3,7 @@ goog.require 'goog.events.Event'
 goog.require 'goog.dom.classes'
 goog.require 'goog.dom.dataset'
 goog.require 'goog.dom.forms'
+goog.require 'goog.style'
 
 class wzk.ui.grid.Paginator extends wzk.ui.Component
 
@@ -199,3 +200,10 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   cleanListeners: ->
     goog.events.unlistenByKey listener for listener in @listeners
     @listeners = []
+
+  ###*
+    @param {boolean} visible
+  ###
+  show: (visible) ->
+    visibility = if visible then 'visible' else 'hidden'
+    goog.style.setStyle el, 'visibility', visibility for el in [@getElement()].concat @clones
