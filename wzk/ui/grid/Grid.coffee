@@ -24,6 +24,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   @EventType:
     DELETE_ITEM: 'delete-item'
+    LOADED: 'loaded'
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -51,6 +52,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @buildBody @buildQuery({offset: 0}), (result) =>
       @decorateWithSorting()
       @buildPaginator paginatorEl, result.total, result.count
+      @dispatchLoaded result
       @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, (e) =>
         @deleteItem e.target
 
@@ -267,11 +269,18 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
+    @param {Object} result
+  ###
+  dispatchLoaded: (result) ->
+    @dispatchEvent new goog.events.Event(wzk.ui.grid.Grid.EventType.LOADED, result)
+
+  ###*
+    @protected
     @param {goog.ui.Button} btn
   ###
   hangListener: (btn) ->
     goog.events.listen btn, goog.ui.Component.EventType.ACTION, =>
-      @setDialogText(btn.getModel().model['_obj_name'])
+      @setDialogText(btn.getModel().model.toString())
       @showDialog(btn)
 
   ###*

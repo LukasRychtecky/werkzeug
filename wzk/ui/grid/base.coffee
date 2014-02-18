@@ -7,6 +7,7 @@ goog.require 'wzk.ui.grid.Repository'
 goog.require 'goog.dom.dataset'
 goog.require 'wzk.ui.dialog.ConfirmDialog'
 goog.require 'wzk.resource.AttrParser'
+goog.require 'wzk.ui.grid.Messenger'
 
 ###*
   @param {Element} table
@@ -37,6 +38,9 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   dialog.setYesNoCaptions goog.dom.dataset.get(table, 'btnYes'), goog.dom.dataset.get(table, 'btnNo')
 
   grid = new ctor dom, repo, extractor.parseColumns(), extractor.parseActions(), dialog
+
+  msgr = new wzk.ui.grid.Messenger grid
+  msgr.decorate dom.getParentElement(table)
 
   grid.decorate table
   grid
