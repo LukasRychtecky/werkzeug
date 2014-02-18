@@ -32,15 +32,15 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Array.<string>} cols
     @param {Object} actions
     @param {wzk.ui.dialog.ConfirmDialog} dialog
+    @param {wzk.resource.Query} query
   ###
-  constructor: (@dom, @repo, @cols, @actions, @dialog) ->
+  constructor: (@dom, @repo, @cols, @actions, @dialog, @query) ->
     super()
     @table = null
     @paginator = null
     @base = 10
     @tbody = null
     @sorter = null
-    @lastQuery = {}
     @formatter = new wzk.ui.grid.CellFormatter()
 
   ###*
@@ -68,16 +68,13 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###*
     @protected
     @param {Object|null=} opts
-    @return {Object}
   ###
   buildQuery: (opts = {}) ->
-    @lastQuery.order = opts.column if opts.column?
-    @lastQuery.direction = opts.direction if opts.direction?
-    @lastQuery.base = opts.base if opts.base?
+    @query.order = opts.column if opts.column?
+    @query.direction = opts.direction if opts.direction?
+    @query.base = opts.base if opts.base?
 
-    @lastQuery.offset = if opts.offset? then opts.offset else @paginator.offset
-
-    @lastQuery
+    @query.offset = if opts.offset? then opts.offset else @paginator.offset
 
   ###*
     @protected
@@ -115,7 +112,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @param {Object} query
+    @param {wzk.resource.Query} query
     @param {function(Object)|null=} doAfter
   ###
   buildBody: (query, doAfter = null) ->

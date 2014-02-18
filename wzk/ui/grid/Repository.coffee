@@ -6,21 +6,16 @@ class wzk.ui.grid.Repository
 
   ###*
     @param {wzk.resource.Client} client
-    @param {string} resource
   ###
-  constructor: (@client, @resource) ->
+  constructor: (@client) ->
 
   ###*
-    @param {Object} query for filtering
-      base: {number}
-      offset: {number}
+    @param {wzk.resource.Query} query for filtering
     @param {function(Array, Object)} onLoad
   ###
   load: (query, onLoad) ->
-    query.offset ?= 0
-    query.base ?= 10
 
-    @client.find @resource, onLoad, null, query
+    @client.find query.composePath(), onLoad, null, query
 
   ###*
     @param {Object} model
