@@ -126,16 +126,16 @@ module.exports = (grunt) ->
         ]
 
       coffee: (filepath) ->
-        config = getCoffeeConfig(filepath)
+        config = getCoffeeConfig filepath
         grunt.config ['coffee', 'all', 'files'], config
+        grunt.config ['zuckrig', 'all', 'files'], config
         grunt.config ['coffee2closure', 'all', 'files'], config
-        ['coffee', 'coffee2closure']
+        ['coffee', 'zuckrig', 'coffee2closure']
 
       js: (filepath) ->
-        grunt.config ['zuckrig', 'all', 'src'], filepath
         grunt.config ['esteDeps', 'all', 'src'], filepath
         grunt.config ['esteUnitTests', 'all', 'src'], filepath
-        ['zuckrig', 'esteDeps', 'esteUnitTests']
+        ['esteDeps', 'esteUnitTests']
 
     coffeelint:
       options:
