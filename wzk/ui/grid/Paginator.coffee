@@ -87,6 +87,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###
   refresh: (result) ->
     {@total, @count} = result
+    @calculatePageCount()
     @renderer.clearPagingAndResult @
     @decorateInternal @getElement()
     @afterRendering()

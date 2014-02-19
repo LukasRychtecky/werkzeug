@@ -9,6 +9,7 @@ goog.require 'wzk.ui.dialog.ConfirmDialog'
 goog.require 'wzk.resource.AttrParser'
 goog.require 'wzk.ui.grid.Messenger'
 goog.require 'wzk.resource.Query'
+goog.require 'wzk.ui.grid.FilterWatcher'
 
 ###*
   @param {Element} table
@@ -45,4 +46,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   msgr.decorate dom.getParentElement(table)
 
   grid.decorate table
+
+  watcher = new wzk.ui.grid.FilterWatcher grid, query
+  watcher.watchOn table
   grid

@@ -68,6 +68,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###*
     @protected
     @param {Object|null=} opts
+    @return {wzk.resource.Query}
   ###
   buildQuery: (opts = {}) ->
     @query.order = opts.column if opts.column?
@@ -75,6 +76,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @query.base = opts.base if opts.base?
 
     @query.offset = if opts.offset? then opts.offset else @paginator.offset
+    @query
 
   ###*
     @protected
@@ -95,6 +97,10 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
         @paginator.refresh result
 
     @renderBottomPaginator()
+
+  refresh: ->
+    @buildBody @buildQuery(), (result) =>
+      @paginator.refresh result
 
   ###*
     @protected
