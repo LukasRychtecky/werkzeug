@@ -38,7 +38,7 @@ class wzk.resource.Client
     @param {Object|string} modelOrUrl
     @param {function(Array, Object)} onSuccess
     @param {Function=} onError
-    @param {Object|null|undefined=} query
+    @param {wzk.resource.Query|null|undefined=} query
   ###
   find: (modelOrUrl, onSuccess, onError = null, query = null) ->
 
