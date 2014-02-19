@@ -345,7 +345,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
       menu.addChild menuItem, true
 
     # do menu action on click of menu item
-    goog.events.listen menu, 'action', (event) =>
+    menu.listen goog.ui.Component.EventType.ACTION, (event) =>
       base = event.target.base
       menu.setVisible false
       dom.appendChild container, select  # destroy menu and append select again
