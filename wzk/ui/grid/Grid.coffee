@@ -33,15 +33,16 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Object} actions
     @param {wzk.ui.dialog.ConfirmDialog} dialog
     @param {wzk.resource.Query} query
+    @param {wzk.ui.grid.Paginator} paginator
   ###
-  constructor: (@dom, @repo, @cols, @actions, @dialog, @query) ->
+  constructor: (@dom, @repo, @cols, @actions, @dialog, @query, @paginator) ->
     super()
     @table = null
-    @paginator = null
     @base = 10
     @tbody = null
     @sorter = null
     @formatter = new wzk.ui.grid.CellFormatter()
+    @lastQuery = {}
 
   ###*
     @param {Element} table
@@ -49,9 +50,12 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   decorate: (@table) ->
     @tbody = @table.querySelector 'tbody'
     paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
-    @buildBody @buildQuery({offset: 0}), (result) =>
+    @buildBody @buildQuery({offset: (@paginator.page - 1) * @paginator.base}), (result) =>
       @decorateWithSorting()
-      @buildPaginator paginatorEl, result.total, result.count
+
+      @paginator.init(result.total, result.count)
+      @buildPaginator paginatorEl
+
       @dispatchLoaded result
       @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, (e) =>
         @deleteItem e.target
@@ -74,9 +78,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @query.order = opts.column if opts.column?
     @query.direction = opts.direction if opts.direction?
     @query.base = opts.base if opts.base?
-
     @query.offset = if opts.offset? then opts.offset else @paginator.offset
-    @query
+ -  @query
 
   ###*
     @protected
@@ -84,9 +87,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {number} total
     @param {number} count
   ###
-  buildPaginator: (el, total, count) ->
-    @paginator = new wzk.ui.grid.Paginator total: total, base: @base, count: count
-
+  buildPaginator: (el) ->
     if el?
       @paginator.decorate el
     else
