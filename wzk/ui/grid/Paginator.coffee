@@ -16,28 +16,32 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###*
     @param {Object} params
       renderer: {@link wzk.ui.grid.PaginatorRenderer}
-      total: {number}
-      offset: {number}
       base: {number}
       page: {number}
-      count: {number}
   ###
   constructor: (params) ->
     params.renderer ?= new wzk.ui.grid.PaginatorRenderer()
     super params
-    {@total, @offset, @base, @page, @count} = params
-    @base ?= 10
-    @offset ?= 0
+    {@base, @page} = params
+
+    @page = if @page >= 0 then @page else 1
+    @base = if @base >= 0 then @base else 10
+    @offset = @offsetFromPage()
     @firstPage = 1
-    @calculatePageCount()
-    @lastPage = @pageCount
-    @page ?= 1
-    @count ?= @base
     @clones = []
     @listeners = []
     @switcher = null
     @bases = null
     @defBases = [10, 25, 50, 100, 500, 1000]
+
+  ###*
+    @param {number} total
+    @param {number} count
+  ###
+  init: (@total, @count) ->
+    @calculatePageCount()
+    @lastPage = @pageCount
+    @count ?= @base
 
   ###*
     @protected
@@ -105,12 +109,11 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @renderer.setSelectBase @base
 
   ###*
+    setter with callback that handles change
     @param {number} base
   ###
   setBase: (base) ->
     @base = base
-    @offset = 0
-    @page = 1
     @calculatePageCount()
     @dispatchGoToPage()
 
@@ -147,6 +150,16 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   getBases: ->
     @bases ? @defBases
 
+  goToPage: (base, page) ->
+    # change page only if base and page are different
+    unless page is @page and base is @base
+      @page = page
+      @base = base
+      @offset = @offsetFromPage()
+      @renderer.setBase(@base)
+      @calculatePageCount()
+      @dispatchGoToPage()
+
   ###*
     @protected
   ###
@@ -165,7 +178,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###
   dispatchGoToPage: ->
     @cleanListeners()
-    @dispatchEvent new goog.events.Event(wzk.ui.grid.Paginator.EventType.GO_TO, {offset: @offset, base: @base})
+    @dispatchEvent new goog.events.Event(wzk.ui.grid.Paginator.EventType.GO_TO, {offset: @offset, base: @base, page: @page})
 
   ###*
     @protected

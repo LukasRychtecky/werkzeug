@@ -10,6 +10,9 @@ goog.require 'wzk.resource.AttrParser'
 goog.require 'wzk.ui.grid.Messenger'
 goog.require 'wzk.resource.Query'
 goog.require 'wzk.ui.grid.FilterWatcher'
+goog.require 'wzk.uri'
+goog.require 'wzk.num'
+goog.require 'wzk.hist'
 
 ###*
   @param {Element} table
@@ -40,13 +43,42 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   dialog.setTitle extractor.parseTitle()
   dialog.setYesNoCaptions goog.dom.dataset.get(table, 'btnYes'), goog.dom.dataset.get(table, 'btnNo')
 
-  grid = new ctor dom, repo, extractor.parseColumns(), extractor.parseActions(), dialog, query
+  win = dom.getWindow()
+  {base, page} = wzk.ui.grid.parseFragment(win.location.hash)
+  paginator = new wzk.ui.grid.Paginator base: base, page: page
 
-  msgr = new wzk.ui.grid.Messenger grid
-  msgr.decorate dom.getParentElement(table)
-
+  grid = new ctor dom, repo, extractor.parseColumns(), extractor.parseActions(), dialog, query, paginator
   grid.decorate table
 
   watcher = new wzk.ui.grid.FilterWatcher grid, query
   watcher.watchOn table
+
+  msgr = new wzk.ui.grid.Messenger grid
+  msgr.decorate dom.getParentElement(table)
+
+  # propagate change of page to hash fragment of url
+  paginator.listen wzk.ui.grid.Paginator.EventType.GO_TO, (event) ->
+    if event.target.page is 1 and event.target.base is 10
+      win.location.hash = ''
+    else
+      frag = wzk.uri.addFragmentParam('page', event.target.page)
+      frag = [frag, '&', wzk.uri.addFragmentParam('base', event.target.base)].join('')
+      win.location.hash = frag
+    undefined #because of Coffee vs. Closure Compiler
+
+  # setup history handling
+  wzk.hist.historyHandler (historyEvent)->
+    {base, page} = wzk.ui.grid.parseFragment(historyEvent.token)
+    paginator.goToPage(base, page)
+
   grid
+
+###*
+  @param {string} fragment
+  @return {Object}
+###
+wzk.ui.grid.parseFragment = (fragment) ->
+  page = wzk.num.parseDec wzk.uri.getFragmentParam('page', fragment), 1
+  base = wzk.num.parseDec wzk.uri.getFragmentParam('base', fragment), 10
+
+  {base: base, page: page}

@@ -5,7 +5,6 @@ goog.require 'goog.dom.classes'
 goog.require 'goog.json'
 goog.require 'goog.dom.forms'
 goog.require 'goog.style'
-
 goog.require 'wzk.ui.menu.Menu'
 goog.require 'wzk.ui.menu.MenuItemRenderer'
 goog.require 'wzk.ui.menu.MenuRenderer'
@@ -323,13 +322,13 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###
   createSwitcher: (paginator, dom) ->
     container = dom.createDom 'div', 'dropdown' # menu-container
-    select = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dropdown-menu button
+    @baseSelect = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dropdown-menu button
 
     # set default base
-    @setSelectBase select, paginator.base
+    @setSelectBase @baseSelect, paginator.base
 
     # add menu into menu-container
-    dom.appendChild container, select
+    dom.appendChild container, @baseSelect
 
     menu = new wzk.ui.menu.Menu()
     menu.setVisible false
@@ -345,11 +344,11 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
       menu.addChild menuItem, true
 
     # do menu action on click of menu item
-    menu.listen goog.ui.Component.EventType.ACTION, (event) =>
+    goog.events.listen menu, goog.ui.Component.EventType.ACTION, (event) =>
       base = event.target.base
       menu.setVisible false
-      dom.appendChild container, select  # destroy menu and append select again
-      @setSelectBase select, base
+      dom.appendChild container, @baseSelect  # destroy menu and append select again
+      @setSelectBase @baseSelect, base
 
       # save selected base to paginator
       paginator.setBase base
@@ -357,7 +356,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     menu.render container
 
     # show menu on click
-    goog.events.listen select, goog.events.EventType.CLICK, (event) ->
+    goog.events.listen @baseSelect, goog.events.EventType.CLICK, (event) ->
       menu.setVisible not menu.isVisible()
 
 
@@ -371,13 +370,21 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
 
     container
 
-  ###
+  ###*
     @protected
+    @param {Element} select
+    @param {number} base
   ###
   setSelectBase: (select, base) ->
     if base?
       caret = '<span class="caret"></span>'
       select.innerHTML = [goog.string.format(@switcherPattern, base), caret].join('')
+
+  ###*
+    @param {number} base
+  ###
+  setBase: (base) ->
+    @setSelectBase(@baseSelect, base)
 
   ###*
     @param {wzk.ui.Component} paginator
