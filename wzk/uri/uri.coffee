@@ -9,12 +9,12 @@ goog.require 'goog.Uri.QueryData'
   @return {string} parameter value
 ###
 wzk.uri.getFragmentParam = (name, fragment) ->
-  wzk.uri.getFragmentQuery(fragment).get(name)
+  String wzk.uri.getFragmentQuery(fragment).get(name)
 
 ###*
   @protected
   @param {string} fragment
-  @return {goog.uri.QueryData} query data object for given fragment
+  @return {goog.Uri.QueryData} query data object for given fragment
 ###
 wzk.uri.getFragmentQuery = (fragment) ->
   if fragment[0] is '#'
@@ -28,13 +28,10 @@ wzk.uri.getFragmentQuery = (fragment) ->
 ###*
   @param {string} name
   @param {string} value
-  @param {string} fragment  # url fragment
+  @param {string=} fragment # url fragment
   @return {string} returns fragment url
 ###
-wzk.uri.addFragmentParam = (name, value, fragment) ->
-  unless fragment?
-    fragment = ''
-
+wzk.uri.addFragmentParam = (name, value, fragment = '') ->
   query = wzk.uri.getFragmentQuery(fragment)
   query.add(name,value)
   query.toDecodedString()

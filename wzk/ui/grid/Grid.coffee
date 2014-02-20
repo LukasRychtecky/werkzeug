@@ -79,13 +79,11 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @query.direction = opts.direction if opts.direction?
     @query.base = opts.base if opts.base?
     @query.offset = if opts.offset? then opts.offset else @paginator.offset
- -  @query
+    @query
 
   ###*
     @protected
     @param {Element|undefined} el
-    @param {number} total
-    @param {number} count
   ###
   buildPaginator: (el) ->
     if el?
