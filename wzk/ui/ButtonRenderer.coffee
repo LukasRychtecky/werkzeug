@@ -1,6 +1,6 @@
 goog.require 'goog.dom.classes'
 
-class wzk.ui.ButtonRenderer extends goog.ui.ButtonRenderer
+class wzk.ui.ButtonRenderer extends goog.ui.NativeButtonRenderer
 
   ###*
     @enum {string}

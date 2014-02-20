@@ -16,6 +16,9 @@ goog.require 'wzk.ui.grid.Sorter'
 goog.require 'wzk.ui.ButtonRenderer'
 goog.require 'wzk.ui.Link'
 goog.require 'wzk.ui.grid.CellFormatter'
+goog.require 'wzk.ui.grid.Body'
+goog.require 'wzk.ui.grid.Row'
+goog.require 'goog.object'
 
 class wzk.ui.grid.Grid extends wzk.ui.Component
 
@@ -25,6 +28,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   @EventType:
     DELETE_ITEM: 'delete-item'
     LOADED: 'loaded'
+    SELECTED_ITEM: 'selected-item'
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -43,12 +47,13 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @sorter = null
     @formatter = new wzk.ui.grid.CellFormatter()
     @lastQuery = {}
+    @rows = new wzk.ui.grid.Body dom: @dom
 
   ###*
     @param {Element} table
   ###
   decorate: (@table) ->
-    @tbody = @table.querySelector 'tbody'
+    @removeBody()
     paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
     @buildBody @buildQuery({offset: (@paginator.page - 1) * @paginator.base}), (result) =>
       @decorateWithSorting()
@@ -57,15 +62,14 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
       @buildPaginator paginatorEl
 
       @dispatchLoaded result
-      @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, (e) =>
-        @deleteItem e.target
+      @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, @handleDeleteItem
 
   ###*
     @protected
-    @param {number|string} id
+    @param {goog.events.Event} e
   ###
-  deleteItem: (id) ->
-    @repo.delete id, =>
+  handleDeleteItem: (e) =>
+    @repo.delete e.target, =>
       @buildBody @buildQuery(), (result) =>
         @paginator.refresh result
 
@@ -110,67 +114,82 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @return {DocumentFragment}
-  ###
-  createFrag: ->
-    @dom.getDocument().createDocumentFragment()
-
-  ###*
-    @protected
     @param {wzk.resource.Query} query
     @param {function(Object)|null=} doAfter
   ###
   buildBody: (query, doAfter = null) ->
-    frag = @createFrag()
+    if @rows.isInDocument()
+      @rows.destroyChildren()
+
     @repo.load query, (data, result) =>
       for model in data
-        @buildRow(model, frag)
+        @buildRow model
 
-      @tbody.innerHTML = ''
-      @tbody.appendChild(frag)
+      unless @rows.isInDocument()
+        @rows.render @table
+      @rows.listen goog.ui.Component.EventType.ACTION, @handleSelectedItem
+
       result.count = data.length
       doAfter result if doAfter?
 
   ###*
     @protected
-    @param {Object} model
-    @param {DocumentFragment} frag
+    @param {goog.events.Event} e
   ###
-  buildRow: (model, frag) ->
-    row = @dom.createDom('tr')
-    frag.appendChild(row)
+  handleSelectedItem: (e) =>
+    e.target.setState goog.ui.Component.State.SELECTED, true
+    @dispatchSelectedItem e.target.getModel()
+
+  ###*
+    @protected
+  ###
+  removeBody: ->
+    body = @table.querySelector 'tbody'
+    if body?
+      @dom.removeNode body
+
+  ###*
+    @protected
+    @param {Object} model
+  ###
+  buildRow: (model) ->
+    row = new wzk.ui.grid.Row dom: @dom
+    row.setModel model
+    @rows.addChild row, true
     for col in @cols
       @buildCell(model, col, row)
 
-    @buildActionsCell(row, model)
+    if goog.object.isEmpty @actions
+      row.addCell ''
+    else
+      @buildActionsCell row, model
 
   ###*
     @protected
     @param {Object} model
     @param {string} col
-    @param {Element} row
+    @param {wzk.ui.grid.Row} row
   ###
   buildCell: (model, col, row) ->
-    cell = @dom.createDom 'td'
-    @dom.setTextContent cell, @formatter.format(model, col)
-    row.appendChild(cell)
+    row.addCell @formatter.format(model, col)
 
   ###*
     @protected
-    @param {Element} row
+    @param {wzk.ui.grid.Row} row
     @param {Object} model
   ###
   buildActionsCell: (row, model) ->
-    cell = @dom.createDom('td', 'class': 'actions')
+    cell = row.addCell ''
+    cell.addClass 'actions'
     @buildAction action, model, cell, row for action in @actions
-    row.appendChild(cell)
+    row.addChild cell
 
   ###*
     @protected
     @param {Object} action
     @param {Object} model
-    @param {Element} cell
-    @param {Element} row
+    @param {wzk.ui.grid.Cell} cell
+    @param {wzk.ui.grid.Row} row
   ###
   buildAction: (action, model, cell, row) ->
     if action['type'] is 'rest'
@@ -185,40 +204,40 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @protected
     @param {Object} action
     @param {Object} model
-    @param {Element} cell
-    @param {Element} row
+    @param {wzk.ui.grid.Cell} cell
+    @param {wzk.ui.grid.Row} row
   ###
   buildRestAction: (action, model, cell, row) ->
     if action['name'] is 'delete'
       btn = @buildButton action['verbose_name'], action['name'], model, cell, row
-      @hangListener btn
+      btn.listen goog.ui.Component.EventType.ACTION, @handleDeleteBtn
 
   ###*
     @protected
     @param {Object} action
     @param {Object} model
-    @param {Element} cell
+    @param {wzk.ui.grid.Cell} cell
   ###
   buildWebAction: (action, model, cell) ->
     link = new wzk.ui.Link dom: @dom, href: model['_web_links'][action['name']], caption: action['verbose_name']
     link.addClass(action['class_name'] or action['name'])
-    link.render cell
+    cell.addChild link
 
   ###*
     @protected
     @param {string} caption
     @param {string} className
     @param {Object} model
-    @param {Element} cell
-    @param {Element} row
+    @param {wzk.ui.grid.Cell} cell
+    @param {wzk.ui.grid.Row} row
     @return {goog.ui.Button}
   ###
   buildButton: (caption, className, model, cell, row) ->
     btn = new goog.ui.Button caption, wzk.ui.ButtonRenderer.getInstance(), @dom
     btn.addClassName 'btn-danger'
     @setupButton model, caption, className, btn
-    btn.render(cell)
-    @buildButtonModel(btn, row, model)
+    cell.addChild btn
+    @buildButtonModel btn, row, model
     btn
 
   ###*
@@ -245,11 +264,11 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {goog.ui.Button} btn
   ###
   showDialog: (btn) ->
-    @dialog.setVisible(true)
+    @dialog.setVisible true
     goog.events.listenOnce @dialog, goog.ui.Dialog.EventType.SELECT, (e) =>
       if e.key is goog.ui.Dialog.DefaultButtonKeys.YES
-        @dispatchDeleteItem(btn)
-        @silentlyRemoveRow(btn)
+        @dispatchDeleteItem btn
+        @silentlyRemoveRow btn
 
   ###*
     @protected
@@ -278,12 +297,19 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @param {goog.ui.Button} btn
+    @param {Object} model
   ###
-  hangListener: (btn) ->
-    goog.events.listen btn, goog.ui.Component.EventType.ACTION, =>
-      @setDialogText(btn.getModel().model.toString())
-      @showDialog(btn)
+  dispatchSelectedItem: (model) ->
+    @dispatchEvent new goog.events.Event(wzk.ui.grid.Grid.EventType.SELECTED_ITEM, model)
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleDeleteBtn: (e) =>
+    btn = (`/** @type {goog.ui.Button} */`) e.target
+    @setDialogText btn.getModel().model.toString()
+    @showDialog btn
 
   ###*
     A little bit dirty, but enough for now.
@@ -299,7 +325,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
     @private
     @param {goog.ui.Button} btn
-    @param {Element} row
+    @param {wzk.ui.grid.Row} row
     @param {Object} model
   ###
   buildButtonModel: (btn, row, model) ->

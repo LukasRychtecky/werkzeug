@@ -4,6 +4,7 @@ goog.require 'goog.dom.classes'
 goog.require 'goog.dom.dataset'
 goog.require 'goog.dom.forms'
 goog.require 'goog.style'
+goog.require 'wzk.num'
 
 class wzk.ui.grid.Paginator extends wzk.ui.Component
 
@@ -114,6 +115,8 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###
   setBase: (base) ->
     @base = base
+    @offset = 0
+    @page = 1
     @calculatePageCount()
     @dispatchGoToPage()
 
@@ -150,6 +153,10 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   getBases: ->
     @bases ? @defBases
 
+  ###*
+    @param {number} base
+    @param {number} page
+  ###
   goToPage: (base, page) ->
     # change page only if base and page are different
     unless page is @page and base is @base
@@ -167,7 +174,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     listener = goog.events.listen paging, goog.events.EventType.CLICK, (e) =>
       page = @renderer.getPage e.target, @dom
       if page?
-        @page = parseInt page, 10
+        @page = wzk.num.parseDec page
         @offset = @offsetFromPage()
         @dispatchGoToPage()
 
