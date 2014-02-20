@@ -62,8 +62,14 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
       query = [query, '&', wzk.uri.addFragmentParam('base', event.target.base)].join('')
       win.location.hash = query
 
+  # setup history handling
+  wzk.history.historyHandler (historyEvent)->
+    {base, page} = wzk.ui.grid.parseFragment(historyEvent.token)
+    paginator.goToPage(base, page)
+
   watcher = new wzk.ui.grid.FilterWatcher grid, query
   watcher.watchOn table
+
   grid
 
 ###*
