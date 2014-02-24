@@ -12,25 +12,30 @@ goog.require 'wzk.resource.Query'
 goog.require 'wzk.ui.grid.FilterWatcher'
 goog.require 'wzk.uri'
 goog.require 'wzk.num'
-goog.require 'wzk.hist'
+goog.require 'wzk.ui.grid.PaneMode'
+goog.require 'wzk.ui.grid.PaginatorHandler'
 
 ###*
   @param {Element} table
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} factory
+  @param {wzk.app.Processor} proc
+  @param {wzk.stor.StateStorage} ss
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.build = (table, dom, factory) ->
-  wzk.ui.grid.buildGrid table, dom, factory, wzk.ui.grid.Grid
+wzk.ui.grid.build = (table, dom, factory, proc, ss) ->
+  wzk.ui.grid.buildGrid table, dom, factory, proc, ss, wzk.ui.grid.Grid
 
 ###*
   @param {Element} table
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
+  @param {wzk.app.Processor} proc
+  @param {wzk.stor.StateStorage} ss
   @param {Function} ctor
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
+wzk.ui.grid.buildGrid = (table, dom, xhrFac, proc, ss, ctor) ->
   parser = new wzk.resource.AttrParser()
   ctx = parser.parseContext table
   client = new wzk.resource.Client xhrFac, ctx
@@ -43,9 +48,11 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   dialog.setTitle extractor.parseTitle()
   dialog.setYesNoCaptions goog.dom.dataset.get(table, 'btnYes'), goog.dom.dataset.get(table, 'btnNo')
 
-  win = dom.getWindow()
-  {base, page} = wzk.ui.grid.parseFragment(win.location.hash)
-  paginator = new wzk.ui.grid.Paginator base: base, page: page
+  pagHandler = new wzk.ui.grid.PaginatorHandler ss
+
+  paginator = new wzk.ui.grid.Paginator base: pagHandler.getBase(), page: pagHandler.getPage()
+
+  pagHandler.handle paginator
 
   grid = new ctor dom, repo, extractor.parseColumns(), extractor.parseActions(), dialog, query, paginator
   grid.decorate table
@@ -54,31 +61,10 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, ctor) ->
   watcher.watchOn table
 
   msgr = new wzk.ui.grid.Messenger grid
-  msgr.decorate dom.getParentElement(table)
+  msgr.decorate dom.getParentElement table
 
-  # propagate change of page to hash fragment of url
-  paginator.listen wzk.ui.grid.Paginator.EventType.GO_TO, (event) ->
-    if event.target.page is 1 and event.target.base is 10
-      win.location.hash = ''
-    else
-      frag = wzk.uri.addFragmentParam('page', event.target.page)
-      frag = [frag, '&', wzk.uri.addFragmentParam('base', event.target.base)].join('')
-      win.location.hash = frag
-    undefined #because of Coffee vs. Closure Compiler
-
-  # setup history handling
-  wzk.hist.historyHandler (historyEvent)->
-    {base, page} = wzk.ui.grid.parseFragment(historyEvent.token)
-    paginator.goToPage(base, page)
+  if wzk.ui.grid.PaneMode.usePane table
+    mode = new wzk.ui.grid.PaneMode client, dom, proc, ss, query
+    mode.watchOn grid
 
   grid
-
-###*
-  @param {string} fragment
-  @return {Object}
-###
-wzk.ui.grid.parseFragment = (fragment) ->
-  page = wzk.num.parseDec wzk.uri.getFragmentParam('page', fragment), 1
-  base = wzk.num.parseDec wzk.uri.getFragmentParam('base', fragment), 10
-
-  {base: base, page: page}
