@@ -16,12 +16,21 @@ class wzk.net.XhrIo extends goog.net.XhrIo
   ###
   constructor: (fac) ->
     super fac
+    @middlewares = []
     @listen goog.net.EventType.COMPLETE, =>
       @dispatchEvent wzk.net.XhrIo.Events.DONE
+
+  ###*
+    @param {wzk.net.Middleware} midware
+  ###
+  addMiddleware: (midware) ->
+    @middlewares.push midware
 
   ###*
     @override
   ###
   send: (url, method, content, headers) ->
     @dispatchEvent wzk.net.XhrIo.Events.SEND
+    for midware in @middlewares
+      midware.apply headers
     super url, method, content, headers

@@ -15,6 +15,8 @@ suite 'wzk.fx.HandlebarRenderer', ->
   mockDom = ->
     createDom: (tag, attrs) ->
       mockEl tag, attrs
+    el: (tag, attrs) ->
+      mockEl tag, attrs
 
   mockComponent = ->
     cssClasses: []
@@ -23,6 +25,8 @@ suite 'wzk.fx.HandlebarRenderer', ->
     getDomHelper: ->
       dom
     getId: ->
+      ''
+    getCaption: ->
       ''
 
   setup ->

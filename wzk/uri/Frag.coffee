@@ -46,4 +46,4 @@ class wzk.uri.Frag
     @return {string}
   ###
   toString: ->
-    String @uri.getQuery().replace '?', '#'
+    String @uri.getQuery()

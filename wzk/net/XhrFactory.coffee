@@ -17,8 +17,9 @@ class wzk.net.XhrFactory
   ###*
     @param {wzk.ui.Flash} flash
     @param {Object.<string, string>} msgs
+    @param {wzk.net.AuthMiddleware} auth
   ###
-  constructor: (@flash, @msgs) ->
+  constructor: (@flash, @msgs, @auth) ->
     wzk.obj.merge @msgs, wzk.net.XhrFactory.MSGS
     @_i = 0
     @_running = 0
@@ -57,6 +58,8 @@ class wzk.net.XhrFactory
     xhr = new wzk.net.XhrIo()
     xhr.id_ = @_i
     @_i++
+
+    xhr.addMiddleware @auth
 
     xhr.listen wzk.net.XhrIo.Events.SEND, =>
       if @_running is 0
