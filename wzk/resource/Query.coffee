@@ -19,6 +19,13 @@ class wzk.resource.Query
     @uri.toString()
 
   ###*
+    @param {string} id
+    @return {string}
+  ###
+  composeGet: (id) ->
+    [@composePath(), id].join '/'
+
+  ###*
     @param {string} par
     @param {*} val
     @return {wzk.resource.Query} this

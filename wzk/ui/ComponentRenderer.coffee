@@ -17,7 +17,7 @@ class wzk.ui.ComponentRenderer
     @return {Element}
   ###
   createDom: (component) ->
-    component.getDomHelper().createDom @tag, @buildAttrs(component)
+    component.getDomHelper().el @tag, @buildAttrs(component), component.getCaption()
 
   ###*
     @param {wzk.ui.Component} component

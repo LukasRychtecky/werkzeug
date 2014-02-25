@@ -15,22 +15,35 @@ class wzk.ui.Component extends goog.ui.Component
     @param {Object} params
       dom: {@link wzk.dom.Dom}
       renderer: a renderer for the component, defaults {@link wzk.ui.ComponentRenderer}
+      caption: {string}
   ###
   constructor: (params = {}) ->
     params.dom ?= new wzk.dom.Dom()
     # an alias for dom_
     @dom = params.dom
     super params.dom
-    {@renderer} = params
+    {@renderer, @caption} = params
     @renderer ?= wzk.ui.ComponentRenderer.getInstance()
     @cssClasses = []
     @renderChildrenInternally = true
+    @caption ?= ''
 
   ###*
     @param {string} klass
   ###
   addClass: (klass) ->
     @cssClasses.push klass
+
+  ###*
+    @return {string}
+  ###
+  getCaption: ->
+    @caption
+
+  ###*
+    @param {string} caption
+  ###
+  setCaption: (@caption) ->
 
   ###*
     @override

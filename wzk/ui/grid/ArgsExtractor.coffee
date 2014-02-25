@@ -24,7 +24,7 @@ class wzk.ui.grid.ArgsExtractor
     @return {Object}
   ###
   parseActions: ->
-    goog.json.parse(@getAttr('actions'))
+    if @getAttr('actions') then goog.json.parse(@getAttr('actions')) else {}
 
   ###*
     @return {string}

@@ -21,9 +21,3 @@ class wzk.ui.Link extends wzk.ui.Component
   ###
   getHref: ->
     @href
-
-  ###*
-    @return {string}
-  ###
-  getCaption: ->
-    @caption

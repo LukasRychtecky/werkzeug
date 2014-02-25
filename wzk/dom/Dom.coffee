@@ -102,3 +102,47 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   hasChildren: (el) ->
     el.children? and el.children.length > 0
+
+  ###*
+    Alias for document.querySelector
+
+    @param {string} selector
+    @param {?Element|Document|null|undefined=} el
+    @return {Element|null}
+  ###
+  one: (selector, el = null) ->
+    unless el?
+      el = @getDocument()
+    el.querySelector selector
+
+  ###*
+    Alias for document.querySelectorAll
+
+    @param {string} selector
+    @param {?Element|Document|null|undefined=} el
+    @return {NodeList}
+  ###
+  all: (selector, el = null) ->
+    unless el?
+      el = @getDocument()
+    el.querySelectorAll selector
+
+  ###*
+    Alias for goog.dom.DomHelper.getElementByClass
+
+    @param {string} cls
+    @param {?Element|Document|null|undefined=} el
+    @return {Element|null}
+  ###
+  cls: (cls, el = null) ->
+    @getElementByClass cls, el
+
+  ###*
+    Alias for goog.dom.DomHelper.getElementsByClass
+
+    @param {string} cls
+    @param {?Element|Document|null|undefined=} el
+    @return { {length: number} }
+  ###
+  clss: (cls, el = null) ->
+    @getElementsByClass cls, el
