@@ -42,6 +42,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, proc, ss, ctor) ->
   extractor = new wzk.ui.grid.ArgsExtractor table
   repo = new wzk.ui.grid.Repository client
   query = new wzk.resource.Query parser.parseResource(table)
+  query.putDefaultExtraFields()
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
   dialog.setConfirm extractor.parseConfirm()
@@ -54,7 +55,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, proc, ss, ctor) ->
 
   pagHandler.handle paginator
 
-  grid = new ctor dom, repo, extractor.parseColumns(), extractor.parseActions(), dialog, query, paginator
+  grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator
   grid.decorate table
 
   watcher = new wzk.ui.grid.FilterWatcher grid, query

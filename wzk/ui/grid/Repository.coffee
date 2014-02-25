@@ -23,3 +23,9 @@ class wzk.ui.grid.Repository
   ###
   delete: (model, onSuccess) ->
     @client.delete model, onSuccess
+
+  ###*
+    @return {wzk.resource.Client}
+  ###
+  getClient: ->
+    @client
