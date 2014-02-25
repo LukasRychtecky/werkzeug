@@ -7,6 +7,7 @@ goog.require 'wzk.ui.grid'
 goog.require 'wzk.uri.Frag'
 goog.require 'goog.History'
 goog.require 'wzk.stor.StateStorage'
+goog.require 'wzk.net.AuthMiddleware'
 
 class wzk.app.App
 
@@ -30,7 +31,8 @@ class wzk.app.App
     @param {Object=} msgs
   ###
   run: (@win, flash, msgs = {}) ->
-    @xhrFac = new wzk.net.XhrFactory flash, msgs
+    auth = new wzk.net.AuthMiddleware @win.document
+    @xhrFac = new wzk.net.XhrFactory flash, msgs, auth
 
     @doc = @win.document
     @frag = new wzk.uri.Frag @win.location.hash
