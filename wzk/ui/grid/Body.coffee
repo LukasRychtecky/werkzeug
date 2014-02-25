@@ -122,3 +122,10 @@ class wzk.ui.grid.Body extends goog.ui.Container
     @exitDocument()
     @getElement().innerHTML = ''
     @removeChildren()
+
+  ###*
+    @override
+  ###
+  handleMouseDown: (e) ->
+    if @enabled_
+      @setMouseButtonPressed true

@@ -16,3 +16,6 @@ class wzk.ui.grid.Row extends wzk.ui.Control
     cell = new wzk.ui.grid.Cell dom: @dom, caption: text
     @addChild cell
     cell
+
+  isAllowTextSelection: ->
+    return true
