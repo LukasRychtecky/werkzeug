@@ -21,8 +21,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   ###*
     Class for rendering the results of an auto-complete in a drop down list.
 
-    @constructor
-    @param {wzk.ui.dom.Dom} dom
+    @param {wzk.dom.Dom} dom
     @param {Element=} parentNode optional reference to the parent element
         that will hold the autocomplete elements. goog.dom.getDocument().body
         will be used if this is null.
@@ -34,7 +33,6 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         highlighting should be applied to each row of data. Standard highlighting
         bolds every matching substring for a given token in each row. True by
         default.
-    @extends {goog.events.EventTarget}
   ###
   constructor: (@dom, @imagePlaceholder, parentNode, customRenderer, rightAlign, useStandardHighlighting) ->
     super(parentNode, customRenderer, rightAlign, useStandardHighlighting)
@@ -47,7 +45,6 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
   ###*
     @param {Element} select element to be decorated
-    @protected
   ###
   decorate: (@select) ->
     # create input element and attach it to dom
@@ -62,16 +59,24 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @dom.appendChild @item, @image
     @dom.appendChild @item, @input
 
+  ###*
+    @return {Element}
+  ###
   getInput: ->
     @input
 
+  ###*
+    @param {string} imageUrl
+  ###
   setImage: (imageUrl) ->
     @image.setAttribute('src', imageUrl)
 
   ###*
     If the main HTML element hasn't been made yet, creates it and appends it
     to the parent.
-    @private
+
+    @override
+    @suppress {visibility}
   ###
   maybeCreateElement_: ->
     unless @element_
@@ -83,21 +88,20 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
       el.id = goog.ui.IdGenerator.getInstance().getNextUniqueId()
 
-      @dom.appendChild(this.parent_, el)
+      @dom.appendChild(@parent_, el)
 
       # Add this object as an event handler
-      goog.events.listen(el, goog.events.EventType.CLICK,
-                         @handleClick_, false, this)
-      goog.events.listen(el, goog.events.EventType.MOUSEDOWN,
-                         @handleMouseDown_, false, this)
-      goog.events.listen(el, goog.events.EventType.MOUSEOVER,
-                         @handleMouseOver_, false, this)
+      goog.events.listen el, goog.events.EventType.CLICK, @handleClick_, false, @
+      goog.events.listen el, goog.events.EventType.MOUSEDOWN, @handleMouseDown_, false, @
+      goog.events.listen el, goog.events.EventType.MOUSEOVER, @handleMouseOver_, false, @
+      undefined # Coffee & Closure
 
   ###*
     Render a row by creating a div and then calling row rendering callback or
     default row handler
 
     @override
+    @suppress {visibility}
     @param {Object} row Object representing row.
     @param {string} token Token to highlight.
     @return {Element} An element with the rendered HTML.

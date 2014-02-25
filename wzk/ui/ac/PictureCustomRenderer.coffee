@@ -8,7 +8,7 @@ class wzk.ui.ac.PictureCustomRenderer
     IMAGE_ALT: 'photo'
 
   ###*
-    @param {wzk.ui.dom.Dom} dom
+    @param {wzk.dom.Dom} dom
   ###
   constructor: (@dom) ->
 
@@ -23,7 +23,6 @@ class wzk.ui.ac.PictureCustomRenderer
     node.appendChild @dom.createTextNode(row.data.toString())
 
   ###*
-    @param {string} text
     @param {string} photo
   ###
   createImage: (photo) ->

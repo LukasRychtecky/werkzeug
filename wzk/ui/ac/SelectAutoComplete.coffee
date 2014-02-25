@@ -21,7 +21,7 @@ class wzk.ui.ac.SelectAutoComplete extends wzk.ui.ac.AutoComplete
 
     @param {wzk.dom.Dom} dom
     @param {Element} select with options, that has values of id's of items
-    @param {wzk.ui.ac.ArrayMatcher} autocomplete matcher
+    @param {wzk.ui.ac.ArrayMatcher} matcher
     @param {Array.<string>} data
   ###
   constructor: (@dom, @select, matcher, data) ->
@@ -36,7 +36,7 @@ class wzk.ui.ac.SelectAutoComplete extends wzk.ui.ac.AutoComplete
     @input = @renderer.getInput()
 
     # hide select
-    goog.style.showElement @select, false
+    goog.style.setElementShown @select, false
 
     # tell autocomplete which input it should attach to
     @inputHandler = new goog.ui.ac.InputHandler()
@@ -46,10 +46,10 @@ class wzk.ui.ac.SelectAutoComplete extends wzk.ui.ac.AutoComplete
     @initData(data)
 
     # this class implements SelectionHandler interface
-    super(matcher, @renderer, @)
+    super matcher, @renderer, @inputHandler
 
   ###*
-    Initializes autocomplete into defaultly setted data
+    Initializes autocomplete into defaultly set data
   ###
   initData: (data) ->
     # works even on IE9

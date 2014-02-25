@@ -16,4 +16,4 @@ wzk.ui.ac.buildSelectAutoComplete = (select, dom, xhrFac) ->
   client.find resourceUrl, (data) ->
     # Autocomplete will show toString() value of data
     matcher = new wzk.ui.ac.ArrayMatcher data, false
-    new wzk.ui.ac.SelectAutoComplete(dom, select, matcher, data, null)
+    new wzk.ui.ac.SelectAutoComplete(dom, select, matcher, data)
