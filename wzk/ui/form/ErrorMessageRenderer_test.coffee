@@ -7,6 +7,8 @@ suite 'wzk.ui.form.ErrorMessageRenderer', ->
   mockDom = ->
     createDom: (tag, classes) ->
       mockEl tag, classes
+    el: (tag, classes) ->
+      @createDom tag, classes
 
   mockEl = (tag, attrs) ->
     tag: tag
@@ -15,6 +17,9 @@ suite 'wzk.ui.form.ErrorMessageRenderer', ->
   mockComponent = (classes) ->
     getId: ->
       ''
+    getCaption: ->
+      ''
+
     cssClasses: classes
     getDomHelper: ->
       dom

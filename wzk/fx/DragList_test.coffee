@@ -15,6 +15,9 @@ suite 'wzk.fx.DragList', ->
         el.events[event] = target
     el
 
+  document.createTextNode = ->
+    mockEl()
+
   mockItem = (el, id = '1') ->
     inDocument_: false
     getParent: ->

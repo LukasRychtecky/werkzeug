@@ -7,6 +7,8 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
   mockDom = ->
     d =
       tags: []
+      el: (tag, attrs, txt) ->
+        @createDom tag, attrs, txt
       createDom: (tag, attrs, txt) ->
         el = mockEl(tag, txt)
         d.tags.push el
@@ -23,6 +25,8 @@ suite 'wzk.ui.form.QuasiFormRenderer', ->
       helper
     forEachChild: ->
     getId: ->
+      ''
+    getCaption: ->
       ''
     renderFieldset: true
 
