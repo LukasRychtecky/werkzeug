@@ -12,6 +12,18 @@ goog.require 'wzk.resource.ModelBuilder'
 class wzk.resource.Client
 
   ###*
+    @enum {string}
+  ###
+  @X_HEADERS:
+    TOTAL: 'X-Total'
+    BASE: 'X-Base'
+    OFFSET: 'X-Offset'
+    ORDER: 'X-Order'
+    DIRECTION: 'X-Direction'
+    REFERRER: 'X-Referer'
+    EXTRA_FIELDS: 'X-Extra-Fields'
+
+  ###*
     @constructor
     @param {wzk.net.XhrFactory} xhrFac
     @param {string=} context
@@ -41,13 +53,13 @@ class wzk.resource.Client
     @param {wzk.resource.Query|null|undefined=} query
   ###
   find: (modelOrUrl, onSuccess, onError = null, query = null) ->
-
+    X = wzk.resource.Client.X_HEADERS
     xhr = @xhrFac.build()
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
       if onSuccess?
         result =
-          total: parseInt xhr.getResponseHeader('X-Total'), 10
+          total: parseInt xhr.getResponseHeader(X.TOTAL), 10
         onSuccess @builder.build(xhr.getResponseJson()), result
 
     @listenOnError xhr, onError
@@ -56,11 +68,12 @@ class wzk.resource.Client
     if query?
       headers = {}
       goog.object.extend headers, @headers
-      headers["X-Base"] = query.base if query.base?
-      headers["X-Offset"] = query.offset if query.offset?
-      headers["X-Order"] = query.order if query.order?
-      headers["X-Direction"] = query.direction if query.direction?
-      headers['X-Referer'] = query.referer if query.referer?
+      headers[X.BASE] = query.base if query.base?
+      headers[X.OFFSET] = query.offset if query.offset?
+      headers[X.ORDER] = query.order if query.order?
+      headers[X.DIRECTION] = query.direction if query.direction?
+      headers[X.REFERRER] = query.referer if query.referer?
+      headers[X.EXTRA_FIELDS] = query.composeExtraFields() if query.hasExtraFields()
 
     method = 'GET'
 

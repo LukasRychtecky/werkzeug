@@ -11,6 +11,28 @@ class wzk.resource.Query
     @base ?= 10
     @offset ?= 0
     @uri = new goog.Uri @path
+    @extraFields = []
+
+  putDefaultExtraFields: ->
+    @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links']
+
+  ###*
+    @param {string} field
+  ###
+  addExtraField: (field) ->
+    @extraFields.push field
+
+  ###*
+    @return {string}
+  ###
+  composeExtraFields: ->
+    @extraFields.join ','
+
+  ###*
+    @return {boolean}
+  ###
+  hasExtraFields: ->
+    @extraFields.length > 0
 
   ###*
     @return {string}
