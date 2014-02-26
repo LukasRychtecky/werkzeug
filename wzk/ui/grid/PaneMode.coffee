@@ -39,11 +39,11 @@ class wzk.ui.grid.PaneMode
   ###*
     @param {wzk.resource.Client} client
     @param {wzk.dom.Dom} dom
-    @param {wzk.app.Processor} proc
+    @param {wzk.app.Register} reg
     @param {wzk.stor.StateStorage} ss
     @param {wzk.resource.Query} query
   ###
-  constructor: (@client, @dom, @proc, @ss, @query) ->
+  constructor: (@client, @dom, @reg, @ss, @query) ->
 
   ###*
     @param {wzk.ui.grid.Grid} grid
@@ -93,4 +93,4 @@ class wzk.ui.grid.PaneMode
     @client.request url + '?snippet=' + PARAM, 'GET', {}, (json) =>
       if json['snippets']?
         el.innerHTML = json['snippets'][PARAM]
-      @proc.process el, @dom.getDocument(), @client.xhrFac
+      @reg.process el

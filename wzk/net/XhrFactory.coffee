@@ -44,7 +44,7 @@ class wzk.net.XhrFactory
     xhr.listen goog.net.EventType.COMPLETE, =>
       if xhr.getStatus() isnt 204 and @isJsonReponse xhr
         response = xhr.getResponseJson()
-        msgs = response['message'] ? response['message']
+        msgs = response['messages'] ? response['message']
         if msgs?
           for type, msg of msgs
             @flash.addMessage msg, type

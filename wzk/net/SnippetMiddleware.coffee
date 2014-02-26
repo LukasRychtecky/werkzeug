@@ -18,11 +18,11 @@ class wzk.net.SnippetMiddleware
     PREPEND: 'prepend'
 
   ###*
-    @param {wzk.app.Processor} proc
+    @param {wzk.app.Register} reg
     @param {wzk.dom.Dom} dom
     @param {Object} opts
   ###
-  constructor: (@proc, @dom, @opts) ->
+  constructor: (@reg, @dom, @opts) ->
 
   ###*
     @param {Object} res
@@ -53,6 +53,7 @@ class wzk.net.SnippetMiddleware
   ###
   replace: (html, el) ->
     el.innerHTML = html
+    @reg.process el
 
   ###*
     @protected
@@ -61,7 +62,8 @@ class wzk.net.SnippetMiddleware
   ###
   append: (html, el) ->
     newEl = @dom.htmlToDocumentFragment html
-    @dom.append el, newEl
+    el.appendChild newEl
+    @reg.process newEl
 
   ###*
     @protected
@@ -70,4 +72,5 @@ class wzk.net.SnippetMiddleware
   ###
   prepend: (html, el) ->
     newEl = @dom.htmlToDocumentFragment html
-    @dom.prependChild el, newEl
+    @dom.prependChild el, (`/** @type {Element} */`) newEl
+    @reg.process newEl
