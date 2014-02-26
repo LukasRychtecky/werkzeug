@@ -2,6 +2,7 @@ goog.provide 'wzk.ui.form.BackgroundForm'
 
 goog.require 'goog.events.EventTarget'
 goog.require 'goog.ui.Button'
+goog.require 'goog.dom.forms'
 
 class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
 
@@ -21,6 +22,7 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
   constructor: (@client, @dom) ->
     super()
     @btn = null
+    @clean = false
 
   ###*
     @param {Element} form
@@ -51,3 +53,28 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
     @btn.listen goog.ui.Component.EventType.ACTION, =>
       @btn.setEnabled false
       @send form
+
+  ###*
+    @param {Element} form
+  ###
+  send: (@form) ->
+
+  ###*
+    @param {boolean} clean
+  ###
+  cleanAfterSubmit: (@clean) ->
+
+  ###*
+    @protected
+    @param {Object} data
+  ###
+  onSuccess: (data) =>
+    if @clean
+      for field in @dom.all 'input[type=text], textarea', @form
+        goog.dom.forms.setValue field, ''
+
+  ###*
+    @protected
+    @param {*} res
+  ###
+  onError: (res) =>

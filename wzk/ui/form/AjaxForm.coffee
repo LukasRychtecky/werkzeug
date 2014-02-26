@@ -32,16 +32,17 @@ class wzk.ui.form.AjaxForm extends wzk.ui.form.BackgroundForm
     @param {Element} form
   ###
   send: (form) ->
+    super form
     data = goog.dom.forms.getFormDataString form
 
     @client.postForm @url, data, @onSuccess, @onError
 
   ###*
     @suppress {checkTypes}
-    @protected
-    @param {string} html
+    @override
   ###
   onError: (html) =>
+    super html
     return unless html?
     @btn.setEnabled true
     snippet = @dom.htmlToDocumentFragment html
@@ -50,9 +51,9 @@ class wzk.ui.form.AjaxForm extends wzk.ui.form.BackgroundForm
     @dispatchEvent new goog.events.Event(wzk.ui.form.BackgroundForm.EventType.ERROR, form)
 
   ###*
-    @protected
-    @param {Object} data
+    @override
   ###
   onSuccess: (data) =>
+    super data
     @btn.setEnabled true
     @dispatchEvent new goog.events.Event(wzk.ui.form.BackgroundForm.EventType.SAVED, data)
