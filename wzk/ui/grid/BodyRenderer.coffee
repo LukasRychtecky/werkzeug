@@ -1,4 +1,4 @@
-class wzk.ui.grid.BodyRenderer extends goog.ui.ContainerRenderer
+class wzk.ui.grid.BodyRenderer extends wzk.ui.SelectableContainerRenderer
 
   constructor: ->
     super()
