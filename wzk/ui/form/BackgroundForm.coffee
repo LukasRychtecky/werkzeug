@@ -21,7 +21,6 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
   constructor: (@client, @dom) ->
     super()
     @btn = null
-    @client = null
 
   ###*
     @param {Element} form
