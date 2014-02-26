@@ -1,8 +1,10 @@
 goog.provide 'wzk.ui.ac'
 
 goog.require 'wzk.ui.ac.SelectAutoComplete'
-goog.require 'wzk.ui.ac.ArrayMatcher'
 goog.require 'goog.dom.dataset'
+goog.require 'wzk.resource.Query'
+goog.require 'wzk.ui.ac.Renderer'
+goog.require 'wzk.ui.ac.PictureCustomRenderer'
 
 ###*
   @param {Element} select
@@ -10,10 +12,15 @@ goog.require 'goog.dom.dataset'
   @param {wzk.net.XhrFactory} xhrFac
 ###
 wzk.ui.ac.buildSelectAutoComplete = (select, dom, xhrFac) ->
-  resourceUrl = goog.dom.dataset.get select, 'resource'
+  url = goog.dom.dataset.get select, 'resource'
+
+  renderer = new wzk.ui.ac.Renderer(dom, null, null, new wzk.ui.ac.PictureCustomRenderer(dom))
+  ac = new wzk.ui.ac.SelectAutoComplete dom, renderer
+  ac.decorate select
 
   client = new wzk.resource.Client(xhrFac)
-  client.find resourceUrl, (data) ->
-    # Autocomplete will show toString() value of data
-    matcher = new wzk.ui.ac.ArrayMatcher data, false
-    new wzk.ui.ac.SelectAutoComplete(dom, select, matcher, data)
+  query = new wzk.resource.Query()
+  query.addExtraField '_obj_name'
+  client.setDefaultExtraFields query
+  client.find url, (data) ->
+    ac.load data

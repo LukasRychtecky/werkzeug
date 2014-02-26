@@ -19,9 +19,17 @@ class wzk.ui.Input extends goog.ui.Control
     goog.style.setElementShown @wrapperEl, visible if @wrapperEl
     super visible, force
 
+  ###*
+    @param {*} val
+  ###
   setValue: (val) ->
-    @setContent(String(val))
+    str = String val
+    @setContent str
+    @getElement().value = str
 
+  ###*
+    @return {string}
+  ###
   getValue: ->
     @getElement().value
 

@@ -3,9 +3,9 @@ class wzk.ui.ac.PictureCustomRenderer
   ###*
     @enum {string}
   ###
-  @STYLE:
-    IMAGE_CLASS: 'ac-image ac-image-list'
-    IMAGE_ALT: 'photo'
+  @CLS:
+    IMG: 'ac-image ac-image-list'
+    IMG_PLACEHOLDER: 'ac-image-placeholder'
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -19,12 +19,28 @@ class wzk.ui.ac.PictureCustomRenderer
     @param {Node} node The node to render into.
   ###
   renderRow: (row, token, node) ->
-    node.appendChild @createImage(row.data["photo"])
+    node.appendChild @createImageOrPlaceholder(row.data)
     node.appendChild @dom.createTextNode(row.data.toString())
 
   ###*
-    @param {string} photo
+    @protected
+    @param {Object} data
+    @return {Element|null}
   ###
-  createImage: (photo) ->
-    @STYLE = wzk.ui.ac.PictureCustomRenderer.STYLE
-    img = @dom.createDom 'img', {src: photo, class: @STYLE.IMAGE_CLASS, alt: @STYLE.IMAGE_ALT}
+  createImage: (data) ->
+    C = wzk.ui.ac.PictureCustomRenderer.CLS
+    @dom.createDom 'img', {src: data['photo'], class: C.IMG, alt: data.toString()}
+
+  ###*
+    @protected
+    @return {Element}
+  ###
+  createImagePlaceholder: ->
+    @dom.el 'div', wzk.ui.ac.PictureCustomRenderer.CLS.IMG_PLACEHOLDER
+
+  ###*
+    @param {Object|null|undefined=} data
+    @return {Element}
+  ###
+  createImageOrPlaceholder: (data = null) ->
+    if data? and data["photo"]? then @createImage(data) else @createImagePlaceholder()
