@@ -21,7 +21,7 @@ class wzk.net.XhrIo extends goog.net.XhrIo
       @dispatchEvent wzk.net.XhrIo.Events.DONE
 
   ###*
-    @param {wzk.net.Middleware} midware
+    @param {wzk.net.HeadersMiddleware} midware
   ###
   addMiddleware: (midware) ->
     @middlewares.push midware

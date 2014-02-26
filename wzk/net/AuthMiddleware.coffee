@@ -1,6 +1,6 @@
 goog.require 'goog.net.Cookies'
 
-class wzk.net.AuthMiddleware extends wzk.net.Middleware
+class wzk.net.AuthMiddleware extends wzk.net.HeadersMiddleware
 
   ###*
     @enum {string}
@@ -16,7 +16,7 @@ class wzk.net.AuthMiddleware extends wzk.net.Middleware
     @cookies = new goog.net.Cookies doc
 
   ###*
-    @override
+    @param {Object} headers
   ###
   apply: (headers) ->
     auth  = @cookies.get wzk.net.AuthMiddleware.HEADER.AUTH

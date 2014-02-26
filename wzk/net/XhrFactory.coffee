@@ -18,8 +18,9 @@ class wzk.net.XhrFactory
     @param {wzk.ui.Flash} flash
     @param {Object.<string, string>} msgs
     @param {wzk.net.AuthMiddleware} auth
+    @param {wzk.net.SnippetMiddleware} snip
   ###
-  constructor: (@flash, @msgs, @auth) ->
+  constructor: (@flash, @msgs, @auth, @snip) ->
     wzk.obj.merge @msgs, wzk.net.XhrFactory.MSGS
     @_i = 0
     @_running = 0
@@ -34,18 +35,22 @@ class wzk.net.XhrFactory
     xhr.listen goog.net.EventType.ERROR, =>
       if @isJsonReponse xhr
         response = xhr.getResponseJson()
-        unless response['message']? or response['errors']?
+        unless response['messages']? or response['message']? or response['errors']?
           @flash.addError @msgs['error']
+        @snip.apply response
       else
         @flash.addError @msgs['error']
 
     xhr.listen goog.net.EventType.COMPLETE, =>
       if xhr.getStatus() isnt 204 and @isJsonReponse xhr
         response = xhr.getResponseJson()
-        if response['message']?
-          for type, msg of response['message']
+        msgs = response['message'] ? response['message']
+        if msgs?
+          for type, msg of msgs
             @flash.addMessage msg, type
           undefined
+
+        @snip.apply response
 
     xhr
 

@@ -8,6 +8,8 @@ goog.require 'wzk.uri.Frag'
 goog.require 'goog.History'
 goog.require 'wzk.stor.StateStorage'
 goog.require 'wzk.net.AuthMiddleware'
+goog.require 'wzk.net.SnippetMiddleware'
+goog.require 'wzk.dom.Dom'
 
 class wzk.app.App
 
@@ -31,14 +33,17 @@ class wzk.app.App
     @param {Object=} msgs
   ###
   run: (@win, flash, msgs = {}) ->
-    auth = new wzk.net.AuthMiddleware @win.document
-    @xhrFac = new wzk.net.XhrFactory flash, msgs, auth
-
     @doc = @win.document
     @frag = new wzk.uri.Frag @win.location.hash
     @opts =
       app: @
       frag: @frag
+
+    dom = new wzk.dom.Dom @doc
+    snip = new wzk.net.SnippetMiddleware @proc, dom, @opts
+
+    auth = new wzk.net.AuthMiddleware @win.document
+    @xhrFac = new wzk.net.XhrFactory flash, msgs, auth, snip
 
     history = new goog.History()
     history.setEnabled true
