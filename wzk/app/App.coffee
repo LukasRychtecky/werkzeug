@@ -10,6 +10,7 @@ goog.require 'wzk.stor.StateStorage'
 goog.require 'wzk.net.AuthMiddleware'
 goog.require 'wzk.net.SnippetMiddleware'
 goog.require 'wzk.dom.Dom'
+goog.require 'wzk.net.FlashMiddleware'
 
 class wzk.app.App
 
@@ -39,21 +40,19 @@ class wzk.app.App
     snip = new wzk.net.SnippetMiddleware @reg, dom, @opts
 
     auth = new wzk.net.AuthMiddleware @win.document
-    @xhrFac = new wzk.net.XhrFactory flash, msgs, auth, snip
+    flashmid = new wzk.net.FlashMiddleware flash, msgs
+    @xhrFac = new wzk.net.XhrFactory flashmid, auth, snip
 
     history = new goog.History()
     history.setEnabled true
     history.listen goog.history.EventType.NAVIGATE, @handleHistory
 
-    clbk = (filter, el) =>
-      filter el, new wzk.dom.Dom(@doc), @xhrFac, @opts
-
-    @regOnce.process @doc, @buildFunc
-    @reg.process @doc, clbk
+    @regOnce.process @doc
+    @reg.process @doc
 
   ###*
     @protected
-    @param {function(?)} func
+    @param {function(?, ?, ?, ?)} func
     @param {(Element|Document)} el
   ###
   buildFunc: (func, el) =>
