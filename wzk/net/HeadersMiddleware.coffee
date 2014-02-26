@@ -1,4 +1,4 @@
-class wzk.net.Middleware
+class wzk.net.HeadersMiddleware
 
   constructor: ->
 

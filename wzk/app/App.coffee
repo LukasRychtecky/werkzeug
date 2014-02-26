@@ -8,16 +8,15 @@ goog.require 'wzk.uri.Frag'
 goog.require 'goog.History'
 goog.require 'wzk.stor.StateStorage'
 goog.require 'wzk.net.AuthMiddleware'
+goog.require 'wzk.net.SnippetMiddleware'
+goog.require 'wzk.dom.Dom'
+goog.require 'wzk.net.FlashMiddleware'
 
 class wzk.app.App
 
-  ###*
-    @param {wzk.app.Processor} proc
-  ###
-  constructor: (@proc) ->
-    @reg = new wzk.app.Register()
-    @proc.add @reg.process
-    @regOnce = new wzk.app.Register()
+  constructor: ->
+    @reg = new wzk.app.Register @buildFunc
+    @regOnce = new wzk.app.Register @buildFunc
     @xhrFac = null
     @doc = null
     @frag = null
@@ -31,39 +30,39 @@ class wzk.app.App
     @param {Object=} msgs
   ###
   run: (@win, flash, msgs = {}) ->
-    auth = new wzk.net.AuthMiddleware @win.document
-    @xhrFac = new wzk.net.XhrFactory flash, msgs, auth
-
     @doc = @win.document
     @frag = new wzk.uri.Frag @win.location.hash
     @opts =
       app: @
       frag: @frag
 
+    dom = new wzk.dom.Dom @doc
+    snip = new wzk.net.SnippetMiddleware @reg, dom, @opts
+
+    auth = new wzk.net.AuthMiddleware @win.document
+    flashmid = new wzk.net.FlashMiddleware flash, msgs
+    @xhrFac = new wzk.net.XhrFactory flashmid, auth, snip
+
     history = new goog.History()
     history.setEnabled true
     history.listen goog.history.EventType.NAVIGATE, @handleHistory
 
-    @proc.once @regOnce.process, @doc, @doc, @xhrFac, @opts
-    @proc.process @doc, @doc, @xhrFac, @opts
+    @regOnce.process @doc
+    @reg.process @doc
+
+  ###*
+    @protected
+    @param {function(?, ?, ?, ?)} func
+    @param {(Element|Document)} el
+  ###
+  buildFunc: (func, el) =>
+    func el, new wzk.dom.Dom(@doc), @xhrFac, @opts
 
   ###*
     @protected
   ###
   handleHistory: =>
     @frag.setFragment @win.location.hash
-
-  ###*
-    @return {wzk.app.Processor}
-  ###
-  getProc: ->
-    @proc
-
-  ###*
-    @param {Element} el
-  ###
-  process: (el) ->
-    @proc.process el, @doc, @xhrFac, @opts
 
   ###*
     @param {string} selector
@@ -80,6 +79,12 @@ class wzk.app.App
     @regOnce.register selector, filter
 
   ###*
+    @return {wzk.app.Register}
+  ###
+  getRegister: ->
+    @reg
+
+  ###*
     @param {wzk.ui.Flash} flash
   ###
   registerStandardComponents: (flash) ->
@@ -87,7 +92,7 @@ class wzk.app.App
       flash.decorateOrRender el
 
     @on 'table.grid', (table, dom, xhrFac, opts) ->
-      wzk.ui.grid.build table, dom, xhrFac, opts.app.getProc(), opts.app.getStorage('g')
+      wzk.ui.grid.build table, dom, xhrFac, opts.app.getRegister(), opts.app.getStorage('g')
 
   ###*
     @param {string} k

@@ -37,22 +37,24 @@ class wzk.ui.form.RestForm extends wzk.ui.form.BackgroundForm
     @param {Element} form
   ###
   send: (form) ->
+    super form
     data = wzk.ui.form.form2Json form
 
     @client.request @url, form.getAttribute('method'), data, @onSuccess, @onError
 
   ###*
-    @protected
-    @param {Object=} json
+    @override
   ###
   onError: (json) =>
+    super json
     @btn.setEnabled true
     @showErrors json?['errors']
 
   ###*
-    @protected
+    @override
   ###
-  onSuccess: =>
+  onSuccess: (data) =>
+    super data
     @btn.setEnabled true
     @notifier.hideAll()
     @dispatchEvent wzk.ui.form.BackgroundForm.EventType.SAVED

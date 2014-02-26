@@ -19,23 +19,23 @@ goog.require 'wzk.ui.grid.PaginatorHandler'
   @param {Element} table
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} factory
-  @param {wzk.app.Processor} proc
+  @param {wzk.app.Register} reg
   @param {wzk.stor.StateStorage} ss
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.build = (table, dom, factory, proc, ss) ->
-  wzk.ui.grid.buildGrid table, dom, factory, proc, ss, wzk.ui.grid.Grid
+wzk.ui.grid.build = (table, dom, factory, reg, ss) ->
+  wzk.ui.grid.buildGrid table, dom, factory, reg, ss, wzk.ui.grid.Grid
 
 ###*
   @param {Element} table
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
-  @param {wzk.app.Processor} proc
+  @param {wzk.app.Register} reg
   @param {wzk.stor.StateStorage} ss
   @param {Function} ctor
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.buildGrid = (table, dom, xhrFac, proc, ss, ctor) ->
+wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   parser = new wzk.resource.AttrParser()
   ctx = parser.parseContext table
   client = new wzk.resource.Client xhrFac, ctx
@@ -67,7 +67,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, proc, ss, ctor) ->
   msgr.decorate dom.getParentElement table
 
   if wzk.ui.grid.PaneMode.usePane table
-    mode = new wzk.ui.grid.PaneMode client, dom, proc, ss, query
+    mode = new wzk.ui.grid.PaneMode client, dom, reg, ss, query
     mode.watchOn grid
 
   grid

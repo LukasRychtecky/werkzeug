@@ -2,7 +2,10 @@ goog.provide 'wzk.app.Register'
 
 class wzk.app.Register
 
-  constructor: ->
+  ###*
+    @param {function(?, ?)} buildFunc
+  ###
+  constructor: (@buildFunc) ->
     @filters = {}
 
   ###*
@@ -13,12 +16,9 @@ class wzk.app.Register
     @filters[selector] = filter
 
   ###*
-    @param {(Element|Document)} el
-    @param {wzk.dom.Dom} dom
-    @param {wzk.net.XhrFactory} xhrFac
-    @param {Object=} opts
+    @param {(Element|Node|Document)} el
   ###
-  process: (el, dom, xhrFac, opts) =>
+  process: (el) =>
     for selector, filter of @filters
       for child in el.querySelectorAll selector
-        filter child, dom, xhrFac, opts
+        @buildFunc filter, child
