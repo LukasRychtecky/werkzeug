@@ -4,9 +4,11 @@ goog.require 'goog.dom.dataset'
 class wzk.ui.grid.PaneMode
 
   ###*
-    @type {string}
+    @enum {string}
   ###
-  @SNIPPET: 'snippet-container'
+  @SNIPPET:
+    CLS: 'snippet-container'
+    PARAM: 'content'
 
   ###*
     @type {string}
@@ -72,7 +74,7 @@ class wzk.ui.grid.PaneMode
   loadSnippets: (model) =>
     @ss.set wzk.ui.grid.PaneMode.PARAM, model['id']
     A = wzk.ui.grid.PaneMode.ATTRS
-    for el in @dom.clss wzk.ui.grid.PaneMode.SNIPPET
+    for el in @dom.clss wzk.ui.grid.PaneMode.SNIPPET.CLS
       link = goog.dom.dataset.get el, A.LINK
       url = model['_web_links'][link]
       i = goog.dom.dataset.get el, A.INDEX
@@ -87,6 +89,8 @@ class wzk.ui.grid.PaneMode
     @param {Element} el
   ###
   processSnippet: (url, el) ->
-    @client.request url + '?popup=1', 'GET', {}, (json) =>
-      el.innerHTML = json['content']
+    PARAM = wzk.ui.grid.PaneMode.SNIPPET.PARAM
+    @client.request url + '?snippet=' + PARAM, 'GET', {}, (json) =>
+      if json['snippets']?
+        el.innerHTML = json['snippets'][PARAM]
       @proc.process el, @dom.getDocument(), @client.xhrFac
