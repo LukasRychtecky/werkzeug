@@ -3,9 +3,9 @@ goog.require 'goog.Uri'
 class wzk.resource.Query
 
   ###*
-    @param {string} path
+    @param {string=} path
   ###
-  constructor: (@path) ->
+  constructor: (@path = '') ->
     @order = null
     @direction = null
     @base ?= 10

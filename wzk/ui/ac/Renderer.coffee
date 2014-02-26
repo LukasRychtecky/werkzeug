@@ -1,3 +1,6 @@
+goog.require 'wzk.ui.Input'
+goog.require 'goog.style'
+
 class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
   ###*
@@ -11,12 +14,12 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   ###*
     @enum {string}
   ###
-  @STYLE:
-    CONTAINER_CLASSNAME: 'dropdown-menu'
-    ROW_CLASSNAME: 'ac-row'
-    ACTIVE_CLASS_NAME: 'active'
-    ITEM_CLASS: 'ac-item'
-    IMAGE_CLASS: 'ac-image'
+  @CLS:
+    CONTAINER: 'ac dropdown-menu'
+    ROW: 'ac-row'
+    ACTIVE: 'active'
+    ITEM: 'ac-item'
+    IMG: 'ac-image'
 
   ###*
     Class for rendering the results of an auto-complete in a drop down list.
@@ -34,42 +37,45 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         bolds every matching substring for a given token in each row. True by
         default.
   ###
-  constructor: (@dom, @imagePlaceholder, parentNode, customRenderer, rightAlign, useStandardHighlighting) ->
+  constructor: (@dom, @imagePlaceholder, parentNode, @customRenderer, rightAlign, useStandardHighlighting) ->
     super(parentNode, customRenderer, rightAlign, useStandardHighlighting)
-    @TAGS = wzk.ui.ac.Renderer.TAGS
-    @STYLE = wzk.ui.ac.Renderer.STYLE
 
-    @className = @STYLE.CONTAINER_CLASSNAME
-    @rowClassName = @STYLE.ROW_CLASSNAME
-    @activeClassName = @STYLE.ACTIVE_CLASS_NAME
+    @className = wzk.ui.ac.Renderer.CLS.CONTAINER
+    @rowClassName = wzk.ui.ac.Renderer.CLS.ROW
+    @activeClassName = wzk.ui.ac.Renderer.CLS.ACTIVE
+    @imgOrPlaceholder = null
+    @input = null
 
   ###*
     @param {Element} select element to be decorated
   ###
   decorate: (@select) ->
+    goog.style.setElementShown @select, false
     # create input element and attach it to dom
-    @item = @dom.createDom @TAGS.ITEM, @STYLE.ITEM_CLASS
-    @image = @dom.createDom 'img', {src: @imagePlaceholder, class: @STYLE.IMAGE_CLASS}
-    @input = @dom.createDom 'input', {type: 'text'}
+    @item = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
+    @imgOrPlaceholder = @customRenderer.createImageOrPlaceholder()
 
     # parent of select element is cosidered to be container
     selectParent = @dom.getParentElement @select
 
     @dom.appendChild selectParent, @item
-    @dom.appendChild @item, @image
-    @dom.appendChild @item, @input
+    @dom.appendChild @item, @imgOrPlaceholder
+    @input = new wzk.ui.Input null, null, @dom
+    @input.render @item
 
   ###*
-    @return {Element}
+    @return {wzk.ui.Input}
   ###
   getInput: ->
     @input
 
   ###*
-    @param {string} imageUrl
+    @param {Object|null|undefined=} data
   ###
-  setImage: (imageUrl) ->
-    @image.setAttribute('src', imageUrl)
+  updateImage: (data = null) ->
+    newImg = @customRenderer.createImageOrPlaceholder data
+    @dom.replaceNode newImg, @imgOrPlaceholder
+    @imgOrPlaceholder = newImg
 
   ###*
     If the main HTML element hasn't been made yet, creates it and appends it
@@ -81,14 +87,19 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   maybeCreateElement_: ->
     unless @element_
       # Make element and add it to the parent
-      el = @dom.createDom(@TAGS.CONTAINER, {style: 'display:none'})
+      el = @dom.createDom(wzk.ui.ac.Renderer.TAGS.CONTAINER, {style: 'display:none'})
+      if @showScrollbarsIfTooLarge_
+        # Make sure that the dropdown will get scrollbars if it isn't large
+        # enough to show all rows.
+        goog.style.setStyle el, 'overflow-y', 'auto'
+
       @element_ = el
-      @setMenuClasses_(el)
-      goog.a11y.aria.setRole(el, goog.a11y.aria.Role.LISTBOX)
+      @setMenuClasses_ el
+      goog.a11y.aria.setRole el, goog.a11y.aria.Role.LISTBOX
 
       el.id = goog.ui.IdGenerator.getInstance().getNextUniqueId()
 
-      @dom.appendChild(@parent_, el)
+      @dom.appendChild @parent_, el
 
       # Add this object as an event handler
       goog.events.listen el, goog.events.EventType.CLICK, @handleClick_, false, @
@@ -111,18 +122,18 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     id = goog.ui.IdGenerator.getInstance().getNextUniqueId()
 
     # create and return the node
-    node = @dom.createDom @TAGS.ROW, {className: @STYLE.ROW_CLASSNAME, id: id}
+    node = @dom.createDom wzk.ui.ac.Renderer.TAGS.ROW, {className: wzk.ui.ac.Renderer.CLS.ROW, id: id}
 
-    goog.a11y.aria.setRole(node, goog.a11y.aria.Role.OPTION)
+    goog.a11y.aria.setRole node, goog.a11y.aria.Role.OPTION
 
-    if (@customRenderer_ and @customRenderer_.renderRow)
-      @customRenderer_.renderRow(row, token, node)
+    if @customRenderer_ and @customRenderer_.renderRow
+      @customRenderer_.renderRow row, token, node
     else
-      @renderRowContents_(row, token, node)
+      @renderRowContents_ row, token, node
 
-    if (token and @useStandardHighlighting_)
+    if token and @useStandardHighlighting_
       @hiliteMatchingText_(node, token)
 
-    goog.dom.classes.add(node, @rowClassName)
-    @rowDivs_.push(node)
+    goog.dom.classes.add node, @rowClassName
+    @rowDivs_.push node
     node

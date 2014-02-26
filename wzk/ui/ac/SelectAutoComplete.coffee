@@ -1,78 +1,76 @@
-goog.require 'goog.dom.dataset'
-goog.require 'goog.ui.ac.InputHandler'
-goog.require 'wzk.ui.ac.Renderer'
+goog.require 'wzk.ui.ac.InputHandler'
 goog.require 'wzk.ui.ac.PictureCustomRenderer'
-goog.require 'goog.dom.dataset'
+goog.require 'wzk.ui.ac.ArrayMatcher'
+goog.require 'wzk.ui.ac.AutoComplete'
+goog.require 'wzk.ui.ac.SelectOneStorage'
 
-###*
-  Implements SelectionHandler interface
-###
-class wzk.ui.ac.SelectAutoComplete extends wzk.ui.ac.AutoComplete
-
-  ###*
-    @enum {string}
-  ###
-  @TAGS:
-    ITEM: 'span'
-    SELECTED_VALUE: 'on'
+class wzk.ui.ac.SelectAutoComplete
 
   ###*
     Select is assumed to be prepopulated with options in templated
 
     @param {wzk.dom.Dom} dom
-    @param {Element} select with options, that has values of id's of items
-    @param {wzk.ui.ac.ArrayMatcher} matcher
-    @param {Array.<string>} data
+    @param {wzk.ui.ac.Renderer} renderer
   ###
-  constructor: (@dom, @select, matcher, data) ->
-    @TAGS = wzk.ui.ac.SelectAutoComplete.TAGS
-
-    # extract image placeholder attribute
-    imagePlaceholder = goog.dom.dataset.get @select, 'imagePlaceholder'
-
-    @rowCustomRenderer = new wzk.ui.ac.PictureCustomRenderer(@dom)
-    @renderer = new wzk.ui.ac.Renderer(@dom, imagePlaceholder, null, @rowCustomRenderer)
-    @renderer.decorate(@select)
-    @input = @renderer.getInput()
-
-    # hide select
-    goog.style.setElementShown @select, false
-
-    # tell autocomplete which input it should attach to
-    @inputHandler = new goog.ui.ac.InputHandler()
-    @inputHandler.attachAutoComplete(@)
-    @inputHandler.attachInput(@input)
-
-    @initData(data)
-
-    # this class implements SelectionHandler interface
-    super matcher, @renderer, @inputHandler
+  constructor: (@dom, @renderer) ->
+    @select = null
+    @handler = null
+    @stro = null
 
   ###*
-    Initializes autocomplete into defaultly set data
+    @protected
+    @param {Array.<wzk.resource.Model>} data
   ###
-  initData: (data) ->
-    # works even on IE9
-    id = goog.dom.forms.getValue(@select)
-    for row in data
-      if row["id"] is id
-        @afterSelect(row)
-        break
+  findDefaultValue: (data) ->
+    model = @stor.load data
+    if model?
+      @setDefaultValue model
 
   ###*
-    @param {Object} row
+    @protected
+    @param {wzk.resource.Model} model
   ###
-  selectRow: (row) ->
-    goog.dom.forms.setValue @select, row["id"]
-    @afterSelect(row)
+  setDefaultValue: (model) ->
+    input = @renderer.getInput()
+    @handler.detachInput input.getElement()
+    input.setValue model.toString()
+    @handler.attachInput input.getElement()
+
+    @afterSelect model
 
   ###*
+    @param {Element} select
+  ###
+  decorate: (@select) ->
+    @renderer.decorate @select
+    @stor = new wzk.ui.ac.SelectOneStorage @dom, @select
+
+  ###*
+    @param {Array} data
+  ###
+  load: (data) ->
+    matcher = new wzk.ui.ac.ArrayMatcher data, false
+    @handler = new wzk.ui.ac.InputHandler null, null, false
+    ac = new wzk.ui.ac.AutoComplete matcher, @renderer, @handler
+
+    @handler.attachAutoComplete ac
+    @handler.attachInput @renderer.getInput().getElement()
+
+    ac.listen goog.ui.ac.AutoComplete.EventType.UPDATE, @handleUpdate
+
+    @findDefaultValue data
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleUpdate: (e) =>
+    @stor.store e.row
+    @afterSelect e.row
+
+  ###*
+    @protected
     @param {Object} row
   ###
   afterSelect: (row) ->
-    # input must be detached in order to change text to prevent autocomplete
-    # catching event of changed text and displaying autocomplete list
-    @inputHandler.detachInput(@input)
-    @input.value = row.toString()
-    @inputHandler.attachInput(@input)
-    @renderer.setImage(row["photo"])
+    @renderer.updateImage row
