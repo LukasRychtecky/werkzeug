@@ -44,6 +44,8 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, proc, ss, ctor) ->
   query = new wzk.resource.Query parser.parseResource(table)
   query.putDefaultExtraFields()
 
+  client.setDefaultExtraFields query
+
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
   dialog.setConfirm extractor.parseConfirm()
   dialog.setTitle extractor.parseTitle()

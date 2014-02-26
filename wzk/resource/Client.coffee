@@ -36,6 +36,12 @@ class wzk.resource.Client
     @builder = new wzk.resource.ModelBuilder()
 
   ###*
+    @param {wzk.resource.Query} query
+  ###
+  setDefaultExtraFields: (query) ->
+    @headers[wzk.resource.Client.X_HEADERS.EXTRA_FIELDS] = query.composeExtraFields() if query.hasExtraFields()
+
+  ###*
     @protected
     @param {wzk.net.XhrIo} xhr
     @param {Function} onError
