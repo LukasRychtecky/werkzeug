@@ -38,3 +38,5 @@ class wzk.ui.menu.MenuItemRenderer extends goog.ui.MenuItemRenderer
   ###
   createContent: (content, dom) ->
     dom.createDom wzk.ui.menu.MenuItemRenderer.RENDER.INNER_TAG, 'menuitem', content
+
+goog.addSingletonGetter wzk.ui.menu.MenuItemRenderer
