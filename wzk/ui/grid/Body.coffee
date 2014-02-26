@@ -125,6 +125,7 @@ class wzk.ui.grid.Body extends goog.ui.Container
 
   ###*
     @override
+    @suppress {visibility}
   ###
   handleMouseDown: (e) ->
     if @enabled_

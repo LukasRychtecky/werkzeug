@@ -242,7 +242,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     btn = e.target
     model = btn.getModel().model
     action = btn.getModel().action
-    btn.call @repo.getClient(), model['_rest_links'][action['name']]['url'], action['method'], action['data'], () =>
+    btn.call @repo.getClient(), model['_rest_links'][action['name']]['url'], action['method'], action['data'], =>
       # dirty remove by row replace, when REST API will be fixed
       @buildBody @buildQuery(), (result) =>
         @paginator.refresh result

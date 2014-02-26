@@ -330,22 +330,17 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     # add menu into menu-container
     dom.appendChild container, @baseSelect
 
-    menu = new wzk.ui.menu.Menu()
+    menu = new wzk.ui.menu.Menu @dom
     menu.setVisible false
-
-    # set menu tag to be ul
-    menu.setRenderer new wzk.ui.menu.MenuRenderer()
 
     # create and add MenuItems
     for base in paginator.getBases()
-      menuItem = new goog.ui.MenuItem goog.string.format(@switcherPattern, base), null, @dom
-      menuItem.base = base
-      menuItem.setRenderer new wzk.ui.menu.MenuItemRenderer()
+      menuItem = new goog.ui.MenuItem goog.string.format(@switcherPattern, base), base, @dom, wzk.ui.menu.MenuItemRenderer.getInstance()
       menu.addChild menuItem, true
 
     # do menu action on click of menu item
     goog.events.listen menu, goog.ui.Component.EventType.ACTION, (event) =>
-      base = event.target.base
+      base = event.target.getModel()
       menu.setVisible false
       dom.appendChild container, @baseSelect  # destroy menu and append select again
       @setSelectBase @baseSelect, base

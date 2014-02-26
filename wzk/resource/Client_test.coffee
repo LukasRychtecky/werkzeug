@@ -77,6 +77,7 @@ suite 'wzk.resource.Client', ->
       query =
         base: 10
         offset: 0
+        hasExtraFields: -> false
 
       onSuccess = (data, result) ->
         xhr = xhrFac.last

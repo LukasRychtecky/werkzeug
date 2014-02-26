@@ -15,7 +15,12 @@ class wzk.ui.menu.MenuRenderer extends goog.ui.MenuRenderer
   constructor: ->
     super()
 
+  ###*
+    @override
+  ###
   createDom: (container) ->
     ul = container.getDomHelper().createDom(wzk.ui.menu.MenuRenderer.RENDER.TAG)
     ul.setAttribute('class', wzk.ui.menu.MenuRenderer.RENDER.CLASS)
     ul
+
+goog.addSingletonGetter wzk.ui.menu.MenuRenderer

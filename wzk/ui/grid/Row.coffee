@@ -17,5 +17,8 @@ class wzk.ui.grid.Row extends wzk.ui.Control
     @addChild cell
     cell
 
+  ###*
+    @override
+  ###
   isAllowTextSelection: ->
     return true

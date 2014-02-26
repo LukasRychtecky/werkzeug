@@ -1,15 +1,13 @@
 goog.require 'wzk.ui.menu.MenuRenderer'
 
-###
-  Note that you MUST set right MenuItemRenderer (the one in this namespace) to your menu items.
-###
 class wzk.ui.menu.Menu extends goog.ui.Menu
 
-  construct: (dom, renderer) ->
+  ###*
+    @param {wzk.dom.Dom} dom
+    @param {wzk.ui.menu.MenuRenderer|null|undefined=} renderer
+  ###
+  constructor: (dom, renderer = wzk.ui.menu.MenuRenderer.getInstance()) ->
     super dom, renderer
-
-    # sets default renderer to be UL renderer
-    @setRenderer new wzk.ui.menu.MenuRenderer()
 
   ###
     @override
