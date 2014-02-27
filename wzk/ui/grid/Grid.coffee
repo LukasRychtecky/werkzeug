@@ -299,7 +299,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {goog.ui.Button} btn
   ###
   showDialog: (btn) ->
-    @dialog.setVisible true
+    @dialog.open()
+    @dialog.focus()
     goog.events.listenOnce @dialog, goog.ui.Dialog.EventType.SELECT, (e) =>
       if e.key is goog.ui.Dialog.DefaultButtonKeys.YES
         @dispatchDeleteItem btn
