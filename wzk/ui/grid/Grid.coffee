@@ -21,6 +21,8 @@ goog.require 'wzk.ui.grid.Row'
 goog.require 'goog.object'
 goog.require 'goog.array'
 goog.require 'wzk.ui.form.RemoteButton'
+goog.require 'wzk.ui.form.ActionButton'
+goog.require 'wzk.ui.grid.RowBuilder'
 
 class wzk.ui.grid.Grid extends wzk.ui.Component
 
@@ -46,9 +48,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @base = 10
     @tbody = null
     @sorter = null
-    @formatter = new wzk.ui.grid.CellFormatter()
     @lastQuery = {}
     @rows = new wzk.ui.grid.Body dom: @dom
+    @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter())
 
   ###*
     @param {Element} table
@@ -124,7 +126,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
     @repo.load query, (data, result) =>
       for model in data
-        @buildRow model
+        row = @rowBuilder.build model
+        row.listen wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn
+        row.listen wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton
 
       unless @rows.isInDocument()
         @rows.render @table
@@ -151,141 +155,14 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @param {Object} model
-  ###
-  buildRow: (model) ->
-    row = new wzk.ui.grid.Row dom: @dom
-    row.setModel model
-    @rows.addChild row, true
-    for col in @cols
-      @buildCell(model, col, row)
-
-    row.addClassName cls for cls in model['_class_names']
-
-    if goog.array.isEmpty model['_actions']
-      row.addCell ''
-    else
-      @buildActionsCell row, model
-
-  ###*
-    @protected
-    @param {Object} model
-    @param {string} col
-    @param {wzk.ui.grid.Row} row
-  ###
-  buildCell: (model, col, row) ->
-    row.addCell @formatter.format(model, col)
-
-  ###*
-    @protected
-    @param {wzk.ui.grid.Row} row
-    @param {Object} model
-  ###
-  buildActionsCell: (row, model) ->
-    cell = row.addCell ''
-    cell.addClass 'actions'
-    @buildAction action, model, cell, row for action in model['_actions']
-    row.addChild cell
-
-  ###*
-    @protected
-    @param {Object} action
-    @param {Object} model
-    @param {wzk.ui.grid.Cell} cell
-    @param {wzk.ui.grid.Row} row
-  ###
-  buildAction: (action, model, cell, row) ->
-    if action['type'] is 'rest'
-      @buildRestAction action, model, cell, row
-    else if action['type'] is 'web'
-      @buildWebAction action, model, cell
-    else
-      # TODO: use google closure logger
-      @dom.getWindow().console.warn('Non-existent action type: ' + action['type'])
-
-  ###*
-    @protected
-    @param {Object} action
-    @param {Object} model
-    @param {wzk.ui.grid.Cell} cell
-    @param {wzk.ui.grid.Row} row
-  ###
-  buildRestAction: (action, model, cell, row) ->
-    if action['method'] is 'DELETE'
-      btn = @buildButton action['verbose_name'], action['name'], model, cell, row
-      btn.listen goog.ui.Component.EventType.ACTION, @handleDeleteBtn
-    else
-      @buildRemoteButton action, model, cell
-
-  ###*
-    @protected
-    @param {Object} action
-    @param {Object} model
-    @param {wzk.ui.grid.Cell} cell
-    @return {wzk.ui.form.RemoteButton}
-  ###
-  buildRemoteButton: (action, model, cell) ->
-    btn = new wzk.ui.form.RemoteButton action['verbose_name'], undefined, @dom
-    btnData =
-      model: model
-      action: action
-    @setupButton btnData, action['verbose_name'], action['class_name'], btn
-    cell.addChild btn
-    btn.listen goog.ui.Component.EventType.ACTION, @handleRemoteButton
-    btn
-
-  ###*
-    @protected
     @param {goog.events.Event} e
   ###
   handleRemoteButton: (e) =>
     btn = e.target
     model = btn.getModel().model
     action = btn.getModel().action
-    btn.call @repo.getClient(), model['_rest_links'][action['name']]['url'], action['method'], action['data'], =>
-      # dirty remove by row replace, when REST API will be fixed
-      @buildBody @buildQuery(), (result) =>
-        @paginator.refresh result
-
-  ###*
-    @protected
-    @param {Object} action
-    @param {Object} model
-    @param {wzk.ui.grid.Cell} cell
-  ###
-  buildWebAction: (action, model, cell) ->
-    link = new wzk.ui.Link dom: @dom, href: model['_web_links'][action['name']], caption: action['verbose_name']
-    link.addClass(action['class_name'] or action['name'])
-    cell.addChild link
-
-  ###*
-    @protected
-    @param {string} caption
-    @param {string} className
-    @param {Object} model
-    @param {wzk.ui.grid.Cell} cell
-    @param {wzk.ui.grid.Row} row
-    @return {goog.ui.Button}
-  ###
-  buildButton: (caption, className, model, cell, row) ->
-    btn = new goog.ui.Button caption, wzk.ui.ButtonRenderer.getInstance(), @dom
-    btn.addClassName 'btn-danger'
-    @setupButton model, caption, className, btn
-    cell.addChild btn
-    @buildButtonModel btn, row, model
-    btn
-
-  ###*
-    @protected
-    @param {Object} model
-    @param {string} caption
-    @param {string} className
-    @param {goog.ui.Button} btn
-  ###
-  setupButton: (model, caption, className, btn) ->
-    btn.addClassName className
-    btn.setModel model
-    btn.setTooltip caption
+    btn.call @repo.getClient(), model['_rest_links'][action['name']]['url'], action['method'], action['data'], (response) =>
+      @rowBuilder.replaceRowByModel(response)
 
   ###*
     @protected
@@ -355,14 +232,3 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   silentlyRemoveRow: (btn) ->
     @dom.removeNode btn.getModel().row
-
-  ###*
-    Temporary a model wrapper, connects a table row and its data
-
-    @private
-    @param {goog.ui.Button} btn
-    @param {wzk.ui.grid.Row} row
-    @param {Object} model
-  ###
-  buildButtonModel: (btn, row, model) ->
-    btn.setModel row: row, model: model
