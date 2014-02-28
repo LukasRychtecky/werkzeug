@@ -180,12 +180,13 @@ class wzk.resource.Client
     @param {Object|null|string=} content
     @param {Function=} onSuccess
     @param {Function=} onError
+    @param {boolean=} responseAsModel
   ###
-  request: (url, method, content = {}, onSuccess = null, onError = null) ->
+  request: (url, method, content = {}, onSuccess = null, onError = null, responseAsModel = false) ->
     xhr = @xhrFac.build()
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
-      onSuccess xhr.getResponseJson() if onSuccess?
+      onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else xhr.getResponseJson()) if onSuccess
 
     @listenOnError xhr, onError
 
