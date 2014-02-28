@@ -21,13 +21,16 @@ class wzk.ui.form.RemoteButton extends goog.ui.Button
     @param {string} url
     @param {string} method
     @param {Object|null|string=} content
-    @param {function()|null=} onSuccess
+    @param {function(Object)|null=} onSuccess
+    @param {boolean=} responseByModel
   ###
-  call: (client, url, method, content, onSuccess = null) ->
+  call: (client, url, method, content, onSuccess = null, responseByModel = false) ->
     @setEnabled false
-    client.request url, method, content, =>
+    handleSuccess = (response) =>
       @setEnabled true
-      onSuccess() if onSuccess?
+      onSuccess(response) if onSuccess?
+
+    client.request url, method, content, handleSuccess, null, responseByModel
 
   ###*
     @override
