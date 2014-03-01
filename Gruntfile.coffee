@@ -148,6 +148,10 @@ module.exports = (grunt) ->
           level: 'error'
         no_empty_param_list:
           level: 'warn'
+        space_operators:
+          level: 'warn'
+        cyclomatic_complexity:
+          level: 'warn'
       all:
         files: [
           expand: true
