@@ -6,9 +6,8 @@ class wzk.ui.grid.PaneMode
   ###*
     @enum {string}
   ###
-  @SNIPPET:
-    CLS: 'snippet-container'
-    PARAM: 'content'
+  @ATTRS:
+    LINK: 'webLink'
 
   ###*
     @type {string}
@@ -18,14 +17,9 @@ class wzk.ui.grid.PaneMode
   ###*
     @enum {string}
   ###
-  @ATTRS:
-    LINK: 'webLink'
-
-  ###*
-    @enum {string}
-  ###
   @DATA:
     MODE: 'mode'
+    SNIPPET: 'snippet'
 
   ###*
     @param {Element} table
@@ -73,14 +67,15 @@ class wzk.ui.grid.PaneMode
   loadSnippets: (model) =>
     @ss.set wzk.ui.grid.PaneMode.PARAM, model['id']
     A = wzk.ui.grid.PaneMode.ATTRS
-    for el in @dom.clss wzk.ui.grid.PaneMode.SNIPPET.CLS
+    for el in @dom.all '*[data-snippet]'
       link = @parseLink String goog.dom.dataset.get(el, A.LINK)
-      url = model['_web_links'][url.link]
+      url = model['_web_links'][link.link]
 
       if link.index?
         url = url[link.index]
       if url?
-        @processSnippet url, el
+        name = String goog.dom.dataset.get(el, wzk.ui.grid.PaneMode.DATA.SNIPPET)
+        @processSnippet name, url, el
 
   ###*
     @protected
@@ -94,12 +89,12 @@ class wzk.ui.grid.PaneMode
 
   ###*
     @protected
+    @param {string} name
     @param {string} url
     @param {Element} el
   ###
-  processSnippet: (url, el) ->
-    PARAM = wzk.ui.grid.PaneMode.SNIPPET.PARAM
-    @client.request url + '?snippet=' + PARAM, 'GET', {}, (json) =>
+  processSnippet: (name, url, el) ->
+    @client.request url + '?snippet=' + name, 'GET', {}, (json) =>
       if json['snippets']?
-        el.innerHTML = json['snippets'][PARAM]
+        el.innerHTML = json['snippets'][name]
       @reg.process el
