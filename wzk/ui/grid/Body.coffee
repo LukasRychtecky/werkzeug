@@ -45,7 +45,7 @@ class wzk.ui.grid.Body extends goog.ui.Container
 
     return unless @renderChildrenInternally
 
-    @forEachChild (child) =>
+    @forEachChild (child) ->
       child.createDom()
 
   ###*

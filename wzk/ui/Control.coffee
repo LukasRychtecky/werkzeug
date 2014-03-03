@@ -38,7 +38,7 @@ class wzk.ui.Control extends goog.ui.Control
 
     return unless @renderChildrenInternally
 
-    @forEachChild (child) =>
+    @forEachChild (child) ->
       child.createDom()
 
   ###*
