@@ -128,7 +128,7 @@ class wzk.resource.Client
   delete: (model, onSuccess = null, onError = null) ->
     xhr = @xhrFac.build()
 
-    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
+    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess() if onSuccess?
 
     @listenOnError xhr, onError
@@ -146,7 +146,7 @@ class wzk.resource.Client
   create: (model, onSuccess = null, onError = null) ->
     xhr = @xhrFac.build()
 
-    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
+    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess xhr.getResponseJson() if onSuccess?
 
     @listenOnError xhr, onError
@@ -164,7 +164,7 @@ class wzk.resource.Client
   update: (model, onSuccess = null, onError = null) ->
     xhr = @xhrFac.build()
 
-    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
+    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess xhr.getResponseJson() if onSuccess?
 
     @listenOnError xhr, onError
@@ -201,7 +201,7 @@ class wzk.resource.Client
   ###
   sniff: (url, onSuccess, onError = null) ->
     xhr = @xhrFac.build()
-    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
+    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess xhr.getResponseText()
 
     @listenOnError xhr, onError

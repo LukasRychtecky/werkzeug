@@ -42,7 +42,7 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
     @param {Element} form
   ###
   removeDefaultBehaviour: (form) ->
-    goog.events.listen form, 'submit', (e) =>
+    goog.events.listen form, 'submit', (e) ->
       e.preventDefault()
 
   ###*
@@ -77,4 +77,4 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
     @protected
     @param {*} res
   ###
-  onError: (res) =>
+  onError: (res) ->

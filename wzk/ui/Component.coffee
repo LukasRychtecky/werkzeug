@@ -58,7 +58,7 @@ class wzk.ui.Component extends goog.ui.Component
 
     return unless @renderChildrenInternally
 
-    @forEachChild (child) =>
+    @forEachChild (child) ->
       child.createDom()
 
   ###*
