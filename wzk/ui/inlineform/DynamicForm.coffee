@@ -17,6 +17,7 @@ class wzk.ui.inlineform.DynamicForm
   constructor: (@dom) ->
     @formNum = 0
     @MAX_FORMS = 1000
+    @config = null
 
   ###*
     Allow dynamic adding table rows. A fieldset argument is HTMLFieldSetElement (but should works with basic Element) which contains a table and a trigger button.
@@ -54,6 +55,7 @@ class wzk.ui.inlineform.DynamicForm
     listener = goog.events.listen btn, goog.events.EventType.CLICK, =>
       builder.addRow()
       @formNum++
+      @config.store @formNum
       if @formNum is @MAX_FORMS
         goog.dom.classes.add(btn, 'disabled')
         goog.events.unlistenByKey(listener)
@@ -65,15 +67,12 @@ class wzk.ui.inlineform.DynamicForm
     @param {Element} fieldset
   ###
   initInputs: (fieldset) ->
-    config = new wzk.ui.inlineform.ConfigHandler fieldset
-    config.load()
+    @config = new wzk.ui.inlineform.ConfigHandler fieldset
+    @config.load()
 
-    @formNum = config.formNum
+    @formNum = @config.formNum
 
-    @MAX_FORMS = config.MAX_FORMS
-
-    goog.events.listen fieldset.form, goog.events.EventType.SUBMIT, =>
-      config.store @formNum
+    @MAX_FORMS = @config.MAX_FORMS
 
   ###*
     @protected
