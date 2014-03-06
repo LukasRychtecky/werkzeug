@@ -48,7 +48,7 @@ class wzk.ui.form.AjaxForm extends wzk.ui.form.BackgroundForm
   ###
   uploadFiles: (form) ->
     iframeIO = new goog.net.IframeIo()
-    iframeIO.sendFromForm(form)
+    iframeIO.sendFromForm (`/** @type {HTMLFormElement} */`) form
     iframeIO.listen goog.net.EventType.SUCCESS, @uploadSuccess
     iframeIO.listen goog.net.EventType.ERROR, @uploadError
 

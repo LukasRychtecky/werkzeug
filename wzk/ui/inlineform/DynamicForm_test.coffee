@@ -95,7 +95,6 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
     fireClick()
 
     assert.equal parent.children.length, 1
-    assert.isFunction form.events['onsubmit']
 
   test 'Should disable the button, a count of forms is limited by MAX_NUM_FORMS', ->
     config.push(mockInput(2, '__MAX_NUM_FORMS'))
@@ -106,7 +105,6 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
     fireClick()
 
     assert.equal parent.children.length, 2
-    assert.isFunction form.events['onsubmit']
 
   test 'A fieldset must contains an element with "dynamic" class', ->
     fieldset = mockFieldset('input[type=hidden]': [])
