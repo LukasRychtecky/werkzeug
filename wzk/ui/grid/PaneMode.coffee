@@ -20,6 +20,10 @@ class wzk.ui.grid.PaneMode
   @DATA:
     MODE: 'mode'
     SNIPPET: 'snippet'
+    SNIPPET_SCOPE: 'snippetScope'
+
+  @CSS:
+    HIDDEN: 'hidden'
 
   ###*
     @param {Element} table
@@ -78,6 +82,24 @@ class wzk.ui.grid.PaneMode
         @processSnippet name, url, el
 
   ###*
+    Scope parent, is parent with data attribute DATA.SNIPPET_SCOPE
+    Scope parent is found in processSnippet method.
+
+    If scope parent is found, it's set to be shown.
+
+    @protected
+    @param {Element} el
+    @param {string} snippetName
+  ###
+  findScopeParent: (el, snippetName) ->
+    el = @dom.getParentElement el
+    while el?
+      if goog.dom.dataset.get(el, wzk.ui.grid.PaneMode.DATA.SNIPPET_SCOPE) is snippetName
+        return el
+      el = @dom.getParentElement el
+    return undefined
+
+  ###*
     @protected
     @param {string} attr
     @return {Object}
@@ -97,4 +119,11 @@ class wzk.ui.grid.PaneMode
     @client.request url + '?snippet=' + name, 'GET', {}, (json) =>
       if json['snippets']?
         el.innerHTML = json['snippets'][name]
+
+        # Find scope parent nad then show it
+        scopeParent = @findScopeParent(el, name)
+        if scopeParent?
+          goog.dom.classes.remove scopeParent, wzk.ui.grid.PaneMode.CSS.HIDDEN
+          goog.style.setElementShown scopeParent, true
+
       @reg.process el
