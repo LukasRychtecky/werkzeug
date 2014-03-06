@@ -3,6 +3,7 @@ goog.provide 'wzk.ui.form.AjaxForm'
 goog.require 'wzk.ui.form.BackgroundForm'
 goog.require 'goog.dom.forms'
 goog.require 'goog.events.Event'
+goog.require 'goog.net.IframeIo'
 
 ###*
   Sending an existing form via AJAX.
@@ -35,7 +36,44 @@ class wzk.ui.form.AjaxForm extends wzk.ui.form.BackgroundForm
     super form
     data = goog.dom.forms.getFormDataString form
 
-    @client.postForm @url, data, @onSuccess, @onError
+    if @formContainsFile(form)
+      @uploadFiles(form)
+    else
+      @client.postForm @url, data, @onSuccess, @onError
+
+  ###*
+    Upload files in iframe
+    @protected
+    @param {Element} form
+  ###
+  uploadFiles: (form) ->
+    iframeIO = new goog.net.IframeIo()
+    iframeIO.sendFromForm(form)
+    iframeIO.listen goog.net.EventType.SUCCESS, @uploadSuccess
+    iframeIO.listen goog.net.EventType.ERROR, @uploadError
+
+  ###*
+    @protected
+    @param {goog.events.Event} event
+  ###
+  uploadSuccess: (event) ->
+    @onSuccess event.target.getResponseJson()
+
+  ###*
+    @protected
+    @param {goog.events.Event} event
+  ###
+  uploadError: (event) ->
+    @onError event.target.getResponseHtml()
+
+  ###*
+    @param {Element} form
+  ###
+  formContainsFile: (form) ->
+    for fileInput in form.querySelectorAll('input[type=file]')
+      if !!goog.dom.forms.getValue fileInput
+        return true
+    return false
 
   ###*
     @suppress {checkTypes}
