@@ -34,6 +34,15 @@ class wzk.ui.dialog.ButtonSet extends goog.ui.Dialog.ButtonSet
   ###*
     @return {wzk.ui.dialog.ButtonSet}
   ###
+  @createNoYes: ->
+    btns = new wzk.ui.dialog.ButtonSet()
+    btns.addButton goog.ui.Dialog.ButtonSet.DefaultButtons.NO, false, true
+    btns.addButton goog.ui.Dialog.ButtonSet.DefaultButtons.YES, true
+    btns
+
+  ###*
+    @return {wzk.ui.dialog.ButtonSet}
+  ###
   @createYesNoCancel: ->
     btns = new wzk.ui.dialog.ButtonSet()
     btns.addButton goog.ui.Dialog.ButtonSet.DefaultButtons.YES
