@@ -3,6 +3,7 @@ suite 'wzk.resource.Client', ->
   E = goog.net.EventType
 
   context = null
+  query = null
 
   mockXhrFactory = (event, data = null, resHeaders = {}) ->
     fac =
@@ -40,6 +41,9 @@ suite 'wzk.resource.Client', ->
 
   setup ->
     context = 'users-user'
+    query = new wzk.resource.Query()
+    query.base = 10
+    query.offset = 0
 
 
   suite '#find', ->
@@ -73,11 +77,6 @@ suite 'wzk.resource.Client', ->
     test 'Should send params for paging', (done) ->
       xhrFac = mockXhrFactory E.SUCCESS, [foo: 'bar', bar: 'foo']
       client = new Client xhrFac, context
-
-      query =
-        base: 10
-        offset: 0
-        hasExtraFields: -> false
 
       onSuccess = (data, result) ->
         xhr = xhrFac.last
