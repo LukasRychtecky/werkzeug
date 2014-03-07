@@ -8,6 +8,7 @@ goog.require 'goog.object'
 goog.require 'wzk.resource.UrlExpert'
 goog.require 'wzk.resource.Model'
 goog.require 'wzk.resource.ModelBuilder'
+goog.require 'wzk.resource.Query'
 
 class wzk.resource.Client
 
@@ -22,6 +23,7 @@ class wzk.resource.Client
     DIRECTION: 'X-Direction'
     REFERRER: 'X-Referer'
     EXTRA_FIELDS: 'X-Extra-Fields'
+    SERIALIZATION_FORMAT: 'X-Serialization-Format'
 
   ###*
     @constructor
@@ -80,6 +82,7 @@ class wzk.resource.Client
       headers[X.DIRECTION] = query.direction if query.direction?
       headers[X.REFERRER] = query.referer if query.referer?
       headers[X.EXTRA_FIELDS] = query.composeExtraFields() if query.hasExtraFields()
+      headers[X.SERIALIZATION_FORMAT] = query.getSerFormat()
 
     method = 'GET'
 

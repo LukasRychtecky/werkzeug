@@ -3,6 +3,14 @@ goog.require 'goog.Uri'
 class wzk.resource.Query
 
   ###*
+    @enum {string}
+  ###
+  @S_FORMAT:
+    VERBOSE: 'VERBOSE'
+    RAW: 'RAW'
+    BOTH: 'BOTH'
+
+  ###*
     @param {string=} path
   ###
   constructor: (@path = '') ->
@@ -12,9 +20,19 @@ class wzk.resource.Query
     @offset ?= 0
     @uri = new goog.Uri @path
     @extraFields = []
+    @serFormat = wzk.resource.Query.S_FORMAT.RAW
 
   putDefaultExtraFields: ->
     @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links']
+
+  verbose: ->
+    @serFormat = wzk.resource.Query.S_FORMAT.VERBOSE
+
+  ###*
+    @return {string}
+  ###
+  getSerFormat: ->
+    @serFormat
 
   ###*
     @param {string} field

@@ -43,6 +43,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   repo = new wzk.ui.grid.Repository client
   query = new wzk.resource.Query parser.parseResource(table)
   query.putDefaultExtraFields()
+  query.verbose()
 
   client.setDefaultExtraFields query
 
