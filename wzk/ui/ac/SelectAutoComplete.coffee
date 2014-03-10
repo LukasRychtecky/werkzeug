@@ -15,7 +15,7 @@ class wzk.ui.ac.SelectAutoComplete
   constructor: (@dom, @renderer) ->
     @select = null
     @handler = null
-    @stro = null
+    @stor = null
 
   ###*
     @protected
