@@ -6,6 +6,7 @@ goog.require 'wzk.ui.form.ModalForm'
 goog.require 'goog.dom.forms'
 goog.require 'wzk.resource.Client'
 goog.require 'wzk.ui.form.RemoteButton'
+goog.require 'wzk.ui.form.RemoteButtonDecorator'
 
 ###*
   @param {Element} form
@@ -61,13 +62,9 @@ wzk.ui.form.openFormInModal = (el, dom, xhrFac, appInstance) ->
   @param {Element} el
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
+  @return {wzk.ui.form.RemoteButtonDecorator}
 ###
 wzk.ui.form.buildRemoteButton = (el, dom, xhrFac) ->
-  btn = new wzk.ui.form.RemoteButton null, null, dom
+  btn = new wzk.ui.form.RemoteButtonDecorator dom, xhrFac
   btn.decorate el
-  btn.listen goog.ui.Component.EventType.ACTION, ->
-    client = new wzk.resource.Client xhrFac
-    url = String(goog.dom.dataset.get(el, 'url'))
-    method = String(goog.dom.dataset.get(el, 'method'))
-    data = goog.dom.dataset.get(el, 'data') ? {}
-    btn.call client, url, method, data
+  btn
