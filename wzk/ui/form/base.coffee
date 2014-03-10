@@ -69,4 +69,5 @@ wzk.ui.form.buildRemoteButton = (el, dom, xhrFac) ->
     client = new wzk.resource.Client xhrFac
     url = String(goog.dom.dataset.get(el, 'url'))
     method = String(goog.dom.dataset.get(el, 'method'))
-    btn.call client, url, method, {}
+    data = goog.dom.dataset.get(el, 'data') ? {}
+    btn.call client, url, method, data
