@@ -45,7 +45,6 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   constructor: (@dom, @repo, @cols, @dialog, @query, @paginator) ->
     super()
     @table = null
-    @base = 10
     @tbody = null
     @sorter = null
     @lastQuery = {}
@@ -58,6 +57,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   decorate: (@table) ->
     @removeBody()
     paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
+    @paginator.loadData paginatorEl
+
     @buildBody @buildQuery({offset: (@paginator.page - 1) * @paginator.base}), (result) =>
       @decorateWithSorting()
 
@@ -84,7 +85,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   buildQuery: (opts = {}) ->
     @query.order = opts.column if opts.column?
     @query.direction = opts.direction if opts.direction?
-    @query.base = opts.base if opts.base?
+    @query.base = opts.base ? @paginator.base
     @query.offset = if opts.offset? then opts.offset else @paginator.offset
     @query
 

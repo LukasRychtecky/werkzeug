@@ -138,11 +138,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
       dom.insertChildAt paging, @switcher, 0
     else
       switcher = el.querySelector '.' + C.BASE_SWITCHER
-      if switcher?
-        @decorateSwitcher paginator, switcher, dom
-      else
-        @attachSwitcher paginator, el, dom
-    goog.dom.forms.setValue @switcherSelect, String(paginator.base)
+      @decorateSwitcher paginator, switcher, dom
 
     goog.style.setStyle el, 'visibility', 'inherit'
 
@@ -295,12 +291,14 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###*
     @protected
     @param {wzk.ui.Component} paginator
-    @param {Element} el
+    @param {Element|null} el
     @param {goog.dom.DomHelper} dom
   ###
   decorateSwitcher: (paginator, el, dom) ->
+    return unless el?
     @parseSwitchPattern el
     @attachSwitcher paginator, el, dom
+    goog.dom.forms.setValue @switcherSelect, String(paginator.base)
 
   ###*
     @protected
@@ -371,9 +369,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {number} base
   ###
   setSelectBase: (select, base) ->
-    if base?
-      caret = '<span class="caret"></span>'
-      select.innerHTML = [goog.string.format(@switcherPattern, base), caret].join('')
+    if base? and select?
+      select.innerHTML = [goog.string.format(@switcherPattern, base), '<span class="caret"></span>'].join('')
 
   ###*
     @param {number} base
