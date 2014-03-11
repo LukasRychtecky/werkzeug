@@ -13,9 +13,10 @@ class wzk.ui.ac.ExtSelectboxStorageHandler
   ###*
     @param {Array.<wzk.resource.Model>} data
     @param {wzk.ui.TagContainer} cont
+    @param {Object=} customRenderer
   ###
-  load: (data, cont) ->
-    @storage.load(data, cont)
+  load: (data, cont, customRenderer) ->
+    @storage.load(data, cont, customRenderer)
     @hangListener(cont)
 
   ###*

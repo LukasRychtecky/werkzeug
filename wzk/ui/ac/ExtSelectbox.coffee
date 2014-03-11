@@ -57,7 +57,7 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @inputHandler.attachInput(@input.getElement())
     @hangCleaner(@autoComplete)
     @delegateObligation(selectbox)
-    @handler.load(data, @cont) if @handler
+    @handler.load(data, @cont, @customRenderer) if @handler
 
   ###*
     @param {boolean} enabled
@@ -87,7 +87,8 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
   ###
   hangCleaner: (autoComplete) ->
     goog.events.listen autoComplete, goog.ui.ac.AutoComplete.EventType.UPDATE, (e) =>
-      @cont.addTag(e.row.toString(), e.row, @customRenderer.getTagRenderer())
+      tagRenderer = if @customRenderer? then @customRenderer.getTagRenderer() else null
+      @cont.addTag(e.row.toString(), e.row, tagRenderer)
       @input.clear()
 
   ###*
