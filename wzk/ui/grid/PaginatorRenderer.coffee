@@ -32,6 +32,14 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   @DATA:
     PAGE: 'p'
 
+  ###*
+    @enum {string}
+  ###
+  @PAGING_STYLE:
+    DATA: 'paginatorPaging'
+    SIMPLE: 'simple'
+    FULL: 'full'  # default
+
   constructor: ->
     super()
     @classes.push 'paginator'
@@ -41,6 +49,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @switcherPattern = '%d per page'
     @itemTag = 'LI'
     @itemInnerTag = 'SPAN'
+    @pagingStyle = null
 
   ###*
     @override
@@ -51,6 +60,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @attachResult paginator, el, dom
     @createPaging paginator, el, dom
     @attachSwitcher paginator, el, dom
+    @pagingStyle = goog.dom.dataset.get(paginator, wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.DATA)
     el
 
   ###*
@@ -206,7 +216,10 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
       @setPage prev, paginator.page - 1
 
     frag = dom.getDocument().createDocumentFragment()
-    @createPaging paginator, frag, dom
+
+    unless @pagingStyle is wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.SIMPLE
+      @createPaging paginator, frag, dom
+
     dom.insertSiblingAfter frag, prev
 
     next = el.querySelector '.' + C.NEXT
