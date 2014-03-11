@@ -11,13 +11,24 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###*
     @enum {string}
   ###
+  @DATA:
+    BASE: 'base'
+
+  ###*
+    @enum {string}
+  ###
   @EventType:
     GO_TO: 'go-to'
 
   ###*
+    @type {number}
+  ###
+  @BASE = 10
+
+  ###*
     @param {Object} params
       renderer: {@link wzk.ui.grid.PaginatorRenderer}
-      base: {number}
+      base: {number|undefined}
       page: {number}
   ###
   constructor: (params) ->
@@ -25,15 +36,21 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     super params
     {@base, @page} = params
 
+    @base = if @base >= 0 then @base else wzk.ui.grid.Paginator.BASE
     @page = if @page >= 0 then @page else 1
-    @base = if @base >= 0 then @base else 10
-    @offset = @offsetFromPage()
     @firstPage = 1
     @clones = []
     @listeners = []
     @switcher = null
     @bases = null
     @defBases = [10, 25, 50, 100, 500, 1000]
+
+  ###*
+    @param {Element} el
+  ###
+  loadData: (el) ->
+    @base = wzk.num.parseDec String(goog.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.BASE)), wzk.ui.grid.Paginator.BASE
+    @offsetFromPage()
 
   ###*
     @param {number} total
@@ -77,10 +94,9 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
 
   ###*
     @protected
-    @return {number}
   ###
   offsetFromPage: ->
-    (@page - 1) * @base
+    @offset = (@page - 1) * @base
 
   ###*
     Re-renders a paginator according to a current page
