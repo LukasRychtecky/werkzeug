@@ -16,7 +16,7 @@ goog.require 'wzk.ui.ac.RestDataProvider'
   @param {wzk.dom.Dom} dom
 ###
 wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
-  ac = wzk.ui.ac.buildSelectAutocomplete select, dom
+  ac = wzk.ui.ac.buildSelectAutoComplete select, dom
   dataProvider = new wzk.ui.ac.NativeDataProvider()
   dataProvider.load select, dom, (data) ->
     ac.load data
@@ -27,10 +27,8 @@ wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
   @param {wzk.net.XhrFactory} xhrFac
 ###
 wzk.ui.ac.buildSelectAutoCompleteRest = (select, dom, xhrFac) ->
-  ac = wzk.ui.ac.buildSelectAutocomplete select, dom
-  dataProvider = new wzk.ui.ac.RestDataProvider()
-  dataProvider.addExtraField '_obj_name'
-  dataProvider.load select, xhrFac, (data) ->
+  ac = wzk.ui.ac.buildSelectAutoComplete select, dom
+  wzk.ui.ac.buildRestDataProvider select, xhrFac, (data) ->
     ac.load data
 
 ###*
@@ -51,25 +49,30 @@ wzk.ui.ac.buildExtSelectboxFromSelectNative = (select, dom) ->
 ###
 wzk.ui.ac.buildExtSelectboxFromSelectRest = (select, dom, xhrFac) ->
   selectbox = wzk.ui.ac.buildExtSelectboxFromSelect select, dom
-
-  dataProvider = new wzk.ui.ac.RestDataProvider()
-  dataProvider.addExtraField '_obj_name'
-  dataProvider.load select, xhrFac, (data) ->
+  wzk.ui.ac.buildRestDataProvider select, xhrFac, (data) ->
     selectbox.decorate(select, data)
 
 ###*
-  @protected
+  @param {HTMLSelectElement} select
+  @param {wzk.net.XhrFactory} xhrFac
+  @param {function(Object)} onLoad
+###
+wzk.ui.ac.buildRestDataProvider = (select, xhrFac, onLoad) ->
+  dataProvider = new wzk.ui.ac.RestDataProvider()
+  dataProvider.addExtraField '_obj_name'
+  dataProvider.load select, xhrFac, onLoad
+
+###*
   @param {HTMLSelectElement} select
   @param {wzk.dom.Dom} dom
 ###
-wzk.ui.ac.buildSelectAutocomplete = (select, dom) ->
+wzk.ui.ac.buildSelectAutoComplete = (select, dom) ->
   renderer = new wzk.ui.ac.Renderer(dom, null, null, new wzk.ui.ac.PictureCustomRenderer(dom))
   ac = new wzk.ui.ac.SelectAutoComplete dom, renderer
   ac.decorate select
   ac
 
 ###*
-  @protected
   @param {HTMLSelectElement} select
   @param {wzk.dom.Dom} dom
 ###
