@@ -1,3 +1,5 @@
+goog.require 'wzk.ui.ac.PictureTagRenderer'
+
 class wzk.ui.ac.PictureCustomRenderer
 
   ###*
@@ -19,11 +21,13 @@ class wzk.ui.ac.PictureCustomRenderer
     @param {Node} node The node to render into.
   ###
   renderRow: (row, token, node) ->
-    node.appendChild @createImageOrPlaceholder(row.data)
-    node.appendChild @dom.createTextNode(row.data.toString())
+    unless row instanceof wzk.resource.Model
+      row = row['data']
+
+    node.appendChild @createImageOrPlaceholder(row)
+    node.appendChild @dom.createTextNode(row.toString())
 
   ###*
-    @protected
     @param {Object} data
     @return {Element|null}
   ###
@@ -44,3 +48,6 @@ class wzk.ui.ac.PictureCustomRenderer
   ###
   createImageOrPlaceholder: (data = null) ->
     if data? and data["photo"]? then @createImage(data) else @createImagePlaceholder()
+
+  getTagRenderer: ->
+    new wzk.ui.ac.PictureTagRenderer @dom, @

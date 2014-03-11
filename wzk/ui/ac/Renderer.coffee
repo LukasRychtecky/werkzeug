@@ -10,6 +10,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     ITEM: 'span'
     CONTAINER: 'ul'
     ROW: 'li'
+    ITEMS_CONTAINER: 'div'
 
   ###*
     @enum {string}
@@ -52,16 +53,19 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   decorate: (@select) ->
     goog.style.setElementShown @select, false
     # create input element and attach it to dom
-    @item = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
+    @container = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
     @imgOrPlaceholder = @customRenderer.createImageOrPlaceholder()
 
     # parent of select element is cosidered to be container
     selectParent = @dom.getParentElement @select
 
-    @dom.appendChild selectParent, @item
-    @dom.appendChild @item, @imgOrPlaceholder
+    @dom.appendChild selectParent, @container
+    @dom.appendChild @container, @imgOrPlaceholder
     @input = new wzk.ui.Input null, null, @dom
-    @input.render @item
+
+    @items = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEMS_CONTAINER
+    @dom.appendChild @container, @items
+    @input.render @container
 
   ###*
     @return {wzk.ui.Input}
