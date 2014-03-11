@@ -26,6 +26,13 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     super()
     @cont = new wzk.ui.TagContainer()
     @input = new wzk.ui.Input(null, wzk.ui.InputSearchRenderer.getInstance(), dom)
+
+    @clrBtn = new wzk.ui.CloseIcon()
+    @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
+      @clear()
+      e.preventDefault()
+
+
     @inputHandler = new wzk.ui.ac.InputHandler(null, null, false)
     @autoComplete = null
     @matcher = null
@@ -53,11 +60,15 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @hideOriginSelect(selectbox)
     @cont.renderBefore(selectbox)
     @input.renderBefore(selectbox)
+    @clrBtn.renderBefore(selectbox)
     @inputHandler.attachAutoComplete(@autoComplete)
     @inputHandler.attachInput(@input.getElement())
     @hangCleaner(@autoComplete)
     @delegateObligation(selectbox)
     @handler.load(data, @cont, @customRenderer) if @handler
+
+  clear: ->
+    @input.setValue ''
 
   ###*
     @param {boolean} enabled
