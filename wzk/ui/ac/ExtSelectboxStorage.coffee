@@ -13,15 +13,17 @@ class wzk.ui.ac.ExtSelectboxStorage
   ###*
     @param {Array.<wzk.resource.Model>} data
     @param {wzk.ui.TagContainer} cont
+    @param {Object=} customRenderer
   ###
-  load: (data, cont) ->
+  load: (data, cont, customRenderer) ->
     @prepareLookupTable(data)
     values = goog.dom.forms.getValue(@select)
     return unless values?
 
     for val in values
       model = @table[val]
-      cont.addTag(model['_obj_name'], model)
+      tagRenderer = if customRenderer? then customRenderer.getTagRenderer() else null
+      cont.addTag(model.toString(), model, tagRenderer)
 
   ###*
     @param {wzk.ui.TagContainer} cont

@@ -54,18 +54,30 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     goog.style.setElementShown @select, false
     # create input element and attach it to dom
     @container = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
-    @imgOrPlaceholder = @customRenderer.createImageOrPlaceholder()
+
+    if @customRenderer?
+      @imgOrPlaceholder = @customRenderer.createImageOrPlaceholder()
 
     # parent of select element is cosidered to be container
     selectParent = @dom.getParentElement @select
 
     @dom.appendChild selectParent, @container
-    @dom.appendChild @container, @imgOrPlaceholder
+
+    if @customRenderer?
+      @dom.appendChild @container, @imgOrPlaceholder
+
     @input = new wzk.ui.Input null, null, @dom
+    @clrBtn = new wzk.ui.CloseIcon()
+
+    @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
+      @input.setValue ''
+      @clearImage()
+      e.preventDefault()
 
     @items = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEMS_CONTAINER
     @dom.appendChild @container, @items
     @input.render @container
+    @clrBtn.render @container
 
   ###*
     @return {wzk.ui.Input}
@@ -77,9 +89,15 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @param {Object|null|undefined=} data
   ###
   updateImage: (data = null) ->
-    newImg = @customRenderer.createImageOrPlaceholder data
-    @dom.replaceNode newImg, @imgOrPlaceholder
-    @imgOrPlaceholder = newImg
+    if @imgOrPlaceholder?
+      newImg = @customRenderer.createImageOrPlaceholder data
+      @dom.replaceNode newImg, @imgOrPlaceholder
+      @imgOrPlaceholder = newImg
+
+  clearImage: ->
+    placeholder = @customRenderer.createImagePlaceholder()
+    @dom.replaceNode placeholder, @imgOrPlaceholder
+    @imgOrPlaceholder = placeholder
 
   ###*
     If the main HTML element hasn't been made yet, creates it and appends it

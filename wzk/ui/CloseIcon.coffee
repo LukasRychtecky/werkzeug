@@ -15,7 +15,7 @@ class wzk.ui.CloseIcon extends wzk.ui.Component
   ###*
     @constructor
     @extends {wzk.ui.Component}
-    @param {Object} params
+    @param {Object=} params
       renderer: {@link wzk.ui.CloseIconRenderer}
   ###
   constructor: (params = {}) ->
