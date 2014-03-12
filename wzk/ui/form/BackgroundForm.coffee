@@ -29,8 +29,10 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
   ###
   decorate: (form) ->
     return unless form?
+
     dispatcher = form.querySelector '.btn-save'
-    throw new Error 'Missing a dispatcher button' unless dispatcher?
+    return unless dispatcher
+
     @btn = new goog.ui.Button()
     @btn.decorate dispatcher
 
