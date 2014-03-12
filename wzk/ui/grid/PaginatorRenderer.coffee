@@ -31,12 +31,12 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###
   @DATA:
     PAGE: 'p'
+    PAGING: 'paging'
 
   ###*
     @enum {string}
   ###
   @PAGING_STYLE:
-    DATA: 'paginatorPaging'
     SIMPLE: 'simple'
     FULL: 'full'  # default
 
@@ -49,7 +49,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @switcherPattern = '%d per page'
     @itemTag = 'LI'
     @itemInnerTag = 'SPAN'
-    @pagingStyle = null
+    @pagingStyle = wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.FULL
 
   ###*
     @override
@@ -60,7 +60,6 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @attachResult paginator, el, dom
     @createPaging paginator, el, dom
     @attachSwitcher paginator, el, dom
-    @pagingStyle = goog.dom.dataset.get(paginator, wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.DATA)
     el
 
   ###*
@@ -140,6 +139,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     else
       @attachResult paginator, el, dom
 
+
+    @pagingStyle = goog.dom.dataset.get el, wzk.ui.grid.PaginatorRenderer.DATA.PAGING
     pagination = el.querySelector('.' + C.PAGINATION) ? el
     @decoratePagination paginator, pagination, dom
 
