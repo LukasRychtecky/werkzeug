@@ -25,19 +25,24 @@ class wzk.net.XhrFactory
     xhr.listen goog.net.EventType.ERROR, =>
       if @isJsonReponse xhr
         response = xhr.getResponseJson()
-        @flash.apply response
-        @snip.apply response
+        @applyJsonResponse(response)
       else
         @flash.error()
 
     xhr.listen goog.net.EventType.COMPLETE, =>
       if xhr.getStatus() isnt 204 and @isJsonReponse xhr
         response = xhr.getResponseJson()
-
-        @flash.apply response
-        @snip.apply response
+        @applyJsonResponse(response)
 
     xhr
+
+  ###*
+    Applies json response
+    @param {Object} json response
+  ###
+  applyJsonResponse: (json) ->
+    @flash.apply json
+    @snip.apply json
 
   ###*
     @suppress {checkTypes}
