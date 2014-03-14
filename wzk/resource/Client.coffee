@@ -4,6 +4,7 @@ goog.require 'goog.events'
 goog.require 'goog.net.EventType'
 goog.require 'goog.json'
 goog.require 'goog.net.XhrIo'
+goog.require 'goog.net.IframeIo'
 goog.require 'goog.object'
 goog.require 'wzk.resource.UrlExpert'
 goog.require 'wzk.resource.Model'
@@ -247,6 +248,51 @@ class wzk.resource.Client
       'Accept': 'text/html,application/json'
       'Content-Type': 'application/x-www-form-urlencoded'
     @send url, 'POST', xhr, content, headers
+
+  ###*
+    Posts given form in Iframe
+    Uses gog.net.IframeIo, which extracts action and method from form element
+    Automatically handles snippets and flashes, using delegation to xhrFactory
+    @param {HTMLFormElement} form
+    @param {function(Object)} onSuccess
+    @param {function(string=)} onError
+  ###
+  postFormIframe: (form, onSuccess, onError) ->
+    iframeIO = new goog.net.IframeIo()
+    iframeIO.sendFromForm (`/** @type {HTMLFormElement} */`) form
+
+    iframeIO.listen goog.net.EventType.SUCCESS, (event) =>
+      response = event.target.getResponseJson()
+      onSuccess response
+      @xhrFac.applyJsonResponse response
+
+    iframeIO.listen goog.net.EventType.ERROR, (event) =>
+      onError event.target.getResponseText()
+
+  ###*
+    Posts form as iframe, if form contains any files (input[type=file])
+    Sends as ajax request otherwise
+    @param {HTMLFormElement} form
+    @param {function(Object)} onSuccess
+    @param {function(string=)} onError
+  ###
+  postFormIframeIfContainsFiles: (form, onSuccess, onError) ->
+    if @formContainsFile(form)
+      @postFormIframe form, onSuccess, onError
+    else
+      url = form.action
+      data = goog.dom.forms.getFormDataString form
+      @postForm url, data, onSuccess, onError
+
+  ###*
+    @protected
+    @param {HTMLFormElement} form
+  ###
+  formContainsFile: (form) ->
+    for fileInput in form.querySelectorAll('input[type=file]')
+      if !!goog.dom.forms.getValue fileInput
+        return true
+    return false
 
   ###*
     @protected
