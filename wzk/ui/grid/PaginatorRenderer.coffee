@@ -20,6 +20,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     PREV: 'previous'
     NEXT: 'next'
     RESULT: 'result'
+    RESULT_TOTAL: 'result-total'
+    RESULT_DISPLAYED: 'result-displayed'
     PAGING: 'paging'
     PAGINATION: 'pagination'
     PAGE_ITEM: 'page-item'
@@ -43,13 +45,14 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   constructor: ->
     super()
     @classes.push 'paginator'
-    @resultPattern = null
+    @resultPatterns = ['Items total: %d', 'Displayed %d to %d']
     @switcher = null
     @switcherSelect = null
     @switcherPattern = '%d per page'
     @itemTag = 'LI'
     @itemInnerTag = 'SPAN'
     @pagingStyle = wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.FULL
+    @resultComposers = [@composeTotalResult, @composeDisplayedResult]
 
   ###*
     @override
@@ -57,18 +60,22 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   createDom: (paginator) ->
     el = super paginator
     dom = paginator.getDomHelper()
-    @attachResult paginator, el, dom
+    for i in [0..1]
+      content = @composeResult paginator, @resultComposers[i]
+      @attachResult paginator, el, content
     @createPaging paginator, el, dom
     @attachSwitcher paginator, el, dom
     el
 
   ###*
     @protected
+    @param {wzk.ui.Component} paginator
+    @param {string} content
     @return {Element}
   ###
-  createResult: (paginator, dom) ->
-    el = dom.createDom @itemInnerTag, {}
-    @decorateResult paginator, el, dom
+  createResult: (paginator, content) ->
+    el = paginator.getDomHelper().createDom @itemInnerTag, {}
+    @decorateResult paginator, el, content
     el
 
   ###*
@@ -103,26 +110,20 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @protected
     @param {wzk.ui.Component} paginator
     @param {Element} parent
-    @param {goog.dom.DomHelper} dom
+    @param {string} content
   ###
-  attachResult: (paginator, parent, dom) ->
-    result = @createResult paginator, dom
+  attachResult: (paginator, parent, content) ->
+    result = @createResult paginator, content
     parent.appendChild result
 
   ###*
     @protected
     @param {string} pattern
+    @param {number} i
   ###
-  setResultPattern: (pattern) ->
-    @resultPattern = pattern unless @resultPattern
-
-  ###*
-    @suppress {checkTypes}
-    @protected
-    @return {string}
-  ###
-  getResultPattern: ->
-    @resultPattern ? '%d-%d of %d'
+  setResultPattern: (pattern, i) ->
+    if pattern? and pattern isnt ''
+      @resultPatterns[i] = pattern
 
   ###*
     @param {wzk.ui.Component} paginator
@@ -132,23 +133,20 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     dom = paginator.getDomHelper()
     C = wzk.ui.grid.PaginatorRenderer.CLASSES
 
-    result = el.querySelector '.' + C.RESULT
-    if result?
-      @setResultPattern dom.getTextContent(result)
-      @decorateResult paginator, result, dom
-    else
-      @attachResult paginator, el, dom
-
+    for resultEl, i in [dom.cls(C.RESULT_TOTAL, el), dom.cls(C.RESULT_DISPLAYED, el)]
+      if resultEl?
+        @setResultPattern dom.getTextContent(resultEl), i
+        @decorateResult paginator, resultEl, @composeResult(paginator, @resultComposers[i])
 
     @pagingStyle = goog.dom.dataset.get el, wzk.ui.grid.PaginatorRenderer.DATA.PAGING
-    pagination = el.querySelector('.' + C.PAGINATION) ? el
+    pagination = dom.cls(C.PAGINATION, el) ? el
     @decoratePagination paginator, pagination, dom
 
-    paging = el.querySelector('.' + C.PAGING) ? el
+    paging = dom.cls(C.PAGING, el) ? el
     if @switcher
       dom.insertChildAt paging, @switcher, 0
     else
-      switcher = el.querySelector '.' + C.BASE_SWITCHER
+      switcher = dom.cls C.BASE_SWITCHER, el
       @decorateSwitcher paginator, switcher, dom
 
     goog.style.setStyle el, 'visibility', 'inherit'
@@ -188,14 +186,37 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     parent.appendChild el
 
   ###*
-    @protected
     @param {wzk.ui.Component} paginator
     @param {Element} el
-    @param {goog.dom.DomHelper} dom
+    @param {string} content
   ###
-  decorateResult: (paginator, el, dom) ->
-    formatted = goog.string.format @getResultPattern(), @resultFrom(paginator), @resultTo(paginator), paginator.total
-    dom.setTextContent el, formatted
+  decorateResult: (paginator, el, content) ->
+    paginator.getDomHelper().setTextContent el, content
+
+  ###*
+    @protected
+    @param {wzk.ui.Component} paginator
+    @return {Array}
+  ###
+  composeDisplayedResult: (paginator) =>
+    [@resultPatterns[1], @resultFrom(paginator), @resultTo(paginator)]
+
+  ###*
+    @protected
+    @param {wzk.ui.Component} paginator
+    @return {Array}
+  ###
+  composeTotalResult: (paginator) =>
+    [@resultPatterns[0], paginator.total]
+
+  ###*
+    @protected
+    @param {wzk.ui.Component} paginator
+    @param {Function} composer
+    @return {string}
+  ###
+  composeResult: (paginator, composer) ->
+    goog.string.format.apply goog.string.format, composer(paginator)
 
   ###*
     @protected
@@ -206,7 +227,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   decoratePagination: (paginator, el, dom) ->
     C = wzk.ui.grid.PaginatorRenderer.CLASSES
 
-    prev = el.querySelector '.' + C.PREV
+    prev = dom.cls C.PREV, el
     if paginator.isFirst()
       @inactivateEl prev
     else
@@ -219,7 +240,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
 
     dom.insertSiblingAfter frag, prev
 
-    next = el.querySelector '.' + C.NEXT
+    next = dom.cls C.NEXT, el
     if paginator.isLast()
       @inactivateEl next
     else
@@ -295,9 +316,9 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     if pagEl?
       next = dom.getNextElementSibling pagEl
       dom.removeNode pagEl
-      for el in pagEl.querySelectorAll ".#{C.PAGE_ITEM}"
+      for el in dom.clss C.PAGE_ITEM, pagEl
         dom.removeNode el
-      for el in pagEl.querySelectorAll ".#{C.RESULT}"
+      for el in dom.clss C.RESULT, pagEl
         el.innerHTML = ''
 
       dom.insertSiblingBefore pagEl, next
@@ -397,7 +418,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Element}
   ###
   getPagination: (paginator) ->
-    paginator.getElement().querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATION
+    paginator.getDomHelper().cls wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATION, paginator.getElement()
 
   ###*
     @param {Element} el
