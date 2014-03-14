@@ -21,6 +21,13 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     GO_TO: 'go-to'
 
   ###*
+    @enum {string}
+  ###
+  @CLASSES:
+    TOP: 'top'
+    BOTTOM: 'bottom'
+
+  ###*
     @type {number}
   ###
   @BASE = 10
@@ -210,6 +217,8 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   clone: ->
     clone = @getElement().cloneNode true
     @hangPageListener clone
+    goog.dom.classes.add @getElement(), wzk.ui.grid.Paginator.CLASSES.TOP
+    goog.dom.classes.add clone, wzk.ui.grid.Paginator.CLASSES.BOTTOM
     clone
 
   ###*
