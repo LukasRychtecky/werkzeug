@@ -99,6 +99,15 @@ class wzk.ui.TagContainer extends goog.ui.Control
       v.setEnabled enabled
     undefined
 
+  ###*
+    Renders the component after a given sibling
+
+    @param {Element} sibling
+    @suppress {accessControls}
+  ###
+  renderAfter: (sibling) ->
+    @render_ @dom_.getParentElement(sibling), @dom_.getNextElementSibling(sibling)
+
 ###*
   @enum {string}
 ###
