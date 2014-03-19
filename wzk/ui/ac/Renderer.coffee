@@ -95,9 +95,10 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       @imgOrPlaceholder = newImg
 
   clearImage: ->
-    placeholder = @customRenderer.createImagePlaceholder()
-    @dom.replaceNode placeholder, @imgOrPlaceholder
-    @imgOrPlaceholder = placeholder
+    if @customRenderer?
+      placeholder = @customRenderer.createImagePlaceholder()
+      @dom.replaceNode placeholder, @imgOrPlaceholder
+      @imgOrPlaceholder = placeholder
 
   ###*
     If the main HTML element hasn't been made yet, creates it and appends it
