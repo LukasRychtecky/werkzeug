@@ -26,6 +26,13 @@ class wzk.ui.ac.ExtSelectboxStorageHandler
     @storage.store(cont)
 
   ###*
+    @param {wzk.ui.Tag} tag
+  ###
+  remove: (tag) ->
+    model = (`/** @type {wzk.resource.Model} */`) tag.getModel()
+    @storage.remove model
+
+  ###*
     @protected
   ###
   hangListener: (cont) ->
