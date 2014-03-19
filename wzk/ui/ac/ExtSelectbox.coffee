@@ -58,7 +58,7 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @matcher = new wzk.ui.ac.ArrayMatcher(data, false)
     @autoComplete = new wzk.ui.ac.AutoComplete(@matcher, @renderer, @inputHandler)
     @hideOriginSelect(selectbox)
-    @cont.renderBefore(selectbox)
+    @cont.renderAfter(selectbox)
     @input.renderBefore(selectbox)
     @clrBtn.renderBefore(selectbox)
     @inputHandler.attachAutoComplete(@autoComplete)
