@@ -32,6 +32,8 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
       @clear()
       e.preventDefault()
 
+    @cont.listen wzk.ui.TagContainer.EventType.REMOVE_TAG, (e) =>
+      @handler.remove(e.target)
 
     @inputHandler = new wzk.ui.ac.InputHandler(null, null, false)
     @autoComplete = null

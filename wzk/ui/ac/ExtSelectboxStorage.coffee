@@ -39,6 +39,14 @@ class wzk.ui.ac.ExtSelectboxStorage
       opt.selected = goog.object.containsKey(selected, opt.value)
 
   ###*
+    @param {wzk.resource.Model} model
+  ###
+  remove: (model) ->
+    opt = @select.querySelector("option[value='#{@getKey(model)}']")
+    if opt?
+      opt.removeAttribute('selected')
+
+  ###*
     @protected
     @param {Array.<wzk.resource.Model>} data
   ###
