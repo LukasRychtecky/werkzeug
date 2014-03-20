@@ -146,3 +146,15 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   clss: (cls, el = null) ->
     @getElementsByClass cls, el
+
+  ###*
+    Unselects given value in a HTMLSelectElement
+
+    @param {Element} select
+    @param {*} val
+  ###
+  unselect: (select, val) ->
+    val = String val
+    for opt in @getChildren select
+      if opt.value is val
+        opt.removeAttribute 'selected'

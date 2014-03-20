@@ -42,9 +42,7 @@ class wzk.ui.ac.ExtSelectboxStorage
     @param {wzk.resource.Model} model
   ###
   remove: (model) ->
-    opt = @select.querySelector("option[value='#{@getKey(model)}']")
-    if opt?
-      opt.removeAttribute('selected')
+    @dom.unselect @select, @getKey(model)
 
   ###*
     @protected
