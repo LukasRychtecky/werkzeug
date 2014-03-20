@@ -17,20 +17,23 @@ goog.require 'goog.testing.events'
 class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
 
   ###*
-    @param {goog.dom.DomHelper} dom
+    @param {wzk.dom.Dom} dom
     @param {goog.ui.ac.Renderer} renderer
     @param {Object} customRenderer
     @param {wzk.ui.ac.ExtSelectboxStorageHandler=} handler
   ###
   constructor: (@dom, @renderer, @customRenderer, @handler = null) ->
     super()
-    @cont = new wzk.ui.TagContainer()
+    @cont = new wzk.ui.TagContainer null, null, @dom
     @input = new wzk.ui.Input(null, wzk.ui.InputSearchRenderer.getInstance(), dom)
 
     @clrBtn = new wzk.ui.CloseIcon()
     @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
       @clear()
       e.preventDefault()
+
+    @cont.listen wzk.ui.TagContainer.EventType.ADD_TAG, (e) =>
+      @handler.add(e.target)
 
     @cont.listen wzk.ui.TagContainer.EventType.REMOVE_TAG, (e) =>
       @handler.remove(e.target)

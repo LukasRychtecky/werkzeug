@@ -17,28 +17,28 @@ class wzk.ui.Tag extends goog.ui.Control
     An item for a tag container.
     Fires REMOVE event on Enter key or on click.
 
-    @constructor
-    @extends {goog.ui.Control}
-    @param {goog.ui.ControlRenderer=} renderer
-    @param {goog.dom.DomHelper=} dom
+    @param {goog.ui.ControlRenderer} renderer
+    @param {wzk.dom.Dom} dom
   ###
-  constructor: (content, renderer = wzk.ui.TagRenderer.getInstance(), dom = null) ->
+  constructor: (content, renderer, dom) ->
+    renderer ?= wzk.ui.TagRenderer.getInstance()
     super(content, renderer, dom)
     @listener = null
+    @icon = null
 
   ###*
     @param {boolean} visible
   ###
   setIconVisible: (visible) ->
-    icon = @getElement()?.querySelector '.goog-icon-remove'
-    goog.style.setElementShown icon, visible if icon?
+    goog.style.setElementShown @icon, visible if @icon
 
   ###*
     @override
   ###
   createDom: ->
     super()
-    @hangListener(@getElement())
+    @icon = @dom_.cls 'goog-icon-remove', @getElement()
+    @hangListener @getElement()
 
   ###*
     @override
@@ -54,10 +54,18 @@ class wzk.ui.Tag extends goog.ui.Control
 
   ###*
     @protected
-    @param {Element} el
+    @param {Element|null|undefined} el
   ###
   hangListener: (el) ->
+    return unless el?
     E = goog.events.EventType
-    goog.events.listen el, [E.CLICK, E.KEYUP], (e) =>
-      if (e.type is E.KEYUP and e.keyCode is goog.events.KeyCodes.ENTER) or e.type is E.CLICK
-        @dispatchEvent(wzk.ui.Tag.EventType.REMOVE)
+    goog.events.listen el, [E.CLICK, E.KEYUP], @handleClick
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleClick: (e) =>
+    E = goog.events.EventType
+    if e.target is @icon and ((e.type is E.KEYUP and e.keyCode is goog.events.KeyCodes.ENTER) or e.type is E.CLICK)
+      @dispatchEvent(wzk.ui.Tag.EventType.REMOVE)
