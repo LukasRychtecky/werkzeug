@@ -219,6 +219,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @hangPageListener clone
     goog.dom.classes.add @getElement(), wzk.ui.grid.Paginator.CLASSES.TOP
     goog.dom.classes.add clone, wzk.ui.grid.Paginator.CLASSES.BOTTOM
+    goog.dom.classes.remove clone, wzk.ui.grid.Paginator.CLASSES.TOP
     clone
 
   ###*
