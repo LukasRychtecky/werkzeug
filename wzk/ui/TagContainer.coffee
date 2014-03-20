@@ -15,13 +15,12 @@ class wzk.ui.TagContainer extends goog.ui.Control
       - REMOVE: when a tag is removed, fires this in an event as a target
       - REMOVE_TAG: when a tag is removed, fires the tag in an event as a target
 
-    @constructor
-    @extends {goog.ui.Control}
-    @param {goog.ui.ControlContent=} content Text caption or DOM structure
-    @param {goog.ui.ControlRenderer=} renderer
-    @param {goog.dom.DomHelper=} dom
+    @param {goog.ui.ControlContent} content Text caption or DOM structure
+    @param {goog.ui.ControlRenderer} renderer
+    @param {wzk.dom.Dom} dom
   ###
-  constructor: (content = null, renderer = wzk.ui.TagContainerRenderer.getInstance(), dom = null) ->
+  constructor: (content, renderer, dom) ->
+    renderer ?= wzk.ui.TagContainerRenderer.getInstance()
     super(content, renderer, dom)
     @tags = {}
 
@@ -29,10 +28,10 @@ class wzk.ui.TagContainer extends goog.ui.Control
     @public
     @param {string} name
     @param {*} model
-    @param {wzk.ui.TagRenderer=} renderer
+    @param {wzk.ui.TagRenderer} renderer
   ###
   addTag: (name, model, renderer) ->
-    t = new wzk.ui.Tag(name, renderer)
+    t = new wzk.ui.Tag(name, renderer, (`/** @type {wzk.dom.Dom} */`) @dom_)
     t.setModel(model)
     @add(t)
 
