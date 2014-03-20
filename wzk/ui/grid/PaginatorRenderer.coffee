@@ -46,6 +46,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     super()
     @classes.push 'paginator'
     @resultPatterns = ['Items total: %d', 'Displayed %d to %d']
+    @isPatternSet = [false, false]
     @switcher = null
     @switcherSelect = null
     @switcherPattern = '%d per page'
@@ -122,8 +123,9 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {number} i
   ###
   setResultPattern: (pattern, i) ->
-    if pattern? and pattern isnt ''
+    if pattern? and pattern isnt '' and not @isPatternSet[i]
       @resultPatterns[i] = pattern
+      @isPatternSet[i] = true
 
   ###*
     @param {wzk.ui.Component} paginator
@@ -165,7 +167,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {number}
   ###
   resultFrom: (paginator) ->
-    paginator.offset + 1
+    if @resultTo(paginator) is 0 then 0 else paginator.offset + 1
 
   ###*
     @protected
