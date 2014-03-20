@@ -28,6 +28,13 @@ class wzk.ui.ac.ExtSelectboxStorageHandler
   ###*
     @param {wzk.ui.Tag} tag
   ###
+  add: (tag) ->
+    model = (`/** @type {wzk.resource.Model} */`) tag.getModel()
+    @storage.add model
+
+  ###*
+    @param {wzk.ui.Tag} tag
+  ###
   remove: (tag) ->
     model = (`/** @type {wzk.resource.Model} */`) tag.getModel()
     @storage.remove model

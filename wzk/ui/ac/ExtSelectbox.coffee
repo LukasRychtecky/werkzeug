@@ -32,6 +32,9 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
       @clear()
       e.preventDefault()
 
+    @cont.listen wzk.ui.TagContainer.EventType.ADD_TAG, (e) =>
+      @handler.add(e.target)
+
     @cont.listen wzk.ui.TagContainer.EventType.REMOVE_TAG, (e) =>
       @handler.remove(e.target)
 

@@ -148,13 +148,34 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     @getElementsByClass cls, el
 
   ###*
+    @param {Element} select
+    @param {*} val
+    @param {function(Element):boolean} clbk
+  ###
+  iterOverOptions: (select, val, clbk) ->
+    val = String val
+    for opt in @getChildren select
+      if opt.value is val
+        if clbk opt
+          break
+
+
+  ###*
+    Selects given value in a HTMLSelectElement
+
+    @param {Element} select
+    @param {*} val
+  ###
+  select: (select, val) ->
+    @iterOverOptions select, val, (opt) ->
+      opt.selected = true
+
+  ###*
     Unselects given value in a HTMLSelectElement
 
     @param {Element} select
     @param {*} val
   ###
   unselect: (select, val) ->
-    val = String val
-    for opt in @getChildren select
-      if opt.value is val
-        opt.removeAttribute 'selected'
+    @iterOverOptions select, val, (opt) ->
+      opt.selected = false

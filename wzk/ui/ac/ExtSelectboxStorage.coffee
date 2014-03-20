@@ -41,6 +41,12 @@ class wzk.ui.ac.ExtSelectboxStorage
   ###*
     @param {wzk.resource.Model} model
   ###
+  add: (model) ->
+    @dom.select @select, @getKey(model)
+
+  ###*
+    @param {wzk.resource.Model} model
+  ###
   remove: (model) ->
     @dom.unselect @select, @getKey(model)
 
