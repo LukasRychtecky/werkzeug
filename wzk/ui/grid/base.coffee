@@ -61,6 +61,8 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator
   grid.decorate table
 
+  pagHandler.setBase paginator.getBase()
+
   watcher = new wzk.ui.grid.FilterWatcher grid, query
   watcher.watchOn table
 

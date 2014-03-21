@@ -53,6 +53,12 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @defBases = [10, 25, 50, 100, 500, 1000]
 
   ###*
+    @return {number}
+  ###
+  getBase: ->
+    @base
+
+  ###*
     @param {Element} el
   ###
   loadData: (el) ->
