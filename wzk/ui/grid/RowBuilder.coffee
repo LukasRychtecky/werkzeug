@@ -68,6 +68,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
   buildCell: (model, col, row) ->
     cell = row.addCell @formatter.format(model, col)
     cell.addClass col
+    cell
 
   ###*
     @protected
