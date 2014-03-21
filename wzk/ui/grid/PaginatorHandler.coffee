@@ -22,6 +22,12 @@ class wzk.ui.grid.PaginatorHandler
   constructor: (@ss) ->
     @history = new goog.History()
     @history.setEnabled true
+    @base = wzk.ui.grid.PaginatorHandler.DEF.BASE
+
+  ###*
+    @param {number} base
+  ###
+  setBase: (@base) ->
 
   ###*
     @return {number}
@@ -33,8 +39,7 @@ class wzk.ui.grid.PaginatorHandler
     @return {number}
   ###
   getBase: ->
-    wzk.num.parseDec @ss.get(wzk.ui.grid.PaginatorHandler.PARAM.BASE), wzk.ui.grid.PaginatorHandler.DEF.BASE
-
+    wzk.num.parseDec @ss.get(wzk.ui.grid.PaginatorHandler.PARAM.BASE), @base
   ###*
     @param {wzk.ui.grid.Paginator} paginator
   ###
@@ -51,7 +56,7 @@ class wzk.ui.grid.PaginatorHandler
     DEF = wzk.ui.grid.PaginatorHandler.DEF
     PARAM = wzk.ui.grid.PaginatorHandler.PARAM
     params = {}
-    params[PARAM.BASE] = if args.base isnt DEF.BASE then args.base else null
+    params[PARAM.BASE] = if args.base isnt @base then args.base else null
     params[PARAM.PAGE] = if args.page isnt DEF.PAGE then args.page else null
 
     @ss.setAll params
