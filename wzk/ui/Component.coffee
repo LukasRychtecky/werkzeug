@@ -136,13 +136,15 @@ class wzk.ui.Component extends goog.ui.Component
     A callback, which is called after rendering
 
     @protected
+    @return {?}
   ###
   afterRendering: ->
 
   ###*
-    A callback, which is called after rendering
+    A callback, which is called before rendering
 
     @protected
+    @return {?}
   ###
   beforeRendering: ->
 

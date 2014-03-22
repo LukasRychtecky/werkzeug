@@ -27,7 +27,8 @@ class wzk.ui.CloseIcon extends wzk.ui.Component
     @override
   ###
   afterRendering: ->
-    goog.events.listen @getElement(), goog.events.EventType.CLICK, =>
+    goog.events.listen @getElement(), goog.events.EventType.CLICK, (e) =>
+      e.preventDefault()
       @dispatchEvent goog.ui.Component.EventType.ACTION
     undefined # because of CoffeeScript
 
