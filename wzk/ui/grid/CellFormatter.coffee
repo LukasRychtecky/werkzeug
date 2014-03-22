@@ -14,8 +14,6 @@ class wzk.ui.grid.CellFormatter
     value = ''
     if property?
       value = @lookupValue model, property
-    else
-      value = model[property]
     @flat value
 
   ###*
@@ -53,4 +51,6 @@ class wzk.ui.grid.CellFormatter
       prop = path.shift()
       if obj[prop]?
         obj = obj[prop]
+      else
+        obj = ''
     obj
