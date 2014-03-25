@@ -19,8 +19,9 @@ class wzk.ui.Tag extends goog.ui.Control
 
     @param {goog.ui.ControlRenderer} renderer
     @param {wzk.dom.Dom} dom
+    @param {boolean=} readonly
   ###
-  constructor: (content, renderer, dom) ->
+  constructor: (content, renderer, dom, @readonly = false) ->
     renderer ?= wzk.ui.TagRenderer.getInstance()
     super(content, renderer, dom)
     @listener = null
@@ -69,3 +70,15 @@ class wzk.ui.Tag extends goog.ui.Control
     E = goog.events.EventType
     if e.target is @icon and ((e.type is E.KEYUP and e.keyCode is goog.events.KeyCodes.ENTER) or e.type is E.CLICK)
       @dispatchEvent(wzk.ui.Tag.EventType.REMOVE)
+
+  ###*
+    @return {boolean} true, if tag is read only (read only tag doesn't has close icon)
+  ###
+  isReadOnly: ->
+    @readonly
+
+  ###*
+    @param {boolean} isReadOnly
+  ###
+  setReadOnly: (isReadOnly) ->
+    @readonly = isReadOnly

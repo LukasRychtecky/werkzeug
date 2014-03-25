@@ -64,13 +64,17 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @autoComplete = new wzk.ui.ac.AutoComplete(@matcher, @renderer, @inputHandler)
     @hideOriginSelect(selectbox)
     @cont.renderAfter(selectbox)
-    @input.renderBefore(selectbox)
-    @clrBtn.renderBefore(selectbox)
-    @inputHandler.attachAutoComplete(@autoComplete)
-    @inputHandler.attachInput(@input.getElement())
-    @hangCleaner(@autoComplete)
-    @delegateObligation(selectbox)
-    @handler.load(data, @cont, @customRenderer) if @handler
+
+    readonly = selectbox.hasAttribute('readonly')
+    unless readonly
+      @input.renderBefore(selectbox)
+      @clrBtn.renderBefore(selectbox)
+      @inputHandler.attachAutoComplete(@autoComplete)
+      @inputHandler.attachInput(@input.getElement())
+      @hangCleaner(@autoComplete)
+      @delegateObligation(selectbox)
+
+    @handler.load(data, @cont, @customRenderer, readonly) if @handler
 
   clear: ->
     @input.setValue ''
