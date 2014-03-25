@@ -38,11 +38,24 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   addRow: ->
     cloned = @clone.cloneNode(true)
+    removeIcon = @addRemoveIcon(cloned)
+
     @cycle(cloned)
     @fixIdsAndNames(cloned)
     @parent.appendChild(cloned)
-    @hangDeleteListener cloned
+    @hangRemoveIconListener removeIcon
     @expert.next()
+
+  ###*
+    @param {Element} row
+  ###
+  addRemoveIcon: (row) ->
+    checkbox = @dom.one 'td:last-child input[type=checkbox]', row
+    goog.style.setElementShown checkbox, false
+
+    removeIcon = new wzk.ui.CloseIcon({dom: @dom, removed: row})
+    removeIcon.render row
+    removeIcon
 
   ###*
     @param {Element} row
@@ -52,6 +65,17 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     goog.events.listen row.querySelector('td:last-child input[type=checkbox]'), [E.CLICK, E.KEYUP], (e) =>
       if e.type is E.CLICK or e.keyCode is goog.events.KeyCodes.SPACE
         @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, row)
+
+  ###*
+    @param {wzk.ui.CloseIcon} removeIcon
+  ###
+  hangRemoveIconListener: (removeIcon) ->
+    removeIcon.listen goog.ui.Component.EventType.ACTION, (event) =>
+      removeIcon = event.target
+      removed = removeIcon.getRemoved()
+      checkbox = @dom.one 'input[type=checkbox]', removed
+      checkbox.setAttribute 'checked'
+      @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, removeIcon.getRemoved())
 
   ###*
     Cycles CSS classes on a row
