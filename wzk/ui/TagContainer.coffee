@@ -29,9 +29,11 @@ class wzk.ui.TagContainer extends goog.ui.Control
     @param {string} name
     @param {*} model
     @param {wzk.ui.TagRenderer} renderer
+    @param {boolean=} readonly
   ###
-  addTag: (name, model, renderer) ->
+  addTag: (name, model, renderer, readonly = false) ->
     t = new wzk.ui.Tag(name, renderer, (`/** @type {wzk.dom.Dom} */`) @dom_)
+    t.setReadOnly readonly
     t.setModel(model)
     @add(t)
 

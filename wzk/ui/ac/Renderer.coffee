@@ -52,6 +52,8 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   ###
   decorate: (@select) ->
     goog.style.setElementShown @select, false
+    readonly = @select.hasAttribute('readonly')
+
     # create input element and attach it to dom
     @container = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
 
@@ -67,17 +69,19 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       @dom.appendChild @container, @imgOrPlaceholder
 
     @input = new wzk.ui.Input null, null, @dom
-    @clrBtn = new wzk.ui.CloseIcon()
-
-    @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
-      @input.setValue ''
-      @clearImage()
-      e.preventDefault()
-
     @items = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEMS_CONTAINER
     @dom.appendChild @container, @items
     @input.render @container
-    @clrBtn.render @container
+
+    if readonly
+      @input.getElement().setAttribute 'readonly', 'true'
+    else
+      @clrBtn = new wzk.ui.CloseIcon()
+      @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
+        @input.setValue ''
+        @clearImage()
+        e.preventDefault()
+      @clrBtn.render @container
 
   ###*
     @return {wzk.ui.Input}

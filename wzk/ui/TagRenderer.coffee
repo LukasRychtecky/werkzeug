@@ -22,8 +22,11 @@ class wzk.ui.TagRenderer extends goog.ui.ControlRenderer
   ###
   createDom: (tag) ->
     parent = super(tag)
-    icon = @buildRemoveIcon(tag.getDomHelper())
-    parent.appendChild(icon)
+
+    unless tag.isReadOnly()
+      icon = @buildRemoveIcon(tag.getDomHelper())
+      parent.appendChild(icon)
+
     parent
 
   ###*
