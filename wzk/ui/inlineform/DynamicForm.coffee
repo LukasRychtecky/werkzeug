@@ -5,7 +5,6 @@ goog.require 'wzk.ui.inlineform.FieldExpert'
 goog.require 'wzk.ui.inlineform.RowBuilder'
 goog.require 'goog.events'
 goog.require 'goog.events.EventType'
-goog.require 'wzk.ui.inlineform.RowBuilder.EventType'
 goog.require 'wzk.ui.inlineform.ConfigHandler'
 
 class wzk.ui.inlineform.DynamicForm
