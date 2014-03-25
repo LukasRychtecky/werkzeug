@@ -3,7 +3,7 @@ goog.require 'goog.dom.dataset'
 class wzk.ui.ac.NativeDataProvider
 
   @DATA:
-    PHOTO: 'photo'
+    PHOTO: 'image'
 
   constructor: ->
 
@@ -34,6 +34,10 @@ class wzk.ui.ac.NativeDataProvider
     data = {
       _obj_name: @dom.getTextContent option
       id: id
-      photo: goog.dom.dataset.get option, wzk.ui.ac.NativeDataProvider.DATA.PHOTO
     }
+
+    photo = goog.dom.dataset.get option, wzk.ui.ac.NativeDataProvider.DATA.PHOTO
+    if !!photo
+      data["photo"] = photo
+
     new wzk.resource.Model(data)
