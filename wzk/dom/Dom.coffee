@@ -179,3 +179,12 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   unselect: (select, val) ->
     @iterOverOptions select, val, (opt) ->
       opt.selected = false
+
+  ###*
+    @param {Element} el
+    @param {string} elementName
+    @return {Node}
+  ###
+  lastChildOfType: (el, elementName) ->
+    elements = @all(elementName, el)
+    elements.item(elements.length-1)

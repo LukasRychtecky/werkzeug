@@ -79,7 +79,8 @@ class wzk.ui.inlineform.DynamicForm
     @return {Element}
   ###
   findRow: (fieldset) ->
-    fieldset.querySelector('table tbody tr:last-child')
+    el = fieldset.querySelector('table tbody')
+    @dom.lastChildOfType el, 'tr'
 
   ###*
     @protected
