@@ -187,4 +187,11 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   lastChildOfType: (el, elementName) ->
     elements = @all(elementName, el)
-    elements.item(elements.length-1)
+    elements.item(elements.length - 1)
+
+  ###*
+    @param {NodeList} list
+    @return {Array}
+  ###
+  nodeList2Array: (list) ->
+    (el for el in list)
