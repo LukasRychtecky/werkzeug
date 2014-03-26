@@ -32,7 +32,7 @@ class wzk.ui.tab.TabBody extends wzk.ui.Component
   applyContent: ->
     if goog.isString(@content)
       @dom.setTextContent @getElement(), @content
-    else if @content instanceof Node
+    else if @dom.isNodeLike(@content)
       @getElement().appendChild @content
 
   ###*

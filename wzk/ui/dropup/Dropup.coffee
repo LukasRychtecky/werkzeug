@@ -40,7 +40,8 @@ class wzk.ui.dropup.Dropup
     # find element with id or class
     @dropupElement = @dom.one "##{dropupSelector}, .#{dropupSelector}", @dom.getDocument()
     unless @dropupElement?
-      throw new Error "Dropup element with specified id or class  '#{dropupSelector}', does not exist!"
+      console.warn "Dropup element with specified id or class  '#{dropupSelector}', does not exist!"
+      return
 
     # hide dropupElement right after registering
     goog.style.setElementShown @dropupElement, false

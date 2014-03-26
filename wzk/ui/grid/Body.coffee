@@ -120,7 +120,9 @@ class wzk.ui.grid.Body extends goog.ui.Container
   ###
   destroyChildren: ->
     @exitDocument()
-    @getElement().innerHTML = ''
+    el = @getElement()
+    while el.hasChildNodes()
+      el.removeChild el.lastChild
     @removeChildren()
 
   ###*

@@ -12,11 +12,6 @@ goog.require 'goog.dom.classes'
 class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
 
   ###*
-    @type {string}
-  ###
-  @ICON_SELECTOR = 'td:last-child input[type=checkbox]'
-
-  ###*
     @enum {string}
   ###
   @CLS =
@@ -63,7 +58,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @param {Element} row
   ###
   addRemoveIcon: (row) ->
-    checkbox = @dom.one wzk.ui.inlineform.RowBuilder.ICON_SELECTOR, row
+    checkbox = @getRemovingCheckbox row
     goog.style.setElementShown checkbox, false
 
     removeIcon = new wzk.ui.CloseIcon dom: @dom, removed: row
@@ -75,9 +70,17 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   hangDeleteListener: (row) ->
     E = goog.events.EventType
-    goog.events.listen @dom.one(wzk.ui.inlineform.RowBuilder.ICON_SELECTOR, row), [E.CLICK, E.KEYUP], (e) =>
+    goog.events.listen @getRemovingCheckbox(row), [E.CLICK, E.KEYUP], (e) =>
       if e.type is E.CLICK or e.keyCode is goog.events.KeyCodes.SPACE
         @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, row)
+
+  ###*
+    @param {Element} row to look for checkbox in
+    @return {Element} returns last checkbox in
+  ###
+  getRemovingCheckbox: (row) ->
+    el = @dom.lastChildOfType row, 'td'
+    @dom.one 'input[type=checkbox]', el
 
   ###*
     @protected
