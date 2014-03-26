@@ -9,7 +9,7 @@ class wzk.ui.Input extends goog.ui.Control
     super(content, renderer, dom)
     @setHandleMouseEvents(false)
     @setAllowTextSelection(true)
-    @setContentInternal('') unless content?
+    @setContent('') unless content?
     @wrapperEl = null
 
   ###*
@@ -26,6 +26,12 @@ class wzk.ui.Input extends goog.ui.Control
     str = String val
     @setContent str
     @getElement().value = str
+
+  ###*
+    @override
+  ###
+  setContent: (content) ->
+    @setContentInternal content
 
   ###*
     @return {string}
