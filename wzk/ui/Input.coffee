@@ -5,6 +5,12 @@ goog.require 'goog.style'
 
 class wzk.ui.Input extends goog.ui.Control
 
+  ###*
+    @enum {string}
+  ###
+  @EventType:
+    VALUE_CHANGE: 'VALUE_CHANGE'
+
   constructor: (content, renderer = wzk.ui.InputRenderer.getInstance(), dom = null) ->
     super(content, renderer, dom)
     @setHandleMouseEvents(false)
@@ -32,6 +38,8 @@ class wzk.ui.Input extends goog.ui.Control
   ###
   setContent: (content) ->
     @setContentInternal content
+    @dispatchEvent new goog.events.Event(wzk.ui.Input.EventType.VALUE_CHANGE, @)
+    undefined
 
   ###*
     @return {string}
@@ -40,7 +48,7 @@ class wzk.ui.Input extends goog.ui.Control
     @getElement().value
 
   clear: ->
-    @getElement().value = ''
+    @setValue ''
 
   ###*
     @override
@@ -55,6 +63,15 @@ class wzk.ui.Input extends goog.ui.Control
   render: (parent) ->
     super(parent)
     @fixInternalElement()
+    goog.events.listen @getElement(), goog.events.EventType.KEYUP, @handleInputChange
+    undefined
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleInputChange: (e) =>
+    @setContent e.target.value
 
   ###*
     @protected
