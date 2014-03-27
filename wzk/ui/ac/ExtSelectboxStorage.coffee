@@ -39,6 +39,8 @@ class wzk.ui.ac.ExtSelectboxStorage
     for opt in @dom.getChildren(@select)
       opt.selected = goog.object.containsKey(selected, opt.value)
 
+    goog.events.fireListeners(@select, goog.events.EventType.CHANGE, false, {type: goog.events.EventType.CHANGE, target: @select})
+
   ###*
     @param {wzk.resource.Model} model
   ###
