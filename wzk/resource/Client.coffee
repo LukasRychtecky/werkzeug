@@ -39,6 +39,13 @@ class wzk.resource.Client
     @builder = new wzk.resource.ModelBuilder()
 
   ###*
+    @param {string} k
+    @param {string} v
+  ###
+  setDefaultHeader: (k, v) ->
+    @headers[k] = v
+
+  ###*
     @param {wzk.resource.Query} query
   ###
   setDefaultExtraFields: (query) ->
