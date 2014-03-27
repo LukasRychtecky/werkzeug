@@ -67,6 +67,7 @@ class wzk.ui.ac.SelectAutoComplete
   handleUpdate: (e) =>
     @stor.store e.row
     @afterSelect e.row
+    goog.events.fireListeners(@select, goog.events.EventType.CHANGE, false, {type: goog.events.EventType.CHANGE, target: @select})
 
   ###*
     @protected
