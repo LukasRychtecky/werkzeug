@@ -47,7 +47,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
   ###
   replaceRow: (model, row) ->
     row.setModel model
-    row.getElement().innerHTML = ''
+    @dom.clearElement row.getElement()
     row.removeChildren()
 
     rowElement = row.getElement()
