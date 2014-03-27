@@ -37,13 +37,24 @@ class wzk.ui.inlineform.DynamicForm
 
     if enabled
       @hangAddRowListener builder, btn
-      @hangRemoveRowHandler builder, fieldset
+
+      builder.listen wzk.ui.inlineform.RowBuilder.EventType.DELETE, @handleRowDelete
     else
       builder.setEnabled false
 
     @removeInputsForCloning row
 
     goog.style.setElementShown btn, enabled
+
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleRowDelete: (e) =>
+    el = (`/** @type {Element} */`) e.target
+    goog.style.setElementShown el, false
+    @removeDutyFromHiddenInputs el
 
   ###*
     @protected
@@ -96,15 +107,3 @@ class wzk.ui.inlineform.DynamicForm
   removeDutyFromHiddenInputs: (row) ->
     for input in row.querySelectorAll 'input, select'
       input.removeAttribute 'required'
-
-  ###*
-    @protected
-    @param {wzk.ui.inlineform.RowBuilder} builder
-    @param {Element} fieldset
-  ###
-  hangRemoveRowHandler: (builder, fieldset) ->
-    builder.hangDeleteListener row for row in fieldset.querySelectorAll 'table tbody tr'
-
-    goog.events.listen builder, wzk.ui.inlineform.RowBuilder.EventType.DELETE, (e) =>
-      goog.style.setElementShown e.target, false
-      @removeDutyFromHiddenInputs e.target

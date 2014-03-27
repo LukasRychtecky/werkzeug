@@ -12,6 +12,7 @@ suite 'wzk.ui.Tag', ->
         mockEl(tag.toUpperCase())
       getDocument: ->
         doc
+      cls: -> mockEl 'span'
     dom
 
   mockDoc = ->
@@ -37,6 +38,7 @@ suite 'wzk.ui.Tag', ->
 
   fireEvent = (type, e = {}) ->
     e.type = type
+    e.target = tag.getIcon()
     tag.getElement().events[type](e)
 
   fireClick = ->

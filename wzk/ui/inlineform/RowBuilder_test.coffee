@@ -9,8 +9,13 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
   checkbox = null
 
   mockDom = ->
-    getParentElement: ->
-      parent
+    getParentElement: -> parent
+    lastChildOfType: -> {}
+    one: -> checkbox
+    el: (tag) ->
+      mockEl tag
+    insertSiblingAfter: (newNode, refNode) ->
+      refNode.nextSibling = newNode
 
   mockParent = ->
     par =
@@ -24,6 +29,13 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
       className: className
       appendChild: ->
       tagName: tag
+      style: {}
+      children: []
+      insertBefore: (newEl, before) ->
+        @children.push newEl
+      attachEvent: (type, clb) ->
+        @events[type] = clb
+      events: {}
     el
 
   mockInput = (val) ->
@@ -46,13 +58,13 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
     el.events = {}
     el.attachEvent = (type, clb) ->
       el.events[type] = clb
+    el.parentNode = mockEl 'td'
+    el.parentNode.insertBefore = (node) ->
+      el.nextSibling = node
     el
 
   fireCheckboxClick = ->
-    checkbox.events['onclick'](type: 'click', target: row)
-
-  fireCheckboxSpaceKeyup = ->
-    checkbox.events['onkeyup'](keyCode: goog.events.KeyCodes.SPACE, target: row)
+    checkbox.nextSibling.events['onclick'](type: 'click', target: row)
 
   setup ->
     parent = mockParent()
@@ -73,11 +85,3 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
     builder.addRow()
 
     fireCheckboxClick()
-
-  test 'Should fire a delete event on a space keyup', (done) ->
-    goog.events.listen builder, E.DELETE, (e) ->
-      done() if e.target is row
-
-    builder.addRow()
-
-    fireCheckboxSpaceKeyup()
