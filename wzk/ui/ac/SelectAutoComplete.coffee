@@ -44,6 +44,13 @@ class wzk.ui.ac.SelectAutoComplete
   decorate: (@select) ->
     @renderer.decorate @select
     @stor = new wzk.ui.ac.SelectOneStorage @dom, @select
+    @renderer.listen wzk.ui.ac.Renderer.EventType.CLEAN, @handleClean
+
+  ###*
+    @protected
+  ###
+  handleClean: =>
+    @stor.clean()
 
   ###*
     @param {Array} data

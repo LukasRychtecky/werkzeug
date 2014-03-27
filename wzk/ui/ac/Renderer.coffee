@@ -23,6 +23,12 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     IMG: 'ac-image'
 
   ###*
+    @enum {string}
+  ###
+  @EventType:
+    CLEAN: 'clean'
+
+  ###*
     Class for rendering the results of an auto-complete in a drop down list.
 
     @param {wzk.dom.Dom} dom
@@ -77,11 +83,18 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       @input.getElement().setAttribute 'readonly', 'true'
     else
       @clrBtn = new wzk.ui.CloseIcon()
-      @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
-        @input.setValue ''
-        @clearImage()
-        e.preventDefault()
+      @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
       @clrBtn.render @container
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleClean: (e) =>
+    @input.setValue ''
+    @clearImage()
+    e.preventDefault()
+    @dispatchEvent new goog.events.Event(wzk.ui.ac.Renderer.EventType.CLEAN)
 
   ###*
     @return {wzk.ui.Input}

@@ -31,6 +31,10 @@ class wzk.ui.ac.SelectOneStorage
     val = if model? then @pk(model) else ''
     goog.dom.forms.setValue @select, val
 
+  clean: ->
+    selected = goog.dom.forms.getValue @select
+    @dom.unselect @select, selected if selected?
+
   ###*
     @protected
     @param {wzk.resource.Model} model
