@@ -25,6 +25,9 @@ class wzk.resource.Query
   putDefaultExtraFields: ->
     @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links']
 
+  ###*
+    @return {string}
+  ###
   verbose: ->
     @serFormat = wzk.resource.Query.S_FORMAT.VERBOSE
 
