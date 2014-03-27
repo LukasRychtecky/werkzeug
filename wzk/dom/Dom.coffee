@@ -195,3 +195,21 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   nodeList2Array: (list) ->
     (el for el in list)
+
+  ###*
+    Clears dom element
+    Use instead of element.innerHTML = ''
+    @param {Element} el
+  ###
+  clearElement: (el) ->
+    unless @isIE()
+      el.innerHTML = ''
+    else
+      while el.hasChildNodes()
+        el.removeChild el.lastChild
+
+  ###*
+    @return {boolean} true if user agent is Internet Explorer
+  ###
+  isIE: ->
+    return goog.userAgent.IE
