@@ -51,6 +51,7 @@ class wzk.ui.ac.SelectAutoComplete
   ###
   handleClean: =>
     @stor.clean()
+    goog.events.fireListeners(@select, goog.events.EventType.CHANGE, false, {type: goog.events.EventType.CHANGE, target: @select})
 
   ###*
     @param {Array} data

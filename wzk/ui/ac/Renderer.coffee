@@ -75,6 +75,8 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       @dom.appendChild @container, @imgOrPlaceholder
 
     @input = new wzk.ui.Input null, null, @dom
+    @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputClean
+    
     @items = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEMS_CONTAINER
     @dom.appendChild @container, @items
     @input.render @container
@@ -94,6 +96,20 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @input.setValue ''
     @clearImage()
     e.preventDefault()
+    @dispatchClean()
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleInputClean: (e) =>
+    unless e.target.getContent()
+      @dispatchClean()
+
+  ###*
+    Dispatches clean signal
+  ###
+  dispatchClean: ->
     @dispatchEvent new goog.events.Event(wzk.ui.ac.Renderer.EventType.CLEAN)
 
   ###*

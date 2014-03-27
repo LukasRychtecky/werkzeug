@@ -120,7 +120,7 @@ class wzk.ui.grid.Body extends goog.ui.Container
   ###
   destroyChildren: ->
     @exitDocument()
-    @dom.clearElement @getElement
+    @dom.clearElement @getElement()
     @removeChildren()
 
   ###*
