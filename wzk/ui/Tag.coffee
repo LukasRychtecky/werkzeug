@@ -82,3 +82,9 @@ class wzk.ui.Tag extends goog.ui.Control
   ###
   setReadOnly: (isReadOnly) ->
     @readonly = isReadOnly
+
+  ###*
+    @return {Element}
+  ###
+  getIcon: ->
+    @icon

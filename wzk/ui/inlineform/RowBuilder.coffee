@@ -5,6 +5,7 @@ goog.require 'goog.events'
 goog.require 'goog.style'
 goog.require 'goog.events.KeyCodes'
 goog.require 'goog.dom.classes'
+goog.require 'wzk.ui.CloseIcon'
 
 ###*
   A dynamic builder of table rows for Django's inline forms
@@ -23,6 +24,11 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   @EventType =
     DELETE: 'delete'
+
+  ###*
+    @type {string}
+  ###
+  @CHECKBOX_SELECTOR = 'input[type=checkbox]'
 
   ###*
     @param {Element} row
@@ -55,24 +61,17 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @expert.next()
 
   ###*
+    @protected
     @param {Element} row
+    @return {wzk.ui.CloseIcon}
   ###
   addRemoveIcon: (row) ->
     checkbox = @getRemovingCheckbox row
     goog.style.setElementShown checkbox, false
 
     removeIcon = new wzk.ui.CloseIcon dom: @dom, removed: row
-    removeIcon.render row
+    removeIcon.renderAfter checkbox
     removeIcon
-
-  ###*
-    @param {Element} row
-  ###
-  hangDeleteListener: (row) ->
-    E = goog.events.EventType
-    goog.events.listen @getRemovingCheckbox(row), [E.CLICK, E.KEYUP], (e) =>
-      if e.type is E.CLICK or e.keyCode is goog.events.KeyCodes.SPACE
-        @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, row)
 
   ###*
     @param {Element} row to look for checkbox in
@@ -80,7 +79,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   getRemovingCheckbox: (row) ->
     el = @dom.lastChildOfType row, 'td'
-    @dom.one 'input[type=checkbox]', el
+    @dom.one wzk.ui.inlineform.RowBuilder.CHECKBOX_SELECTOR, el
 
   ###*
     @protected
@@ -89,7 +88,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   handleIconAction: (e) =>
     removeIcon = e.target
     removed = removeIcon.getRemoved()
-    checkbox = @dom.one 'input[type=checkbox]', removed
+    checkbox = @dom.one wzk.ui.inlineform.RowBuilder.CHECKBOX_SELECTOR, removed
     checkbox.checked = true
     @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, removeIcon.getRemoved())
 

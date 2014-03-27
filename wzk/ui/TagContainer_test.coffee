@@ -12,8 +12,11 @@ suite 'wzk.ui.TagContainer', ->
     dom =
       createDom: (tag) ->
         mockEl(tag.toUpperCase())
+      el: (tag) ->
+        @createDom tag
       getDocument: ->
         doc
+      cls: -> {}
     dom
 
   mockDoc = ->

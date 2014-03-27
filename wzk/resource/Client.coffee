@@ -266,7 +266,7 @@ class wzk.resource.Client
       onSuccess response
       @xhrFac.applyJsonResponse response
 
-    iframeIO.listen goog.net.EventType.ERROR, (event) =>
+    iframeIO.listen goog.net.EventType.ERROR, (event) ->
       onError event.target.getResponseText()
 
   ###*

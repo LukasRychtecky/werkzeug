@@ -42,9 +42,12 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
       appendChild: ->
       tagName: tag
       events: {}
+      parentNode: {}
       attachEvent: (type, e) ->
         el.events[type] = e
       style: {}
+      insertBefore: (node) ->
+        @nextSibling = node
     el
 
   fireClick = ->
@@ -55,6 +58,13 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
     getParentElement: ->
       parent
     removeNode: ->
+    lastChildOfType: -> mockRow()
+    one: (sel, el) ->
+      el.querySelector sel
+    el: (tag) ->
+      mockEl tag
+    insertSiblingAfter: (newNode, refNode) ->
+      refNode.nextSibling = newNode
 
   mockForm = ->
     events: {}
@@ -79,7 +89,6 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
 
     dataset =
       'input[type=hidden]': config
-      'table tbody tr:last-child': mockRow()
       '.dynamic': btn
       'table tbody tr': []
 
