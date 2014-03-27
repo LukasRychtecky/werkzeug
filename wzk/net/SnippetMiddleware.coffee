@@ -8,6 +8,14 @@ class wzk.net.SnippetMiddleware
   @DATA:
     SNIPPET: 'snippet'
     TYPE: 'snippetType'
+    LOADER: 'snippetLoader'
+
+  ###*
+    @enum {string}
+  ###
+  @SELECTOR:
+    SNIPPET: 'data-snippet'
+    LOADER: 'data-snippet-loader'
 
   ###*
     @enum {string}
@@ -30,21 +38,37 @@ class wzk.net.SnippetMiddleware
   apply: (res) ->
     return unless res['snippets']
 
-    T = wzk.net.SnippetMiddleware.TYPE
     D = wzk.net.SnippetMiddleware.DATA
+    S = wzk.net.SnippetMiddleware.SELECTOR
+
+    loaders = {}
+    for loader in @dom.all "*[#{S.LOADER}]"
+      tokens = String(goog.dom.dataset.get(loader, D.LOADER)).split ' '
+      loaders[name] = loader for name in tokens
 
     for name, snip of res['snippets']
-      el = @dom.one "*[data-snippet=#{name}]"
-      continue unless el
 
-      type = goog.dom.dataset.get(el, D.TYPE) ? T.REPLACE
+      if loaders[name]?
+        @process loaders[name], snip
 
-      method = switch type
-        when T.REPLACE then @replace
-        when T.APPEND then @append
-        when T.PREPEND then @prepend
+      el = @dom.one "*[#{S.SNIPPET}=#{name}]"
+      if el?
+        @process el, snip
 
-      goog.bind(method, @, snip, el)()
+  ###*
+    @protected
+    @param {Element} el
+    @param {string} snippet
+  ###
+  process: (el, snippet) ->
+    type = goog.dom.dataset.get(el, wzk.net.SnippetMiddleware.DATA.TYPE) ? wzk.net.SnippetMiddleware.TYPE.REPLACE
+
+    method = switch type
+      when wzk.net.SnippetMiddleware.TYPE.REPLACE then @replace
+      when wzk.net.SnippetMiddleware.TYPE.APPEND then @append
+      when wzk.net.SnippetMiddleware.TYPE.PREPEND then @prepend
+
+    goog.bind(method, @, snippet, el)()
 
   ###*
     @protected

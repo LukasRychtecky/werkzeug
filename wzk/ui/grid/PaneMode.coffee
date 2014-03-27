@@ -20,10 +20,6 @@ class wzk.ui.grid.PaneMode
   @DATA:
     MODE: 'mode'
     SNIPPET: 'snippet'
-    SNIPPET_SCOPE: 'snippetScope'
-
-  @CSS:
-    HIDDEN: 'hidden'
 
   ###*
     @param {Element} table
@@ -71,33 +67,14 @@ class wzk.ui.grid.PaneMode
   loadSnippets: (model) =>
     @ss.set wzk.ui.grid.PaneMode.PARAM, model['id']
     A = wzk.ui.grid.PaneMode.ATTRS
-    for el in @dom.all '*[data-snippet]'
+    for el in @dom.all '.snippet[data-web-link]'
       link = @parseLink String goog.dom.dataset.get(el, A.LINK)
       url = model['_web_links'][link.link]
 
       if link.index?
         url = url[link.index]
       if url?
-        name = String goog.dom.dataset.get(el, wzk.ui.grid.PaneMode.DATA.SNIPPET)
-        @processSnippet name, url, el
-
-  ###*
-    Scope parent, is parent with data attribute DATA.SNIPPET_SCOPE
-    Scope parent is found in processSnippet method.
-
-    If scope parent is found, it's set to be shown.
-
-    @protected
-    @param {Element} el
-    @param {string} snippetName
-  ###
-  findScopeParent: (el, snippetName) ->
-    el = @dom.getParentElement el
-    while el?
-      if goog.dom.dataset.get(el, wzk.ui.grid.PaneMode.DATA.SNIPPET_SCOPE) is snippetName
-        return el
-      el = @dom.getParentElement el
-    return undefined
+        @processSnippet url
 
   ###*
     @protected
@@ -111,19 +88,7 @@ class wzk.ui.grid.PaneMode
 
   ###*
     @protected
-    @param {string} name
     @param {string} url
-    @param {Element} el
   ###
-  processSnippet: (name, url, el) ->
-    @client.request url + '?snippet=' + name, 'GET', {}, (json) =>
-      if json['snippets']?
-        el.innerHTML = json['snippets'][name]
-
-        # Find scope parent nad then show it
-        scopeParent = @findScopeParent(el, name)
-        if scopeParent?
-          goog.dom.classes.remove scopeParent, wzk.ui.grid.PaneMode.CSS.HIDDEN
-          goog.style.setElementShown scopeParent, true
-
-      @reg.process el
+  processSnippet: (url) ->
+    @client.request url, 'GET'
