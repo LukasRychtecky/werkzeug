@@ -20,6 +20,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     PREV: 'previous'
     NEXT: 'next'
     RESULT: 'result'
+    RESULT_NUMBER: 'result-number'
+    RESULT_CAPTION: 'result-caption'
     RESULT_TOTAL: 'result-total'
     RESULT_DISPLAYED: 'result-displayed'
     PAGING: 'paging'
@@ -40,12 +42,21 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###
   @PAGING_STYLE:
     SIMPLE: 'simple'
-    FULL: 'full'  # default
+    FULL: 'full' # default
+
+  ###*
+    @type {Array}
+  ###
+  @RESULT_CAPTION: ['Items total:', 'Displayed']
+
+  ###*
+    @type {Array}
+  ###
+  @RESULT_NUMBER: ['%d', '%d to %d']
 
   constructor: ->
     super()
     @classes.push 'paginator'
-    @resultPatterns = ['Items total: %d', 'Displayed %d to %d']
     @isPatternSet = [false, false]
     @switcher = null
     @switcherSelect = null
@@ -119,26 +130,40 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
 
   ###*
     @protected
-    @param {string} pattern
+    @param {wzk.dom.Dom} dom
+    @param {string} cls
+    @param {Element} resultEl
     @param {number} i
+    @param {Array} results
   ###
-  setResultPattern: (pattern, i) ->
-    if pattern? and pattern isnt '' and not @isPatternSet[i]
-      @resultPatterns[i] = pattern
-      @isPatternSet[i] = true
+  fetchResultText: (dom, cls, resultEl, i, results) ->
+    return if @isPatternSet[i]
+
+    el = dom.cls cls, resultEl
+    txt = ''
+    if el?
+      txt = dom.getTextContent el
+
+    results[i] = txt if txt? and txt isnt ''
+    @isPatternSet[i] = true
 
   ###*
     @param {wzk.ui.Component} paginator
     @param {Element} el
   ###
   decorate: (paginator, el) ->
-    dom = paginator.getDomHelper()
+    dom = (`/** @type {wzk.dom.Dom} */`) paginator.getDomHelper()
     C = wzk.ui.grid.PaginatorRenderer.CLASSES
 
     for resultEl, i in [dom.cls(C.RESULT_TOTAL, el), dom.cls(C.RESULT_DISPLAYED, el)]
       if resultEl?
-        @setResultPattern dom.getTextContent(resultEl), i
-        @decorateResult paginator, resultEl, @composeResult(paginator, @resultComposers[i])
+
+        @fetchResultText dom, C.RESULT_CAPTION, resultEl, i, wzk.ui.grid.PaginatorRenderer.RESULT_CAPTION
+        @fetchResultText dom, C.RESULT_NUMBER, resultEl, i, wzk.ui.grid.PaginatorRenderer.RESULT_NUMBER
+
+        numberEl = dom.cls C.RESULT_NUMBER, resultEl
+        if numberEl?
+          @decorateResult paginator, numberEl, @composeResult(paginator, @resultComposers[i])
 
     @pagingStyle = goog.dom.dataset.get el, wzk.ui.grid.PaginatorRenderer.DATA.PAGING
     pagination = dom.cls(C.PAGINATION, el) ? el
@@ -201,7 +226,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Array}
   ###
   composeDisplayedResult: (paginator) =>
-    [@resultPatterns[1], @resultFrom(paginator), @resultTo(paginator)]
+    [wzk.ui.grid.PaginatorRenderer.RESULT_NUMBER[1], @resultFrom(paginator), @resultTo(paginator)]
 
   ###*
     @protected
@@ -209,7 +234,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Array}
   ###
   composeTotalResult: (paginator) =>
-    [@resultPatterns[0], paginator.total]
+    [wzk.ui.grid.PaginatorRenderer.RESULT_NUMBER[0], paginator.total]
 
   ###*
     @protected
