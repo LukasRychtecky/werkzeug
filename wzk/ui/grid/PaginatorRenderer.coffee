@@ -47,17 +47,12 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   ###*
     @type {Array}
   ###
-  @RESULT_CAPTION: ['Items total:', 'Displayed']
-
-  ###*
-    @type {Array}
-  ###
-  @RESULT_NUMBER: ['%d', '%d to %d']
+  @RESULT: [['Items total:', '%d'], ['Displayed', '%d to %d']]
 
   constructor: ->
     super()
     @classes.push 'paginator'
-    @isPatternSet = [false, false]
+    @isPatternSet = [[false, false], [false, false]]
     @switcher = null
     @switcherSelect = null
     @switcherPattern = '%d per page'
@@ -134,18 +129,18 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {string} cls
     @param {Element} resultEl
     @param {number} i
-    @param {Array} results
+    @param {number} part
   ###
-  fetchResultText: (dom, cls, resultEl, i, results) ->
-    return if @isPatternSet[i]
+  fetchResultText: (dom, cls, resultEl, i, part) ->
+    return if @isPatternSet[i][part]
 
     el = dom.cls cls, resultEl
     txt = ''
     if el?
       txt = dom.getTextContent el
 
-    results[i] = txt if txt? and txt isnt ''
-    @isPatternSet[i] = true
+    wzk.ui.grid.PaginatorRenderer.RESULT[i][part] = txt if txt? and txt isnt ''
+    @isPatternSet[i][part] = true
 
   ###*
     @param {wzk.ui.Component} paginator
@@ -158,8 +153,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     for resultEl, i in [dom.cls(C.RESULT_TOTAL, el), dom.cls(C.RESULT_DISPLAYED, el)]
       if resultEl?
 
-        @fetchResultText dom, C.RESULT_CAPTION, resultEl, i, wzk.ui.grid.PaginatorRenderer.RESULT_CAPTION
-        @fetchResultText dom, C.RESULT_NUMBER, resultEl, i, wzk.ui.grid.PaginatorRenderer.RESULT_NUMBER
+        @fetchResultText dom, C.RESULT_CAPTION, resultEl, i, 0
+        @fetchResultText dom, C.RESULT_NUMBER, resultEl, i, 1
 
         numberEl = dom.cls C.RESULT_NUMBER, resultEl
         if numberEl?
@@ -226,7 +221,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Array}
   ###
   composeDisplayedResult: (paginator) =>
-    [wzk.ui.grid.PaginatorRenderer.RESULT_NUMBER[1], @resultFrom(paginator), @resultTo(paginator)]
+    [wzk.ui.grid.PaginatorRenderer.RESULT[1][1], @resultFrom(paginator), @resultTo(paginator)]
 
   ###*
     @protected
@@ -234,7 +229,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Array}
   ###
   composeTotalResult: (paginator) =>
-    [wzk.ui.grid.PaginatorRenderer.RESULT_NUMBER[0], paginator.total]
+    [wzk.ui.grid.PaginatorRenderer.RESULT[0][1], paginator.total]
 
   ###*
     @protected
