@@ -96,6 +96,12 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###*
     @return {boolean}
   ###
+  isResultEmpty: ->
+    @total is 0
+
+  ###*
+    @return {boolean}
+  ###
   isFirst: ->
     @page is @firstPage
 

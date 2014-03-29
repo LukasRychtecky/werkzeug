@@ -187,7 +187,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {number}
   ###
   resultFrom: (paginator) ->
-    if @resultTo(paginator) is 0 then 0 else paginator.offset + 1
+    if @resultTo(paginator) is 0 or paginator.isResultEmpty() then 0 else paginator.offset + 1
 
   ###*
     @protected
@@ -195,7 +195,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {number}
   ###
   resultTo: (paginator) ->
-    paginator.offset + paginator.count
+    if paginator.isResultEmpty() then 0 else paginator.offset + paginator.count
 
   ###*
     @protected
@@ -228,7 +228,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {wzk.ui.Component} paginator
     @return {Array}
   ###
-  composeTotalResult: (paginator) =>
+  composeTotalResult: (paginator) ->
     [wzk.ui.grid.PaginatorRenderer.RESULT[0][1], paginator.total]
 
   ###*
@@ -250,7 +250,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     C = wzk.ui.grid.PaginatorRenderer.CLASSES
 
     prev = dom.cls C.PREV, el
-    if paginator.isFirst()
+    if paginator.isFirst() or paginator.isResultEmpty()
       @inactivateEl prev
     else
       @setPage prev, paginator.page - 1
@@ -263,7 +263,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     dom.insertSiblingAfter frag, prev
 
     next = dom.cls C.NEXT, el
-    if paginator.isLast()
+    if paginator.isLast() or paginator.isResultEmpty()
       @inactivateEl next
     else
       @setPage next, paginator.page + 1
