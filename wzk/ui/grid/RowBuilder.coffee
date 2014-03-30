@@ -23,9 +23,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
 
     row.addClassName cls for cls in model['_class_names']
 
-    if goog.array.isEmpty model['_actions']
-      row.addCell ''
-    else
+    unless goog.array.isEmpty model['_actions']
       @buildActionsCell row, model
 
     row
