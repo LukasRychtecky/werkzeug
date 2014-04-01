@@ -6,6 +6,7 @@ goog.require 'goog.style'
 goog.require 'goog.events.KeyCodes'
 goog.require 'goog.dom.classes'
 goog.require 'wzk.ui.CloseIcon'
+goog.require 'goog.dom.dataset'
 
 ###*
   A dynamic builder of table rows for Django's inline forms
@@ -115,10 +116,15 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @param {Element} row
   ###
   fixIdsAndNames: (row) ->
-    for field in row.querySelectorAll('input, select')
-      for attr in ['name', 'id']
+    for field in @dom.all 'input, select', row
+      for attr in ['name', 'id', 'data-for']
         if field[attr]?
           field[attr] = @expert.process(field[attr])
+
+    for el in @dom.all 'div[data-for]', row
+      value = goog.dom.dataset.get el, 'for'
+      if value?
+        goog.dom.dataset.set el, 'for', @expert.process value
 
   ###*
     Prepares a row for cloning
