@@ -10,6 +10,12 @@ goog.require 'wzk.ui.inlineform.ConfigHandler'
 class wzk.ui.inlineform.DynamicForm
 
   ###*
+    @enum {string}
+  ###
+  @SELECTORS:
+    FILE_INPUT: "input[type=file]"
+
+  ###*
     @constructor
     @param {goog.dom.DomHelper} dom
   ###
@@ -53,6 +59,8 @@ class wzk.ui.inlineform.DynamicForm
   ###
   handleRowDelete: (e) =>
     el = (`/** @type {Element} */`) e.target
+    for fileInput in @dom.all wzk.ui.inlineform.DynamicForm.SELECTORS.FILE_INPUT, el
+      @dom.removeNode fileInput
     goog.style.setElementShown el, false
     @removeDutyFromHiddenInputs el
 
