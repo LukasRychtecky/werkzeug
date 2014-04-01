@@ -38,8 +38,13 @@ class wzk.ui.inlineform.DynamicForm
 
     @initInputs(fieldset)
     expert = new wzk.ui.inlineform.FieldExpert(parseInt(@formNum, 10))
-    row = @findRow fieldset
+
+    rows = @findRows fieldset
+    row = rows[rows.length - 1] # prototype row, intended to be cloned
     builder = new wzk.ui.inlineform.RowBuilder(row, expert, @dom)
+
+    for rowIndex in [0..rows.length - 2]
+      builder.decorateRow rows[rowIndex]
 
     if enabled
       @hangAddRowListener builder, btn
@@ -97,9 +102,8 @@ class wzk.ui.inlineform.DynamicForm
     @param {Element} fieldset
     @return {Element}
   ###
-  findRow: (fieldset) ->
-    el = fieldset.querySelector('table tbody')
-    @dom.lastChildOfType el, 'tr'
+  findRows: (fieldset) ->
+    @dom.all 'table tbody tr', fieldset
 
   ###*
     @protected

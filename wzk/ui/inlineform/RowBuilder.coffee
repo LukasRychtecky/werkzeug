@@ -6,6 +6,7 @@ goog.require 'goog.style'
 goog.require 'goog.events.KeyCodes'
 goog.require 'goog.dom.classes'
 goog.require 'wzk.ui.CloseIcon'
+goog.require 'wzk.ui.inlineform.RowDecorator'
 
 ###*
   A dynamic builder of table rows for Django's inline forms
@@ -39,6 +40,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     super()
     @parent = @dom.getParentElement(@row)
     @clone = @prepareClone()
+    @rowDecorator = new wzk.ui.inlineform.RowDecorator({dom: @dom})
     CLS = wzk.ui.inlineform.RowBuilder.CLS
     @prevClass = CLS.ODD
     @nextClass = CLS.EVEN
@@ -52,34 +54,19 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   addRow: ->
     cloned = @clone.cloneNode(true)
-    removeIcon = @addRemoveIcon(cloned)
+    @decorateRow cloned
 
     @cycle(cloned)
     @fixIdsAndNames(cloned)
     @parent.appendChild(cloned)
-    removeIcon.listen goog.ui.Component.EventType.ACTION, @handleIconAction
     @expert.next()
 
   ###*
-    @protected
     @param {Element} row
-    @return {wzk.ui.CloseIcon}
   ###
-  addRemoveIcon: (row) ->
-    checkbox = @getRemovingCheckbox row
-    goog.style.setElementShown checkbox, false
-
-    removeIcon = new wzk.ui.CloseIcon dom: @dom, removed: row
-    removeIcon.renderAfter checkbox
-    removeIcon
-
-  ###*
-    @param {Element} row to look for checkbox in
-    @return {Element} returns last checkbox in
-  ###
-  getRemovingCheckbox: (row) ->
-    el = @dom.lastChildOfType row, 'td'
-    @dom.one wzk.ui.inlineform.RowBuilder.CHECKBOX_SELECTOR, el
+  decorateRow: (row) ->
+    removeIcon = @rowDecorator.addRemoveIcon(row)
+    removeIcon.listen goog.ui.Component.EventType.ACTION, @handleIconAction
 
   ###*
     @protected
