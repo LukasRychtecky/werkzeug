@@ -63,7 +63,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
 
   pagHandler.setBase paginator.getBase()
 
-  watcher = new wzk.ui.grid.FilterWatcher grid, query
+  watcher = new wzk.ui.grid.FilterWatcher grid, query, dom
   watcher.watchOn table
 
   msgr = new wzk.ui.grid.Messenger grid

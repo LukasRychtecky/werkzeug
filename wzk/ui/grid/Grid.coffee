@@ -233,3 +233,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   silentlyRemoveRow: (btn) ->
     @dom.removeNode btn.getModel().row
+
+  ###*
+    @param {wzk.resource.Query} query
+  ###
+  setQuery: (@query) ->
