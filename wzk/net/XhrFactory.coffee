@@ -25,6 +25,7 @@ class wzk.net.XhrFactory
     xhr.listen goog.net.EventType.ERROR, =>
       if @isJsonReponse xhr
         response = xhr.getResponseJson()
+        @flash.clearAll()
         @applyJsonResponse(response)
       else
         @flash.error()
@@ -33,6 +34,7 @@ class wzk.net.XhrFactory
       if xhr.getStatus() isnt 204
         try
           response = xhr.getResponseJson()
+          @flash.clearAll()
           @applyJsonResponse(response)
         catch error
     xhr
