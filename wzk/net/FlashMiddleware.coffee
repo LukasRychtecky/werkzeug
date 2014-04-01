@@ -33,3 +33,6 @@ class wzk.net.FlashMiddleware
 
   loading: ->
     @flash.addMessage @msgs['loading'], 'info', false, false
+
+  clearAll: ->
+    @flash.clearAll()

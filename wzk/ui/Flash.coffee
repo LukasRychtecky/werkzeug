@@ -14,6 +14,7 @@ class wzk.ui.Flash extends wzk.ui.Component
   ###
   constructor: (params) ->
     params.renderer ?= wzk.ui.FlashRenderer.getInstance()
+    @shownMessages = []
     super params
 
   ###*
@@ -33,6 +34,7 @@ class wzk.ui.Flash extends wzk.ui.Component
 
     for msg in msgs
       flash = @buildFlash msg, severity, fadeOut, closable
+      @shownMessages.push flash
       flashes.push flash
       @addChild flash
     flashes
@@ -91,3 +93,8 @@ class wzk.ui.Flash extends wzk.ui.Component
       @decorate el
     else
       @render el
+
+  clearAll: ->
+    for message in @shownMessages
+      message.destroy()
+    @shownMessages = []
