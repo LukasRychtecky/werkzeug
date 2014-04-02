@@ -43,8 +43,9 @@ class wzk.ui.inlineform.DynamicForm
     row = rows[rows.length - 1] # prototype row, intended to be cloned
     builder = new wzk.ui.inlineform.RowBuilder(row, expert, @dom)
 
-    for rowIndex in [0..rows.length - 2]
-      builder.decorateRow rows[rowIndex]
+    if rows.length > 1
+      for rowIndex in [0..rows.length - 2]
+        builder.decorateRow rows[rowIndex]
 
     if enabled
       @hangAddRowListener builder, btn
