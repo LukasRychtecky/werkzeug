@@ -26,7 +26,7 @@ class wzk.ui.inlineform.FieldExpert
     @return {string}
   ###
   process: (attr) ->
-    attr.replace('_prefix_', @start.toString())
+    attr.replace('__prefix__', @start.toString())
 
   ###*
     Returns a model name from a given field
