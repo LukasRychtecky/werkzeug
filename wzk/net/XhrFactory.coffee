@@ -7,14 +7,35 @@ goog.require 'goog.events'
 class wzk.net.XhrFactory
 
   ###*
+    @enum {string}
+  ###
+  @EventType:
+    BEFORE_UNLOAD: 'beforeunload'
+
+  ###*
     @param {wzk.net.FlashMiddleware} flash
     @param {wzk.net.AuthMiddleware} auth
     @param {wzk.net.SnippetMiddleware} snip
+    @param {wzk.dom.Dom} dom
   ###
-  constructor: (@flash, @auth, @snip) ->
+  constructor: (@flash, @auth, @snip, @dom) ->
     @_i = 0
     @_running = 0
     @_flashLoading = null
+    @xhrs = []
+
+    goog.events.listen @dom.getWindow(), wzk.net.XhrFactory.EventType.BEFORE_UNLOAD, @handleBeforeUnload
+
+  ###*
+    When user nagivates elsewhere (invokes unload of page), cancell all xhr requests
+    Will not work for requests that have not been built by XhrFactory
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleBeforeUnload: (e) =>
+    for xhr in @xhrs
+      xhr.abort()
+    e.preventDefault()
 
   ###*
     @return {wzk.net.XhrIo}
@@ -54,6 +75,7 @@ class wzk.net.XhrFactory
   ###
   buildXhr: ->
     xhr = new wzk.net.XhrIo()
+    @xhrs.push xhr
     xhr.id_ = @_i
     @_i++
 
