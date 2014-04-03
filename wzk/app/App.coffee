@@ -41,7 +41,7 @@ class wzk.app.App
 
     auth = new wzk.net.AuthMiddleware @win.document
     flashmid = new wzk.net.FlashMiddleware flash, msgs
-    @xhrFac = new wzk.net.XhrFactory flashmid, auth, snip
+    @xhrFac = new wzk.net.XhrFactory flashmid, auth, snip, dom
 
     history = new goog.History()
     history.setEnabled true
