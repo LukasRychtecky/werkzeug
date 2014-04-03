@@ -18,7 +18,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @enum {string}
   ###
   @CLS =
-    EVEN: 'EVEN'
+    EVEN: 'even'
     ODD: 'odd'
 
   ###*
@@ -45,7 +45,6 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     CLS = wzk.ui.inlineform.RowBuilder.CLS
     @prevClass = CLS.ODD
     @nextClass = CLS.EVEN
-    @rotateClasses() if goog.dom.classes.has @clone, CLS.EVEN
     goog.dom.classes.remove @clone, CLS.EVEN, CLS.ODD
 
   ###*
