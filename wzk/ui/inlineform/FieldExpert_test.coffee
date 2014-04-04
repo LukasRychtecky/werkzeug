@@ -8,9 +8,9 @@ suite 'wzk.ui.inlineform.FieldExpert', ->
   test 'Should return next attribute in a valid format', ->
     names = ['id', 'node', 'name']
     for name in names
-      assert.equal expert.process(attrFrom(0, name)), attrFrom(1, name)
+      assert.equal expert.process(attrFrom(wzk.ui.inlineform.FieldExpert.PREFIX, name)), attrFrom(1, name)
 
     expert.next()
 
     for name in names
-      assert.equal expert.process(attrFrom(0, name)), attrFrom(2, name)
+      assert.equal expert.process(attrFrom(wzk.ui.inlineform.FieldExpert.PREFIX, name)), attrFrom(2, name)

@@ -63,6 +63,10 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
       el.querySelector sel
     el: (tag) ->
       mockEl tag
+    all: (sel) ->
+      res = []
+      res.push mockRow() if sel is 'table tbody tr'
+      res
     insertSiblingAfter: (newNode, refNode) ->
       refNode.nextSibling = newNode
 

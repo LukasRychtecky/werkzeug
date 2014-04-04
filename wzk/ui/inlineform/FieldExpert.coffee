@@ -8,6 +8,11 @@ goog.require 'goog.array'
 class wzk.ui.inlineform.FieldExpert
 
   ###*
+    @type {string}
+  ###
+  @PREFIX = '__prefix__'
+
+  ###*
     @constructor
     @param {number=} start
   ###
@@ -26,7 +31,7 @@ class wzk.ui.inlineform.FieldExpert
     @return {string}
   ###
   process: (attr) ->
-    attr.replace('__prefix__', @start.toString())
+    attr.replace(wzk.ui.inlineform.FieldExpert.PREFIX, @start.toString())
 
   ###*
     Returns a model name from a given field
