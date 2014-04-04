@@ -16,6 +16,7 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
       mockEl tag
     insertSiblingAfter: (newNode, refNode) ->
       refNode.nextSibling = newNode
+    all: -> []
 
   mockParent = ->
     par =
