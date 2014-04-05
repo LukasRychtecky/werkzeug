@@ -3,40 +3,23 @@ suite 'wzk.dom.Dom', ->
   dom = null
   doc = null
 
-  mockTextNode = (txt) ->
-    txt: txt
-
-  mockEl = (tag) ->
-    el = document.createElement(tag)
-    el.children = []
-    el.ownerDocument = doc
-    el.appendChild = (child) ->
-      el.children.push(child)
-
-    el
-
-  mockDocument = ->
-    createTextNode: (txt) ->
-      mockTextNode(txt)
-    createElement: (tag) ->
-      mockEl(tag)
-
   setup ->
-    doc = mockDocument()
-    dom = new wzk.dom.Dom(doc)
+    doc = jsdom '<html><head></head><body></body></html>'
+    dom = new wzk.dom.Dom doc
+    doc.body.innerHTML = ''
 
 
   suite '#el', ->
 
     test 'Should set a text content to the new element', ->
+      doc.body.textContent = 'novy'
       txt = 'Text content'
       el = dom.el('div', {}, txt)
-      assert.equal el.children[0].txt, txt
+      assert.equal el.textContent, txt
 
     test 'Should append the new element as a child', ->
-      parent = mockEl('div')
-      dom.el('div', {}, parent)
-      assert.equal parent.children.length, 1
+      dom.el 'div', {}, doc.body
+      assert.equal doc.body.children.length, 1
 
     test 'Should omit a third argument', ->
       el = dom.el('div', {}, {})
@@ -46,35 +29,37 @@ suite 'wzk.dom.Dom', ->
   suite '#isNode', ->
 
     test 'Should be a Node', ->
-      assert.isTrue dom.isNode(nodeType: 1)
+      assert.isTrue dom.isNode(doc.body)
 
     test 'Should not be a Node', ->
       assert.isFalse dom.isNode(null)
 
+
   suite '#getFirstSibling, #getLastSibling', ->
 
-    parent = null
+    html = """
+    <html><head></head>
+    <body>
+    <div class="first"></div>
+    <div class="mid"></div>
+    <div class="last"></div>
+    </body>
+    </html>
+    """
 
     setup ->
-      parent =
-        nodeType: goog.dom.NodeType.ELEMENT
-        firstElementChild: null
-        lastElementChild: null
+      doc = jsdom html
 
     test 'Should return first sibling', ->
-      parent.firstElementChild = 'class': 'first'
-
-      first = dom.getFirstSibling parentNode: parent
-      assert.equal first['class'], 'first'
+      first = dom.getFirstSibling doc.body.children[1]
+      assert.equal first.className, 'first'
 
     test 'First sibling should not exists', ->
-      assert.isNull dom.getFirstSibling(parentNode: parent)
+      assert.isNull dom.getFirstSibling(doc.body.children[0])
 
     test 'Should return last sibling', ->
-      parent.lastElementChild = 'class': 'last'
-
-      last = dom.getLastSibling parentNode: parent
-      assert.equal last['class'], 'last'
+      last = dom.getLastSibling doc.body.children[1]
+      assert.equal last.className, 'last'
 
     test 'Last sibling should not exists', ->
-      assert.isNull dom.getLastSibling(parentNode: parent)
+      assert.isNull dom.getLastSibling(doc.body.children[2])
