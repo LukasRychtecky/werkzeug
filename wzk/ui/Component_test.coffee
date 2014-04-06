@@ -1,8 +1,12 @@
 suite 'wzk.ui.Component', ->
 
+  doc = null
   component = null
   parent = null
-  sibling = null
+  dom = null
+  last = null
+  first = null
+  parentChildCount = 0
 
   class ExtComp extends wzk.ui.Component
 
@@ -25,32 +29,25 @@ suite 'wzk.ui.Component', ->
       @count++
 
   buildComp = (done = null) ->
-    component = new ExtComp {}, done
+    component = new ExtComp {dom: dom}, done
 
-  buildbeforeRenderingComp = (done) ->
-    component = new BeforeRendering {}, done
-
-  mockChild = (onCreate, onRender = ->) ->
-    getParent: ->
-    getId: ->
-      ''
-    setParent: ->
-    createDom: ->
-      onCreate()
-    render: ->
-      onRender()
-    isInDocument: ->
-      false
-    getElement: ->
-      {}
-    enterDocument: ->
+  buildBeforeRenderingComp = (done) ->
+    component = new BeforeRendering {dom: dom}, done
 
   setup ->
-    component = new wzk.ui.Component()
-    parent =
-      insertBefore: ->
-    sibling =
-      parentNode: parent
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    <div class="first"></div>
+    <div class="last"></div>
+    </body>
+    </html>"""
+    dom = new wzk.dom.Dom doc
+    component = new wzk.ui.Component dom: dom
+    parent = doc.body
+    first = doc.body.children[0]
+    last = doc.body.children[1]
+    parentChildCount = parent.children.length
 
   suite '#render', ->
 
@@ -65,76 +62,67 @@ suite 'wzk.ui.Component', ->
       catch err
         assert.instanceOf err, Error
 
-    test 'Should insert a component as a child', (done) ->
-      parent.insertBefore = ->
-        done()
+    test 'Should insert a component as a child', ->
       component.render parent
+      assert.equal parent.children.length, parentChildCount + 1
 
     test 'Should call a callback after rendering', (done) ->
       buildComp(done).render parent
 
-    test 'Should render children', (done) ->
+    test 'Should render children', ->
       comp = buildComp()
-      comp.addChild mockChild(done)
+      comp.addChild buildComp()
       comp.render parent
+      assert.equal comp.getChildCount(), 1
 
     test 'Should not render children', ->
       comp = buildComp()
       comp.renderChildrenInternally = false
       nothing = ->
-      comp.addChild mockChild(nothing, assert.fail)
+      comp.addChild buildComp()
       comp.render parent
       assert.equal comp.getChildCount(), 1
+      assert.equal comp.getElement().children.length, 0
+
 
   suite '#renderBefore', ->
 
-    mockParent = (done = ->) ->
-      parent.insertBefore = (el, sib) ->
-        done() if sib is sibling
-
-    test 'Should insert a component before an element', (done) ->
-      mockParent done
-      component.renderBefore sibling
+    test 'Should insert a component before an element', ->
+      component.renderBefore last
+      assert.equal doc.body.children[1], component.getElement()
 
     test 'Should call a callback after rendering', (done) ->
-      mockParent()
-      buildComp(done).renderBefore sibling
+      buildComp(done).renderBefore last
 
     test 'Should call a callback before rendering', (done) ->
-      mockParent()
-      buildbeforeRenderingComp(done).renderBefore sibling
+      buildBeforeRenderingComp(done).renderBefore last
+
 
   suite '#renderAfter', ->
 
-    nextSib = null
-
-    setup ->
-      nextSib = {}
-      sibling.nextSibling = nextSib
-
-    test 'Should insert a component after an element', (done) ->
-      parent.insertBefore = (el, sib) ->
-        done() if sib is nextSib
-
-      component.renderAfter sibling
+    test 'Should insert a component after an element', ->
+      component.renderAfter first
+      assert.equal parent.children[1], component.getElement()
 
     test 'Should call a callback after rendering', (done) ->
-      buildComp(done).renderAfter sibling
+      buildComp(done).renderAfter first
+
 
   suite '#enterDocument', ->
 
     test 'Should call a callback after rendering', (done) ->
       buildComp(done).enterDocument()
 
+
   suite '#createDom', ->
 
-    test 'Should render also children', (done) ->
+    test 'Should render also children', ->
       comp = buildComp()
-      comp.addChild mockChild done, assert.fail
+      comp.addChild buildComp()
       comp.createDom()
+      assert.equal comp.getElement().children.length, 1
 
     test 'Should not create an element if a component is in DOM', ->
-      parent.insertBefore = ->
       component.render parent
       component.setElementInternal = ->
         assert.fail 'Element should not be build again'
@@ -143,21 +131,16 @@ suite 'wzk.ui.Component', ->
     test 'Should not create children elements', ->
       comp = buildComp()
       comp.renderChildrenInternally = false
-      nothing = ->
-      comp.addChild mockChild(assert.fail)
-      comp.createDom parent
+      comp.addChild buildComp()
+      comp.createDom()
+      assert.equal comp.getElement().innerHTML, ''
+
 
   suite '#destroy', ->
 
-    test 'Should destroy a component', (done) ->
-      exited = false
-      parent =
-        removeChild: ->
-          done()
+    test 'Should destroy a component', ->
       comp = buildComp()
-      comp.enterDocument()
-      comp.exitDocument = ->
-        exited = true
-      comp.getElement = ->
-        parentNode: parent
+      comp.render last
+      assert.equal last.children.length, 1
       comp.destroy()
+      assert.equal last.children.length, 0
