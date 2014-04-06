@@ -1,4 +1,4 @@
-goog.provide 'wzk.ui.ComponentRenderer'
+goog.require 'wzk.dom.Dom'
 
 ###*
   A base component renderer. By default renders a component as DIV.
