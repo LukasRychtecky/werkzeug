@@ -45,6 +45,7 @@ class wzk.ui.ac.SelectAutoComplete
     @renderer.decorate @select
     @stor = new wzk.ui.ac.SelectOneStorage @dom, @select
     @renderer.listen wzk.ui.ac.Renderer.EventType.CLEAN, @handleClean
+    @renderer.listen wzk.ui.ac.Renderer.EventType.OPEN, @handleOpen
 
   ###*
     @protected
@@ -54,19 +55,27 @@ class wzk.ui.ac.SelectAutoComplete
     goog.events.fireListeners(@select, goog.events.EventType.CHANGE, false, {type: goog.events.EventType.CHANGE, target: @select})
 
   ###*
+     @protected
+   ###
+  handleOpen: =>
+    @renderer.getInput().getElement().focus()
+    @ac.renderRows(@data)
+
+  ###*
     @param {Array} data
   ###
-  load: (data) ->
-    matcher = new wzk.ui.ac.ArrayMatcher data, false
+  load: (@data) ->
+    matcher = new wzk.ui.ac.ArrayMatcher @data, false
     @handler = new wzk.ui.ac.InputHandler null, null, false
-    ac = new wzk.ui.ac.AutoComplete matcher, @renderer, @handler
+    @ac = new wzk.ui.ac.AutoComplete matcher, @renderer, @handler
+    @ac.setTarget(@renderer.getInput().getElement())  # sets target element where to attach suggest box
 
-    @handler.attachAutoComplete ac
+    @handler.attachAutoComplete @ac
     @handler.attachInput @renderer.getInput().getElement()
 
-    ac.listen goog.ui.ac.AutoComplete.EventType.UPDATE, @handleUpdate
+    @ac.listen goog.ui.ac.AutoComplete.EventType.UPDATE, @handleUpdate
 
-    @findDefaultValue data
+    @findDefaultValue @data
 
   ###*
     @protected
