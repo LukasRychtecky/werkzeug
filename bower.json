@@ -3,6 +3,6 @@
     "version": "0.3.47",
     "dependencies": {
         "closure-compiler": "http://dl.google.com/closure-compiler/compiler-latest.zip",
-        "closure-library": "git://github.com/steida/google-closure-library.git#1bd2a9bdb7786c4a6a4026886f48e586f79a2755"
+        "closure-library": "git://github.com/steida/google-closure-library.git#f26bb3122769eb1b19c6fb5adbd9448e36996627"
     }
 }
