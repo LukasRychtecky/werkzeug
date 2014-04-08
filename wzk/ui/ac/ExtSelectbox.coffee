@@ -76,6 +76,9 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
       @dom.insertSiblingBefore inputContainer, selectbox
       @renderer.setInputContainer inputContainer
 
+      if selectbox.hasAttribute 'placeholder'
+        @input.getElement().setAttribute 'placeholder', selectbox.getAttribute 'placeholder'
+
       @clrBtn.renderBefore(selectbox)
       @openBtn.renderBefore(selectbox)
       @inputHandler.attachAutoComplete(@autoComplete)

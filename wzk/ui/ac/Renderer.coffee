@@ -99,6 +99,9 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputClean
     @input.render @inputContainer
 
+    if @select.hasAttribute 'placeholder'
+      @input.getElement().setAttribute 'placeholder', @select.getAttribute 'placeholder'
+
   ###*
     @protected
     @param {goog.events.Event} e
