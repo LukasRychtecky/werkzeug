@@ -5,6 +5,7 @@ goog.require 'wzk.ui.Input'
 goog.require 'wzk.ui.InputSearchRenderer'
 goog.require 'wzk.ui.ac.InputHandler'
 goog.require 'wzk.ui.ac.AutoComplete'
+goog.require 'wzk.ui.OpenIcon'
 goog.require 'goog.ui.ac.Renderer'
 goog.require 'wzk.ui.ac.ArrayMatcher'
 goog.require 'goog.events'
@@ -31,6 +32,9 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
       @clear()
       e.preventDefault()
+
+    @openBtn = new wzk.ui.OpenIcon()
+    @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
 
     @cont.listen wzk.ui.TagContainer.EventType.ADD_TAG, (e) =>
       @handler.add(e.target)
@@ -59,16 +63,21 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @param {HTMLSelectElement} selectbox
     @param {Array.<wzk.resource.Model>} data
   ###
-  render: (selectbox, data) ->
-    @matcher = new wzk.ui.ac.ArrayMatcher(data, false)
+  render: (selectbox, @data) ->
+    @matcher = new wzk.ui.ac.ArrayMatcher(@data, false)
     @autoComplete = new wzk.ui.ac.AutoComplete(@matcher, @renderer, @inputHandler)
     @hideOriginSelect(selectbox)
     @cont.renderAfter(selectbox)
 
     readonly = selectbox.hasAttribute('readonly')
     unless readonly
-      @input.renderBefore(selectbox)
+      inputContainer = @dom.createElement 'div'
+      @input.render inputContainer
+      @dom.insertSiblingBefore inputContainer, selectbox
+      @renderer.setInputContainer inputContainer
+
       @clrBtn.renderBefore(selectbox)
+      @openBtn.renderBefore(selectbox)
       @inputHandler.attachAutoComplete(@autoComplete)
       @inputHandler.attachInput(@input.getElement())
       @hangCleaner(@autoComplete)
@@ -110,6 +119,13 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
       tagRenderer = if @customRenderer? then @customRenderer.getTagRenderer() else null
       @cont.addTag(e.row.toString(), e.row, tagRenderer)
       @input.clear()
+
+  ###*
+    @protected
+  ###
+  handleOpen: =>
+    @input.getElement().focus()
+    @autoComplete.renderRows(@data)
 
   ###*
     @protected

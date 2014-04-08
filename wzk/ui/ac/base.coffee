@@ -81,7 +81,7 @@ wzk.ui.ac.buildRestDataProvider = (select, xhrFac, onLoad) ->
 ###
 wzk.ui.ac.buildSelectAutocompleteInternal = (select, dom) ->
   customRenderer = wzk.ui.ac.buildCustomRenderer(select, dom)
-  renderer = new wzk.ui.ac.Renderer(dom, null, null, customRenderer)
+  renderer = new wzk.ui.ac.Renderer(dom, null, customRenderer)
   ac = new wzk.ui.ac.SelectAutoComplete dom, renderer
   ac.decorate select
   ac
@@ -94,7 +94,7 @@ wzk.ui.ac.buildExtSelectboxFromSelectInternal = (select, dom) ->
   return unless select?
 
   customRenderer = wzk.ui.ac.buildCustomRenderer(select, dom)
-  renderer = new wzk.ui.ac.Renderer(dom, null, null, customRenderer)
+  renderer = new wzk.ui.ac.Renderer(dom, null, customRenderer)
   storage = new wzk.ui.ac.ExtSelectboxStorage(dom, select)
   selectbox = new wzk.ui.ac.ExtSelectbox(dom, renderer, customRenderer, new wzk.ui.ac.ExtSelectboxStorageHandler(select, storage))
   selectbox

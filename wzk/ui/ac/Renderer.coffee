@@ -1,4 +1,5 @@
 goog.require 'wzk.ui.Input'
+goog.require 'wzk.ui.OpenIcon'
 goog.require 'goog.style'
 
 class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
@@ -21,20 +22,19 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     ACTIVE: 'active'
     ITEM: 'ac-item'
     IMG: 'ac-image'
+    WITH_IMAGE: 'with-image'
 
   ###*
     @enum {string}
   ###
   @EventType:
     CLEAN: 'clean'
+    OPEN: 'open'
 
   ###*
     Class for rendering the results of an auto-complete in a drop down list.
 
     @param {wzk.dom.Dom} dom
-    @param {Element=} parentNode optional reference to the parent element
-        that will hold the autocomplete elements. goog.dom.getDocument().body
-        will be used if this is null.
     @param {?({renderRow}|{render})=} customRenderer Custom full renderer to
         render each row. Should be something with a renderRow or render method.
     @param {boolean=} rightAlign Determines if the autocomplete will always
@@ -44,8 +44,8 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         bolds every matching substring for a given token in each row. True by
         default.
   ###
-  constructor: (@dom, @imagePlaceholder, parentNode, @customRenderer, rightAlign, useStandardHighlighting) ->
-    super(parentNode, customRenderer, rightAlign, useStandardHighlighting)
+  constructor: (@dom, @imagePlaceholder, @customRenderer, rightAlign, useStandardHighlighting) ->
+    super(null, customRenderer, rightAlign, useStandardHighlighting)
 
     @className = wzk.ui.ac.Renderer.CLS.CONTAINER
     @rowClassName = wzk.ui.ac.Renderer.CLS.ROW
@@ -65,21 +65,17 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
     if @customRenderer?
       @imgOrPlaceholder = @customRenderer.createImageOrPlaceholder()
+      @dom.appendChild @container, @imgOrPlaceholder
 
     # parent of select element is cosidered to be container
     selectParent = @dom.getParentElement @select
-
     @dom.appendChild selectParent, @container
 
-    if @customRenderer?
-      @dom.appendChild @container, @imgOrPlaceholder
-
-    @input = new wzk.ui.Input null, null, @dom
-    @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputClean
-    
+    @buildInput()
     @items = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEMS_CONTAINER
-    @dom.appendChild @container, @items
-    @input.render @container
+
+    if @customRenderer?
+      goog.dom.classes.add @input.getElement(), wzk.ui.ac.Renderer.CLS.WITH_IMAGE
 
     if readonly
       @input.getElement().setAttribute 'readonly', 'true'
@@ -87,6 +83,21 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       @clrBtn = new wzk.ui.CloseIcon()
       @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
       @clrBtn.render @container
+
+      @openBtn = new wzk.ui.OpenIcon()
+      @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
+      @openBtn.render @container
+
+  ###*
+    @protected
+  ###
+  buildInput: ->
+    @inputContainer = @dom.createElement 'div'
+    @dom.appendChild @container, @inputContainer
+
+    @input = new wzk.ui.Input null, null, @dom
+    @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputClean
+    @input.render @inputContainer
 
   ###*
     @protected
@@ -97,6 +108,13 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @clearImage()
     e.preventDefault()
     @dispatchClean()
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleOpen: (e) =>
+    @dispatchEvent new goog.events.Event(wzk.ui.ac.Renderer.EventType.OPEN)
 
   ###*
     @protected
@@ -117,6 +135,11 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   ###
   getInput: ->
     @input
+
+  ###*
+    @param {Element} inputContainer
+  ###
+  setInputContainer: (@inputContainer) ->
 
   ###*
     @param {Object|null|undefined=} data
@@ -155,7 +178,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
       el.id = goog.ui.IdGenerator.getInstance().getNextUniqueId()
 
-      @dom.appendChild @parent_, el
+      @dom.appendChild @inputContainer, el
 
       # Add this object as an event handler
       goog.events.listen el, goog.events.EventType.CLICK, @handleClick_, false, @
