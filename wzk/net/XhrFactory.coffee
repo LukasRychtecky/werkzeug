@@ -24,7 +24,8 @@ class wzk.net.XhrFactory
     @_flashLoading = null
     @xhrs = []
 
-    goog.events.listen @dom.getWindow(), wzk.net.XhrFactory.EventType.BEFORE_UNLOAD, @handleBeforeUnload
+    unless goog.userAgent.IE
+      goog.events.listen @dom.getWindow(), wzk.net.XhrFactory.EventType.BEFORE_UNLOAD, @handleBeforeUnload
 
   ###*
     When user nagivates elsewhere (invokes unload of page), cancell all xhr requests
@@ -35,7 +36,7 @@ class wzk.net.XhrFactory
   handleBeforeUnload: (e) =>
     for xhr in @xhrs
       xhr.abort()
-    e.preventDefault()
+    undefined
 
   ###*
     @return {wzk.net.XhrIo}
