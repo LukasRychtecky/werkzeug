@@ -18,6 +18,12 @@ goog.require 'goog.testing.events'
 class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
 
   ###*
+    @enum {string}
+  ###
+  @CLS:
+    AC_BUTTONS: 'ac-buttons'
+
+  ###*
     @param {wzk.dom.Dom} dom
     @param {goog.ui.ac.Renderer} renderer
     @param {Object} customRenderer
@@ -26,12 +32,9 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
   constructor: (@dom, @renderer, @customRenderer, @handler = null) ->
     super()
     @cont = new wzk.ui.TagContainer null, null, @dom
-    @input = new wzk.ui.Input(null, wzk.ui.InputSearchRenderer.getInstance(), dom)
+    @input = new wzk.ui.ClearableInput(dom)
 
-    @clrBtn = new wzk.ui.CloseIcon()
-    @clrBtn.listen goog.ui.Component.EventType.ACTION, (e) =>
-      @clear()
-      e.preventDefault()
+    @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputValueChange
 
     @openBtn = new wzk.ui.OpenIcon()
     @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
@@ -71,22 +74,33 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
 
     readonly = selectbox.hasAttribute('readonly')
     unless readonly
-      inputContainer = @dom.createElement 'div'
+      inputContainer = @dom.createDom 'div', wzk.ui.ac.ExtSelectbox.CLS.AC_BUTTONS
+
       @input.render inputContainer
+      @openBtn.render inputContainer
+
+      @renderer.setContainer inputContainer
       @dom.insertSiblingBefore inputContainer, selectbox
-      @renderer.setInputContainer inputContainer
 
       if selectbox.hasAttribute 'placeholder'
         @input.getElement().setAttribute 'placeholder', selectbox.getAttribute 'placeholder'
 
-      @clrBtn.renderBefore(selectbox)
-      @openBtn.renderBefore(selectbox)
       @inputHandler.attachAutoComplete(@autoComplete)
       @inputHandler.attachInput(@input.getElement())
       @hangCleaner(@autoComplete)
       @delegateObligation(selectbox)
 
     @handler.load(data, @cont, @customRenderer, readonly) if @handler
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleInputValueChange: (e) =>
+    if e.target.getContent()
+      goog.style.setElementShown @openBtn.getElement(), false
+    else
+      goog.style.setElementShown @openBtn.getElement(), true
 
   clear: ->
     @input.setValue ''

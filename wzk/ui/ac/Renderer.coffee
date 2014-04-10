@@ -1,5 +1,6 @@
 goog.require 'wzk.ui.Input'
 goog.require 'wzk.ui.OpenIcon'
+goog.require 'wzk.ui.ClearableInput'
 goog.require 'goog.style'
 
 class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
@@ -20,7 +21,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     CONTAINER: 'ac dropdown-menu'
     ROW: 'ac-row'
     ACTIVE: 'active'
-    ITEM: 'ac-item'
+    ITEM: 'ac-item ac-buttons'
     IMG: 'ac-image'
     WITH_IMAGE: 'with-image'
 
@@ -80,10 +81,6 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     if readonly
       @input.getElement().setAttribute 'readonly', 'true'
     else
-      @clrBtn = new wzk.ui.CloseIcon()
-      @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
-      @clrBtn.render @container
-
       @openBtn = new wzk.ui.OpenIcon()
       @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
       @openBtn.render @container
@@ -92,25 +89,12 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @protected
   ###
   buildInput: ->
-    @inputContainer = @dom.createElement 'div'
-    @dom.appendChild @container, @inputContainer
-
-    @input = new wzk.ui.Input null, null, @dom
-    @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputClean
-    @input.render @inputContainer
+    @input = new wzk.ui.ClearableInput @dom
+    @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputValueChange
+    @input.render @container
 
     if @select.hasAttribute 'placeholder'
       @input.getElement().setAttribute 'placeholder', @select.getAttribute 'placeholder'
-
-  ###*
-    @protected
-    @param {goog.events.Event} e
-  ###
-  handleClean: (e) =>
-    @input.setValue ''
-    @clearImage()
-    e.preventDefault()
-    @dispatchClean()
 
   ###*
     @protected
@@ -123,8 +107,12 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @protected
     @param {goog.events.Event} e
   ###
-  handleInputClean: (e) =>
-    unless e.target.getContent()
+  handleInputValueChange: (e) =>
+    if e.target.getContent()
+      goog.style.setElementShown @openBtn.getElement(), false
+    else
+      goog.style.setElementShown @openBtn.getElement(), true
+      @clearImage()
       @dispatchClean()
 
   ###*
@@ -140,9 +128,9 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @input
 
   ###*
-    @param {Element} inputContainer
+    @param {Element} container
   ###
-  setInputContainer: (@inputContainer) ->
+  setContainer: (@container) ->
 
   ###*
     @param {Object|null|undefined=} data
@@ -181,7 +169,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
       el.id = goog.ui.IdGenerator.getInstance().getNextUniqueId()
 
-      @dom.appendChild @inputContainer, el
+      @dom.appendChild @container, el
 
       # Add this object as an event handler
       goog.events.listen el, goog.events.EventType.CLICK, @handleClick_, false, @
