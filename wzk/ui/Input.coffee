@@ -67,7 +67,7 @@ class wzk.ui.Input extends goog.ui.Control
     undefined
 
   ###*
-    @param {goog.events.Event} e
+    @param {goog.events.Event=} e
   ###
   handleInputChange: (e) =>
     if e?.target?.value?
