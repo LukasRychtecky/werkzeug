@@ -35,6 +35,7 @@ class wzk.ui.ac.SelectAutoComplete
     @handler.detachInput input.getElement()
     input.setValue model.toString()
     @handler.attachInput input.getElement()
+    input.showClearButton() if input.getValue()
 
     @afterSelect model
 
