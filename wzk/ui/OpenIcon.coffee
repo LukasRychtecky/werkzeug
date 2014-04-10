@@ -13,4 +13,5 @@ class wzk.ui.OpenIcon extends wzk.ui.IconComponent
   ###
   constructor: (params = {}) ->
     params.classname ?= wzk.ui.OpenIcon.CLASSES.ICON
+    params.renderer = new wzk.ui.IconRenderer params.classname, ''
     super(params)
