@@ -59,7 +59,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   ###
   decorate: (@select) ->
     goog.style.setElementShown @select, false
-    readonly = @select.hasAttribute('readonly')
+    @readonly = @select.hasAttribute('readonly')
 
     # create input element and attach it to dom
     @container = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
@@ -78,7 +78,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     if @customRenderer?
       goog.dom.classes.add @input.getElement(), wzk.ui.ac.Renderer.CLS.WITH_IMAGE
 
-    if readonly
+    if @readonly
       @input.getElement().setAttribute 'readonly', 'true'
     else
       @openBtn = new wzk.ui.OpenIcon()
@@ -108,12 +108,13 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @param {goog.events.Event} e
   ###
   handleInputValueChange: (e) =>
-    if e.target.getContent()
-      goog.style.setElementShown @openBtn.getElement(), false
-    else
-      goog.style.setElementShown @openBtn.getElement(), true
-      @clearImage()
-      @dispatchClean()
+    unless @readonly
+      if e.target.getContent()
+        goog.style.setElementShown @openBtn.getElement(), false
+      else
+        goog.style.setElementShown @openBtn.getElement(), true
+        @clearImage()
+        @dispatchClean()
 
   ###*
     Dispatches clean signal
