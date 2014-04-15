@@ -1,11 +1,10 @@
-goog.provide 'wzk.app.Register'
-
 class wzk.app.Register
 
   ###*
     @param {function(?, ?)} buildFunc
+    @param {wzk.debug.ErrorReporter} reporter
   ###
-  constructor: (@buildFunc) ->
+  constructor: (@buildFunc, @reporter) ->
     @filters = {}
 
   ###*
@@ -21,4 +20,7 @@ class wzk.app.Register
   process: (el) =>
     for selector, filter of @filters
       for child in el.querySelectorAll selector
-        @buildFunc filter, child
+        try
+          @buildFunc filter, child
+        catch e
+          @reporter.report e

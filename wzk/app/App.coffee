@@ -11,12 +11,14 @@ goog.require 'wzk.net.AuthMiddleware'
 goog.require 'wzk.net.SnippetMiddleware'
 goog.require 'wzk.dom.Dom'
 goog.require 'wzk.net.FlashMiddleware'
+goog.require 'wzk.debug.ErrorReporter'
 
 class wzk.app.App
 
   constructor: ->
-    @reg = new wzk.app.Register @buildFunc
-    @regOnce = new wzk.app.Register @buildFunc
+    @reporter = new wzk.debug.ErrorReporter()
+    @reg = new wzk.app.Register @buildFunc, @reporter
+    @regOnce = new wzk.app.Register @buildFunc, @reporter
     @xhrFac = null
     @doc = null
     @frag = null
@@ -30,6 +32,9 @@ class wzk.app.App
     @param {Object=} msgs
   ###
   run: (@win, flash, msgs = {}) ->
+    log = if @win['console']? then goog.bind(@win['console']['log'], @win['console']) else ->
+    @reporter.setLog log
+
     @doc = @win.document
     @frag = new wzk.uri.Frag @win.location.hash
     @opts =
