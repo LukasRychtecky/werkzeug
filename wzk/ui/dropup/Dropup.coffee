@@ -18,12 +18,13 @@ class wzk.ui.dropup.Dropup
     @enum {number}
   ###
   @ANIMATION:
-    DURATION: 500
+    DEFAULT_DURATION: 500
 
   ###*
     @param {wzk.dom.Dom} dom
+    @param {number=} duration
   ###
-  constructor: (@dom)->
+  constructor: (@dom, @duration = wzk.ui.dropup.Dropup.ANIMATION.DEFAULT_DURATION) ->
 
   ###*
     @param {Element} dropupButton
@@ -112,7 +113,7 @@ class wzk.ui.dropup.Dropup
     @param {number} stop
   ###
   getAnimation: (start, stop) ->
-    animation = new goog.fx.Animation [start],[stop], wzk.ui.dropup.Dropup.ANIMATION.DURATION
+    animation = new goog.fx.Animation [start],[stop], @duration
 
     # set animation step callback
     animation.listen goog.fx.Animation.EventType.ANIMATE, (event) =>
