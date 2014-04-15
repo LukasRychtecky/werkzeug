@@ -13,6 +13,7 @@ class wzk.ui.I18NInputDatePicker
       showToday {boolean}
       allowNone {boolean}
       showWeekNum {boolean}
+      useSimpleNavigationMenu {boolean} hides year selection
   ###
   constructor: (@dom, @pattern = "yyyy'-'MM'-'dd", @params) ->
     @params = {} unless @params?
@@ -20,6 +21,7 @@ class wzk.ui.I18NInputDatePicker
     @params.showToday ?= false
     @params.allowNone ?= false
     @params.showWeekNum ?= false
+    @params.useSimpleNavigationMenu ?= false
 
   ###*
     @param {Element} el
@@ -36,6 +38,7 @@ class wzk.ui.I18NInputDatePicker
     datePicker.setShowToday @params.showToday
     datePicker.setAllowNone @params.allowNone
     datePicker.setShowWeekNum @params.showWeekNum
+    datePicker.setUseSimpleNavigationMenu @params.useSimpleNavigationMenu
 
     picker = new goog.ui.InputDatePicker formatter, parser, datePicker
 
