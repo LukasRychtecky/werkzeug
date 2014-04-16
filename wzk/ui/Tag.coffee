@@ -4,6 +4,7 @@ goog.require 'goog.ui.Control'
 goog.require 'wzk.ui.TagRenderer'
 goog.require 'goog.events.EventType'
 goog.require 'goog.events.KeyCodes'
+goog.require 'wzk.dom.Dom'
 
 class wzk.ui.Tag extends goog.ui.Control
 
