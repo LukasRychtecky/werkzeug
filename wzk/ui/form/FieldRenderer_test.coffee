@@ -3,19 +3,6 @@ suite 'wzk.ui.form.FieldRenderer', ->
   dom = null
   comp = null
 
-  mockEl = (tag, attrs = {}) ->
-    el =
-      children: []
-      tagName: tag
-      appendChild: (child) ->
-        el.children.push child
-    el[attr] = val for attr, val of attrs
-    el
-
-  mockDom = ->
-    createDom: (tag, attrs) ->
-      mockEl tag, attrs
-
   mockComponent = ->
     cssClasses: []
     createDom: ->
@@ -27,7 +14,13 @@ suite 'wzk.ui.form.FieldRenderer', ->
 
   setup ->
     renderer = wzk.ui.form.FieldRenderer.getInstance()
-    dom = mockDom()
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    </body>
+    </html>
+    """
+    dom = new wzk.dom.Dom doc
     comp = mockComponent()
 
   test 'Should render a placeholder attribute', ->
