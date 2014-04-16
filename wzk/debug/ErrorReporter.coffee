@@ -16,4 +16,4 @@ class wzk.debug.ErrorReporter
     @param {Object} e an exception
   ###
   report: (e) ->
-    @log goog.testing.stacktrace.canonicalize e.stack
+    @log e.message, goog.testing.stacktrace.canonicalize e.stack
