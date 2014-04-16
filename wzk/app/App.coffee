@@ -32,7 +32,7 @@ class wzk.app.App
     @param {Object=} msgs
   ###
   run: (@win, flash, msgs = {}) ->
-    log = if @win['console']? then goog.bind(@win['console']['log'], @win['console']) else ->
+    log = if @win['console']? then goog.bind(@win['console']['error'], @win['console']) else ->
     @reporter.setLog log
 
     @doc = @win.document
