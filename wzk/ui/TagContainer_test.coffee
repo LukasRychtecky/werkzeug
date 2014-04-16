@@ -8,38 +8,8 @@ suite 'wzk.ui.TagContainer', ->
   doc = null
   tag = null
 
-  mockDom = ->
-    dom =
-      createDom: (tag) ->
-        mockEl(tag.toUpperCase())
-      el: (tag) ->
-        @createDom tag
-      getDocument: ->
-        doc
-      cls: -> {}
-    dom
-
-  mockDoc = ->
-    doc = document
-    doc.createTextNode = ->
-      {}
-    doc
-
-  mockEl = (tag) ->
-    el =
-      appendChild: ->
-      insertBefore: ->
-      ownerDocument: doc
-      getAttributeNode: ->
-        {}
-      attachEvent: ->
-      tagName: tag
-      remove: ->
-      removeAttribute: ->
-    el
-
   buildTag = (model) ->
-    t = new wzk.ui.Tag(model, wzk.ui.TagRenderer.getInstance(), dom)
+    t = new wzk.ui.Tag(model, null, dom)
     t.setModel(model)
     t
 
@@ -47,10 +17,15 @@ suite 'wzk.ui.TagContainer', ->
     tag.dispatchEvent(wzk.ui.Tag.EventType.REMOVE)
 
   setup ->
-    doc = mockDoc()
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    </body>
+    </html>
+    """
     model = 'Foo'
-    dom = mockDom()
-    cont = new TagContainer(null, wzk.ui.TagContainerRenderer.getInstance(), dom)
+    dom = new wzk.dom.Dom doc
+    cont = new TagContainer(null, null, dom)
     tag = buildTag(model)
 
   test 'Should fires ADD with the container', (done) ->

@@ -1,12 +1,20 @@
-goog.provide 'wzk.ui.TagContainer'
-goog.provide 'wzk.ui.TagContainer.EventType'
-
 goog.require 'goog.ui.Control'
 goog.require 'wzk.ui.TagContainerRenderer'
 goog.require 'goog.object'
 goog.require 'goog.events.Event'
+goog.require 'wzk.dom.Dom'
+goog.require 'wzk.ui.Tag'
 
 class wzk.ui.TagContainer extends goog.ui.Control
+
+  ###*
+    @enum {string}
+  ###
+  @EventType:
+    ADD: 'add'
+    REMOVE: 'remove'
+    ADD_TAG: 'add-tag'
+    REMOVE_TAG: 'remove-tag'
 
   ###*
     A container for @link{wzk.ui.Tag} that fires these events:
@@ -108,12 +116,3 @@ class wzk.ui.TagContainer extends goog.ui.Control
   ###
   renderAfter: (sibling) ->
     @render_ @dom_.getParentElement(sibling), @dom_.getNextElementSibling(sibling)
-
-###*
-  @enum {string}
-###
-wzk.ui.TagContainer.EventType =
-  ADD: 'add'
-  REMOVE: 'remove'
-  ADD_TAG: 'add-tag'
-  REMOVE_TAG: 'remove-tag'
