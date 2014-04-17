@@ -1,118 +1,64 @@
 suite 'wzk.ui.inlineform.DynamicForm', ->
-  dynamicForm = null
+  form = null
   dom = null
   fieldset = null
   btn = null
   parent = null
-  config = null
-  dataset = null
-  form = null
-
-  mockFieldset = (dataset, form) ->
-    querySelector: (sel) ->
-      dataset[sel]
-    querySelectorAll: (sel) ->
-      dataset[sel]
-    form: form
-
-  mockRow = ->
-    row = mockEl('tr', 'odd')
-    row.querySelectorAll = ->
-      [mockInput('foo')]
-    row.querySelector = ->
-      mockCheckbox()
-    row.cloneNode = ->
-      mockRow()
-    row
-
-  mockInput = (val, name = '') ->
-    input = mockEl('input')
-    input.value = val
-    input.name = name
-    input
-
-  mockCheckbox = ->
-    checkbox = mockEl 'input'
-    checkbox.type = 'checkbox'
-    checkbox
-
-  mockEl = (tag, className = '') ->
-    el =
-      className: className
-      appendChild: ->
-      tagName: tag
-      events: {}
-      parentNode: {}
-      attachEvent: (type, e) ->
-        el.events[type] = e
-      style: {}
-      insertBefore: (node) ->
-        @nextSibling = node
-    el
+  doc = null
 
   fireClick = ->
-    e = type: 'onclick'
-    btn.events[e.type]({})
-
-  mockDom = ->
-    getParentElement: ->
-      parent
-    removeNode: ->
-    lastChildOfType: -> mockRow()
-    one: (sel, el) ->
-      el.querySelector sel
-    el: (tag) ->
-      mockEl tag
-    all: (sel) ->
-      res = []
-      res.push mockRow() if sel is 'table tbody tr'
-      res
-    insertSiblingAfter: (newNode, refNode) ->
-      refNode.nextSibling = newNode
-
-  mockForm = ->
-    events: {}
-    attachEvent: (type, clbk) ->
-      @events[type] = clbk
-
-  mockParent = ->
-    par =
-      children: []
-      appendChild: (el) ->
-        par.children.push(el)
-    par
+    btn._listeners['click'].false[0].listener.listener({})
 
   setup ->
-    parent = mockParent()
-    dom = mockDom()
-    btn = mockEl('button', 'dynamic')
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    <fieldset>
+      <input id="id_external-inline-file-TOTAL_FORMS" name="external-inline-file-TOTAL_FORMS" type="hidden" value="0">
+      <input id="id_external-inline-file-INITIAL_FORMS" name="external-inline-file-INITIAL_FORMS" type="hidden" value="0">
+      <input id="id_external-inline-file-MAX_NUM_FORMS" name="external-inline-file-MAX_NUM_FORMS" type="hidden" value="2">
+      <table class="form">
+        <thead>
+        <tr>
+          <th>File</th>
+          <th>Delete</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="odd">
+          <td class="field">
+            <input id="id_external-inline-file-__prefix__-message" name="external-inline-file-__prefix__-message" type="hidden">
+            <input id="id_external-inline-file-__prefix__-id" name="external-inline-file-__prefix__-id" type="hidden">
+            <input id="id_external-inline-file-__prefix__-file" name="external-inline-file-__prefix__-file" type="file">
+          </td>
+          <td class="field">
+            <input id="id_external-inline-file-__prefix__-DELETE" name="external-inline-file-__prefix__-DELETE" type="checkbox">
+          </td>
+        </tr>
+        </tbody>
+      </table>
+      <button type="button" class="dynamic">Add file</button>
+      </fieldset>
+    </body>
+    </html>
+    """
+    dom = new wzk.dom.Dom doc
+    btn = doc.querySelector '.dynamic'
+    parent = doc.querySelector 'table tbody'
+    fieldset = doc.querySelector 'fieldset'
 
-    config = [
-      mockInput(2, '__TOTAL_FORMS')
-    ]
+    form = new wzk.ui.inlineform.DynamicForm dom
 
-    dataset =
-      'input[type=hidden]': config
-      '.dynamic': btn
-      'table tbody tr': []
-
-    form = mockForm()
-
-    dynamicForm = new wzk.ui.inlineform.DynamicForm(dom)
-
-  test 'Should make a dynamic form', ->
-    config.push(mockInput(10, '__MAX_NUM_FORMS'))
-    fieldset = mockFieldset(dataset, form)
-    dynamicForm.dynamic(fieldset)
+  test 'Should add a row', ->
+    form.dynamic fieldset
 
     fireClick()
 
     assert.equal parent.children.length, 1
+    assert.isNotNull doc.getElementById('id_external-inline-file-0-file'), 'Missing an expected cloned field'
 
   test 'Should disable the button, a count of forms is limited by MAX_NUM_FORMS', ->
-    config.push(mockInput(2, '__MAX_NUM_FORMS'))
-    fieldset = mockFieldset(dataset, form)
-    dynamicForm.dynamic(fieldset)
+    form.dynamic fieldset
 
     fireClick()
     fireClick()
@@ -120,8 +66,7 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
     assert.equal parent.children.length, 2
 
   test 'A fieldset must contains an element with "dynamic" class', ->
-    fieldset = mockFieldset('input[type=hidden]': [])
     try
-      dynamicForm.dynamic(fieldset)
+      form.dynamic fieldset
     catch err
       assert.instanceOf err, ReferenceError
