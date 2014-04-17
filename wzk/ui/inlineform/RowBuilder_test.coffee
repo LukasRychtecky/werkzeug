@@ -4,85 +4,58 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
   builder = null
   row = null
   expert = null
+  doc = null
   dom = null
   parent = null
   checkbox = null
 
-  mockDom = ->
-    getParentElement: -> parent
-    lastChildOfType: -> {}
-    one: -> checkbox
-    el: (tag) ->
-      mockEl tag
-    insertSiblingAfter: (newNode, refNode) ->
-      refNode.nextSibling = newNode
-    all: -> []
-
-  mockParent = ->
-    par =
-      children: []
-      appendChild: (el) ->
-        par.children.push(el)
-    par
-
-  mockEl = (tag, className = '') ->
-    el =
-      className: className
-      appendChild: ->
-      tagName: tag
-      style: {}
-      children: []
-      insertBefore: (newEl, before) ->
-        @children.push newEl
-      attachEvent: (type, clb) ->
-        @events[type] = clb
-      events: {}
-    el
-
-  mockInput = (val) ->
-    input = mockEl('input')
-    input.value = val
-    input
-
-  mockRow = ->
-    row = mockEl('tr', 'odd')
-    row.querySelectorAll = ->
-      [mockInput('foo')]
-    row.querySelector = ->
-      checkbox
-    row.cloneNode = ->
-      mockRow()
-    row
-
-  mockCheckbox = ->
-    el = mockEl 'input'
-    el.events = {}
-    el.attachEvent = (type, clb) ->
-      el.events[type] = clb
-    el.parentNode = mockEl 'td'
-    el.parentNode.insertBefore = (node) ->
-      el.nextSibling = node
-    el
-
   fireCheckboxClick = ->
-    checkbox.nextSibling.events['onclick'](type: 'click', target: row)
+    e =
+      type: 'click'
+      target: row
+      preventDefault: ->
+    checkbox.parentNode.querySelector('.goog-icon-remove')._listeners['click'].false[0].listener.listener e
 
   setup ->
-    parent = mockParent()
-    dom = mockDom()
-    row = mockRow()
-    checkbox = mockCheckbox()
+    doc = jsdom """
+    <html><head></head>
+    <body>
+      <table class="form">
+        <tbody>
+        <tr class="odd">
+          <td class="field">
+            <input id="id_external-inline-file-__prefix__-message" name="external-inline-file-__prefix__-message" type="hidden">
+            <input id="id_external-inline-file-__prefix__-id" name="external-inline-file-__prefix__-id" type="hidden">
+            <input id="id_external-inline-file-__prefix__-file" name="external-inline-file-__prefix__-file" type="file">
+          </td>
+          <td class="field">
+            <input id="id_external-inline-file-__prefix__-DELETE" name="external-inline-file-__prefix__-DELETE" type="checkbox">
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </body>
+    </html>
+    """
+    dom = new wzk.dom.Dom doc
+    row = doc.querySelector 'table tr'
+    parent = doc.querySelector 'table tbody'
+    checkbox = doc.querySelector 'table input[type=checkbox]'
     expert = new wzk.ui.inlineform.FieldExpert(1)
     builder = new wzk.ui.inlineform.RowBuilder(row, expert, dom)
 
   test 'Should add a row', ->
     builder.addRow()
-    assert.equal parent.children.length, 1
+
+    assert.equal parent.children.length, 2
+    assert.isNotNull doc.getElementById 'id_external-inline-file-1-file'
+    assert.equal parent.children[1].className, 'even'
 
   test 'Should fire a delete event on click', (done) ->
     goog.events.listen builder, E.DELETE, (e) ->
       done() if e.target is row
 
     builder.addRow()
+    builder.decorateRow row
 
     fireCheckboxClick()
