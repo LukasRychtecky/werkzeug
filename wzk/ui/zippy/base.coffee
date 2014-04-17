@@ -1,6 +1,7 @@
 goog.provide 'wzk.ui.zippy'
 
 goog.require 'wzk.ui.zippy.Zippy'
+goog.require 'wzk.ui.zippy.CollapsableList'
 
 ###*
   Element must have 1:N messege classes
@@ -14,3 +15,11 @@ goog.require 'wzk.ui.zippy.Zippy'
 wzk.ui.zippy.buildZippy = (messages, dom) ->
   zippy = new wzk.ui.zippy.Zippy dom
   zippy.decorate messages
+
+###*
+  @param {Element} el
+  @param {wzk.dom.Dom} dom
+###
+wzk.ui.zippy.buildCollapsableList = (el, dom) ->
+  collapsable = new wzk.ui.zippy.CollapsableList {dom: dom}
+  collapsable.decorate el
