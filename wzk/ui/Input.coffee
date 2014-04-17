@@ -2,6 +2,7 @@ goog.require 'wzk.ui.InputRenderer'
 goog.require 'wzk.ui.InputSearchRenderer'
 goog.require 'goog.dom.TagName'
 goog.require 'goog.style'
+goog.require 'wzk.dom.Dom'
 
 class wzk.ui.Input extends goog.ui.Control
 

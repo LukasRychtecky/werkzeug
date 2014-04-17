@@ -1,13 +1,5 @@
-goog.provide 'wzk.fx.HandlebarRenderer'
-
-goog.require 'wzk.ui.ComponentRenderer'
-
 class wzk.fx.HandlebarRenderer extends wzk.ui.ComponentRenderer
 
-  ###*
-    @constructor
-    @extends {wzk.ui.ComponentRenderer}
-  ###
   constructor: ->
     super()
 

@@ -1,5 +1,5 @@
 module.exports = (grunt) ->
-  bowerDir = '.bower_components'
+  bowerDir = 'bower_components'
   closureLibDir = bowerDir + '/closure-library'
 
   appDirs = [
@@ -18,7 +18,7 @@ module.exports = (grunt) ->
     'var/wzk/deps.js'
 
   # from closure base.js dir to app root dir
-  depsPrefix = '../'
+  depsPrefix = '../../../../'
 
   getCoffeeConfig = (filepath = coffeeFiles) ->
     [
@@ -112,6 +112,7 @@ module.exports = (grunt) ->
       all:
         options:
           depsPath: '<%= esteDeps.all.options.outputFile %>'
+          useReact: false
           prefix: '<%= esteDeps.all.options.prefix %>'
         src: [
           'var/wzk/**/*_test.js'

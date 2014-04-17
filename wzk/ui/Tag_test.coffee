@@ -6,40 +6,10 @@ suite 'wzk.ui.Tag', ->
   dom = null
   doc = null
 
-  mockDom = ->
-    dom =
-      createDom: (tag) ->
-        mockEl(tag.toUpperCase())
-      getDocument: ->
-        doc
-      cls: -> mockEl 'span'
-    dom
-
-  mockDoc = ->
-    doc = document
-    doc.createTextNode = ->
-      {}
-    doc
-
-  mockEl = (tag) ->
-    el =
-      appendChild: ->
-      insertBefore: ->
-      ownerDocument: doc
-      getAttributeNode: ->
-        {}
-      attachEvent: ->
-      tagName: tag
-      remove: ->
-      events: {}
-      addEventListener: (type, proxy) ->
-        @events[type] = proxy
-    el
-
   fireEvent = (type, e = {}) ->
     e.type = type
     e.target = tag.getIcon()
-    tag.getElement().events[type](e)
+    tag.getElement()._listeners[type].false[0].listener.listener(e)
 
   fireClick = ->
     fireEvent(Event.CLICK)
@@ -51,10 +21,15 @@ suite 'wzk.ui.Tag', ->
     fireEvent(Event.KEYUP, keyCode: goog.events.KeyCodes.ESC)
 
   setup ->
-    doc = mockDoc()
-    dom = mockDom()
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    </body>
+    </html>
+    """
+    dom = new wzk.dom.Dom doc
     tag = new Tag('Foo', wzk.ui.TagRenderer.getInstance(), dom)
-    tag.createDom()
+    tag.render doc.body
 
   test 'Should fire REMOVE on click', (done) ->
     goog.events.listen tag, wzk.ui.Tag.EventType.REMOVE, (e) ->

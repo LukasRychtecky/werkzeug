@@ -1,47 +1,28 @@
 suite 'wzk.fx.HandlebarRenderer', ->
   renderer = null
+  doc = null
   dom = null
   comp = null
 
-  mockEl = (tag, attrs = {}) ->
-    el =
-      children: []
-      tagName: tag
-      appendChild: (child) ->
-        el.children.push child
-    el[attr] = val for attr, val of attrs
-    el
-
-  mockDom = ->
-    createDom: (tag, attrs) ->
-      mockEl tag, attrs
-    el: (tag, attrs) ->
-      mockEl tag, attrs
-
-  mockComponent = ->
-    cssClasses: []
-    createDom: ->
-      renderer.createDom @
-    getDomHelper: ->
-      dom
-    getId: ->
-      ''
-    getCaption: ->
-      ''
-
   setup ->
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    </body>
+    </html>
+    """
     renderer = wzk.fx.HandlebarRenderer.getInstance()
-    dom = mockDom()
-    comp = mockComponent()
+    dom = new wzk.dom.Dom doc
+    comp = new wzk.ui.Component dom: dom
 
   test 'Should create an element with a class', ->
     klass = 'klass'
-    comp.cssClasses.push klass
-    el = renderer.createDom(comp)
-    assert.equal el['class'], 'klass'
+    comp.addClass klass
+    el = renderer.createDom comp
+    assert.equal el.className, 'klass'
 
   test 'Should create an element with tag name DIV', ->
-    assert.equal renderer.createDom(comp).tagName, 'div'
+    assert.equal renderer.createDom(comp).tagName.toLowerCase(), 'div'
 
   test 'Should has a handle icon', ->
-    assert.equal renderer.createDom(comp).children[0].tagName, 'span'
+    assert.equal renderer.createDom(comp).children[0].tagName.toLowerCase(), 'span'

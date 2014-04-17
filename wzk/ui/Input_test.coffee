@@ -5,55 +5,34 @@ suite 'wzk.ui.Input', ->
   dom = null
   parent = null
   doc = null
-  el = null
-
-  mockDom = (children = null) ->
-    dom =
-      el: (tag) ->
-        mockEl(tag.toUpperCase())
-      getDocument: ->
-        doc
-      getChildren: ->
-        assert.fail 'getChildren should not be called!' unless children?
-        children
-    dom
-
-  mockDoc = ->
-    {}
-
-  mockEl = (tag) ->
-    el =
-      appendChild: ->
-      insertBefore: ->
-      ownerDocument: doc
-      getAttributeNode: ->
-      attachEvent: ->
-      tagName: tag
-      required: undefined
-    el
 
   setup ->
-    doc = mockDoc()
-    parent = mockEl('div')
+    doc = jsdom("""
+    <html><head></head>
+    <body>
+    </body>
+    </html>
+    """)
+    parent = doc.body
+    dom = new wzk.dom.Dom doc
 
   suite '#render', ->
 
     test 'Should render a basic input', ->
-      dom = mockDom()
       input = new Input(null, wzk.ui.InputRenderer.getInstance(), dom)
-      input.render(parent)
+      input.render parent
+      assert.equal parent.children.length, 1
 
     test 'Should render a search input', ->
-      dom = mockDom([mockEl()])
       input = new Input(null, wzk.ui.InputSearchRenderer.getInstance(), dom)
-      input.render(parent)
+      input.render parent
+      assert.equal parent.children[0].children.length, 2
 
   suite '#makeRequired', ->
 
     setup ->
-      dom = mockDom()
       input = new Input(null, wzk.ui.InputRenderer.getInstance(), dom)
-      input.render(parent)
+      input.render parent
 
     test 'Should make an input required', ->
       input.makeRequired()

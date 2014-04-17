@@ -1,5 +1,3 @@
-goog.provide 'wzk.ui.inlineform.DynamicForm'
-
 goog.require 'goog.string'
 goog.require 'wzk.ui.inlineform.FieldExpert'
 goog.require 'wzk.ui.inlineform.RowBuilder'

@@ -3,42 +3,28 @@ suite 'wzk.ui.form.MirrorInput', ->
 
   input = null
   target = null
-  elements = null
-
-  mockDom = (els) ->
-    createDom: (tagName) ->
-      els[tagName]
-
-  mockEl = ->
-    el =
-      events: {}
-      addEventListener: (type, listener) ->
-        el.events[type] = listener
-      value: ''
-      insertBefore: ->
-    el
-
-  mockInput = ->
-    el = mockEl()
-    el.type = 'input'
-    el
-
-  renderInput = (input) ->
-    input.createDom()
-    input.enterDocument()
+  doc = null
+  dom = null
 
   type = (el, val) ->
     el.value += val
-    el.events['keyup']?()
+    el._listeners['keyup']?.false[0]?.listener.listener({})
 
   setup ->
-    elements =
-      input: mockInput()
+    doc = jsdom """
+    <html><head></head>
+    <body>
+    <input type="text" name="target" id="target">
+    </body>
+    </html>
+    """
+    dom = new wzk.dom.Dom doc
+    target = doc.getElementById 'target'
+    target.value = ''
 
   test 'Should watch an element', ->
-    target = mockInput()
-    input = new MirrorInput dom: mockDom(elements), target: target
-    renderInput input
+    input = new MirrorInput dom: dom, target: target
+    input.render doc.body
 
     type target, 'a'
     assert.equal input.getValue(), target.value
@@ -47,9 +33,8 @@ suite 'wzk.ui.form.MirrorInput', ->
     assert.equal input.getValue(), target.value
 
   test 'Should stop watching after its value has been changed', ->
-    target = mockInput()
-    input = new MirrorInput dom: mockDom(elements), target: target
-    renderInput input
+    input = new MirrorInput dom: dom, target: target
+    input.render doc.body
 
     type target, 'a'
     assert.equal input.getValue(), target.value
@@ -60,10 +45,11 @@ suite 'wzk.ui.form.MirrorInput', ->
     assert.equal input.getValue(), 'aA'
 
   test 'Should watch wzk.ui.form.Input', ->
-    target = new wzk.ui.form.Input dom: mockDom(elements)
-    renderInput target
-    input = new MirrorInput dom: mockDom(elements), target: target
-    renderInput input
+    target = new wzk.ui.form.Input dom: dom
+    target.render doc.body
+
+    input = new MirrorInput dom: dom, target: target
+    input.render doc.body
 
     type target.getElement(), 'a'
     assert.equal input.getValue(), target.getValue()
@@ -72,13 +58,12 @@ suite 'wzk.ui.form.MirrorInput', ->
     assert.equal input.getValue(), target.getValue()
 
   test 'Should apply a filter on a value', ->
-    target = mockInput()
-    input = new MirrorInput dom: mockDom(elements), target: target
+    input = new MirrorInput dom: dom, target: target
     input.addFilter (val) ->
       val.toUpperCase()
     input.addFilter (val) ->
       val.replace /\ /g, '_'
-    renderInput input
+    input.render doc.body
 
     type target, 'a'
     assert.equal input.getValue(), 'A'

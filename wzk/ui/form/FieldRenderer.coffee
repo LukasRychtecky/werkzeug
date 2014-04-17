@@ -1,13 +1,7 @@
-goog.provide 'wzk.ui.form.FieldRenderer'
-
-goog.require 'wzk.ui.ComponentRenderer'
+goog.require 'wzk.dom.Dom'
 
 class wzk.ui.form.FieldRenderer extends wzk.ui.ComponentRenderer
 
-  ###*
-    @constructor
-    @extends {wzk.ui.ComponentRenderer}
-  ###
   constructor: ->
     super()
     @tag = 'input'

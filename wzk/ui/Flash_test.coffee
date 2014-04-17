@@ -3,30 +3,16 @@ suite 'wzk.ui.Flash', ->
 
   flash = null
   dom = null
-  parent = null
-
-  mockEl = ->
-    appendChild: ->
-    querySelector: ->
-      mockEl()
-    attachEvent: ->
-    style: {}
-
-  mockDom = ->
-    createDom: ->
-      mockEl()
-    el: ->
-      mockEl()
-    createTextNode: ->
-      {}
-    setTextContent: ->
-    getDocument: ->
-      mockDom()
-    body: mockEl()
+  doc = null
 
   setup ->
-    parent = mockEl()
-    dom = mockDom()
+    doc = jsdom("""
+    <html><head></head>
+    <body>
+    </body>
+    </html>
+    """)
+    dom = new wzk.dom.Dom doc
     flash = new Flash dom: dom
 
   test 'Should add an error message without a fade out and a close icon', ->

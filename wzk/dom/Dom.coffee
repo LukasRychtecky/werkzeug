@@ -85,7 +85,8 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     @return {Element}
   ###
   getFirstSibling: (el) ->
-    @elementOrNull @getFirstElementChild, @getParentElement(el)
+    first = @elementOrNull @getFirstElementChild, @getParentElement(el)
+    if first is el then null else first
 
   ###*
     Returns last sibling if exists
@@ -94,7 +95,8 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     @return {Element}
   ###
   getLastSibling: (el) ->
-    @elementOrNull @getLastElementChild, @getParentElement(el)
+    last = @elementOrNull @getLastElementChild, @getParentElement(el)
+    if last is el then null else last
 
   ###*
     @param {Element} el

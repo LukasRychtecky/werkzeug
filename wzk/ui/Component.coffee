@@ -60,6 +60,7 @@ class wzk.ui.Component extends goog.ui.Component
 
     @forEachChild (child) ->
       child.createDom()
+      el.appendChild child.getElement()
 
   ###*
     @override
@@ -117,10 +118,6 @@ class wzk.ui.Component extends goog.ui.Component
       @createDom()
 
     insertion @getElement()
-
-    if @renderChildrenInternally
-      @forEachChild (child) =>
-        child.render @getElement()
 
     @enterDocument()
 
