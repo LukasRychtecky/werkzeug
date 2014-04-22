@@ -38,18 +38,18 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.dom.Dom} dom
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
-    @param {wzk.ui.dialog.ConfirmDialog} dialog
+    @param {wzk.ui.dialog.ConfirmDialog} confirm
     @param {wzk.resource.Query} query
     @param {wzk.ui.grid.Paginator} paginator
   ###
-  constructor: (@dom, @repo, @cols, @dialog, @query, @paginator) ->
+  constructor: (@dom, @repo, @cols, @confirm, @query, @paginator) ->
     super()
     @table = null
     @tbody = null
     @sorter = null
     @lastQuery = {}
     @rows = new wzk.ui.grid.Body dom: @dom
-    @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter())
+    @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter(), @confirm)
 
   ###*
     @param {Element} table
@@ -167,25 +167,6 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   ###*
     @protected
-    @param {string} txt
-  ###
-  setDialogText: (txt) ->
-    @dialog.formatContent txt
-
-  ###*
-    @protected
-    @param {goog.ui.Button} btn
-  ###
-  showDialog: (btn) ->
-    @dialog.open()
-    @dialog.focus()
-    goog.events.listenOnce @dialog, goog.ui.Dialog.EventType.SELECT, (e) =>
-      if e.key is goog.ui.Dialog.DefaultButtonKeys.YES
-        @dispatchDeleteItem btn
-        @silentlyRemoveRow btn
-
-  ###*
-    @protected
   ###
   decorateWithSorting: ->
     @sorter = new wzk.ui.grid.Sorter @dom
@@ -222,8 +203,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   handleDeleteBtn: (e) =>
     btn = (`/** @type {goog.ui.Button} */`) e.target
-    @setDialogText btn.getModel().model.toString()
-    @showDialog btn
+    @dispatchDeleteItem btn
+    @silentlyRemoveRow btn
 
   ###*
     A little bit dirty, but enough for now.

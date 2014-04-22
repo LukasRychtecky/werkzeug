@@ -13,6 +13,7 @@ class wzk.ui.grid.Row extends wzk.ui.Control
   constructor: (params = {}) ->
     params.renderer ?= wzk.ui.grid.RowRenderer.getInstance()
     super params
+    @confirm = params.confirm
     @cells = []
 
   ###*
@@ -33,8 +34,25 @@ class wzk.ui.grid.Row extends wzk.ui.Control
   ###*
     @param {goog.events.Event} e
   ###
-  handleRemoteButton: (e) ->
-    @dispatchEvent new goog.events.Event(wzk.ui.grid.Row.EventType.REMOTE_BUTTON, e.target)
+  handleRemoteButton: (e) =>
+    action = e.target.getModel()['action']
+    confirm = action['confirm']
+    btn = e.target
+
+    if confirm
+      @confirm.setContent confirm['text']
+      @confirm.setTitle confirm['title']
+      @confirm.setYesNoCaptions confirm['true_label'], confirm['false_label']
+      @confirm.open()
+      @confirm.focus()
+      goog.events.listenOnce @confirm, goog.ui.Dialog.EventType.SELECT, (e) =>
+        if e.key is goog.ui.Dialog.DefaultButtonKeys.YES
+          if action['method'] is 'DELETE'
+            @dispatchEvent new goog.events.Event(wzk.ui.grid.Row.EventType.DELETE_BUTTON, btn)
+          else
+            @dispatchEvent new goog.events.Event(wzk.ui.grid.Row.EventType.REMOTE_BUTTON, btn)
+    else
+      @dispatchEvent new goog.events.Event(wzk.ui.grid.Row.EventType.REMOTE_BUTTON, e.target)
 
   ###*
     @param {goog.events.Event} e

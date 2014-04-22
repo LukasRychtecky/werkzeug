@@ -7,15 +7,16 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     @param {wzk.ui.grid.Body} rows
     @param {Array.<string>} cols
     @param {wzk.ui.grid.CellFormatter} formatter
+    @param {wzk.ui.dialog.ConfirmDialog} confirm
   ###
-  constructor: (@dom, @rows, @cols, @formatter) ->
+  constructor: (@dom, @rows, @cols, @formatter, @confirm) ->
     super()
 
   ###*
     @param {Object} model
   ###
   build: (model) ->
-    row = new wzk.ui.grid.Row dom: @dom
+    row = new wzk.ui.grid.Row dom: @dom, confirm: @confirm
     row.setModel model
     @rows.addChild row, true
     for col in @cols
@@ -103,11 +104,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     @param {wzk.ui.grid.Row} row
   ###
   buildRestAction: (action, model, cell, row) ->
-    if action['method'] is 'DELETE'
-      btn = @buildButton action['verbose_name'], action['name'], model, cell, row
-      btn.listen goog.ui.Component.EventType.ACTION, row.handleDeleteBtn
-    else
-      @buildRemoteButton action, model, row, cell
+    @buildRemoteButton action, model, row, cell
 
   ###*
     @protected
@@ -117,25 +114,16 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
   ###
   buildWebAction: (action, model, cell) ->
     link = new wzk.ui.Link dom: @dom, href: model['_web_links'][action['name']], caption: action['verbose_name']
-    link.addClass(action['class_name'] or action['name'])
+    link.addClass(@getClass(action))
     cell.addChild link
 
   ###*
     @protected
-    @param {string} caption
-    @param {string} className
-    @param {Object} model
-    @param {wzk.ui.grid.Cell} cell
-    @param {wzk.ui.grid.Row} row
-    @return {goog.ui.Button}
+    @param {Object} action
+    return {string}
   ###
-  buildButton: (caption, className, model, cell, row) ->
-    btn = new goog.ui.Button caption, wzk.ui.ButtonRenderer.getInstance(), @dom
-    btn.addClassName 'btn-danger'
-    @setupButton model, caption, className, btn
-    cell.addChild btn
-    @buildButtonModel btn, row, model
-    btn
+  getClass: (action) ->
+    (action['class_name'] or action['name']) or ''
 
   ###*
     @protected
@@ -150,7 +138,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     btnData =
       model: model
       action: action
-    @setupButton btnData, action['verbose_name'], action['class_name'], btn
+    @setupButton btnData, action['verbose_name'], @getClass(action), btn
     cell.addChild btn
     btn.listen goog.ui.Component.EventType.ACTION, row.handleRemoteButton
     btn
