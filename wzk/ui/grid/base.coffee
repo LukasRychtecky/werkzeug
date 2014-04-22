@@ -4,7 +4,6 @@ goog.require 'wzk.resource.Client'
 goog.require 'wzk.ui.grid.Grid'
 goog.require 'wzk.ui.grid.ArgsExtractor'
 goog.require 'wzk.ui.grid.Repository'
-goog.require 'goog.dom.dataset'
 goog.require 'wzk.ui.dialog.ConfirmDialog'
 goog.require 'wzk.resource.AttrParser'
 goog.require 'wzk.ui.grid.Messenger'
@@ -47,16 +46,13 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   client.setDefaultExtraFields query
   client.setDefaultHeader wzk.resource.Client.X_HEADERS.SERIALIZATION_FORMAT, query.verbose()
 
-  dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
-  dialog.setConfirm extractor.parseConfirm()
-  dialog.setTitle extractor.parseTitle()
-  dialog.setYesNoCaptions goog.dom.dataset.get(table, 'btnYes'), goog.dom.dataset.get(table, 'btnNo')
-
   pagHandler = new wzk.ui.grid.PaginatorHandler ss
 
   paginator = new wzk.ui.grid.Paginator base: pagHandler.getBase(), page: pagHandler.getPage()
 
   pagHandler.handle paginator
+
+  dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 
   grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator
   grid.decorate table
