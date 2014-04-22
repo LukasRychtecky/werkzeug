@@ -14,8 +14,9 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
 
   ###*
     @param {Object} model
+    @param {boolean=} showActions
   ###
-  build: (model) ->
+  build: (model, showActions = true) ->
     row = new wzk.ui.grid.Row dom: @dom, confirm: @confirm
     row.setModel model
     @rows.addChild row, true
@@ -24,7 +25,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
 
     row.addClassName cls for cls in model['_class_names']
 
-    unless goog.array.isEmpty model['_actions']
+    if (not goog.array.isEmpty(model['_actions'])) and showActions
       @buildActionsCell row, model
 
     row

@@ -27,5 +27,5 @@ class wzk.ui.grid.Messenger
   ###
   handleLoaded: (e) =>
     isEmpty = e.target.count is 0
-    @grid.paginator.show not isEmpty
+    @grid.paginator?.show not isEmpty
     goog.style.setElementShown @msgEl, isEmpty if @msgEl

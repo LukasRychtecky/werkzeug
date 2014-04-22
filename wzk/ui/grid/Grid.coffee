@@ -35,6 +35,12 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     SELECTED_ITEM: 'selected-item'
 
   ###*
+    @enum {string}
+  ###
+  @DATA:
+    SHOW_ACTIONS: 'showActions'
+
+  ###*
     @param {wzk.dom.Dom} dom
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
@@ -50,20 +56,30 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @lastQuery = {}
     @rows = new wzk.ui.grid.Body dom: @dom
     @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter(), @confirm)
+    @showActions = true
 
   ###*
     @param {Element} table
   ###
   decorate: (@table) ->
+    if goog.dom.dataset.has @table, wzk.ui.grid.Grid.DATA.SHOW_ACTIONS
+      if goog.dom.dataset.get(@table, wzk.ui.grid.Grid.DATA.SHOW_ACTIONS) is 'false'
+        @showActions = false
+
     @removeBody()
     paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
-    @paginator.loadData paginatorEl
+    if paginatorEl?
+      @paginator.loadData paginatorEl
+      paging = {offset: (@paginator.page - 1) * @paginator.base}
+    else
+      @paginator = null
 
-    @buildBody @buildQuery({offset: (@paginator.page - 1) * @paginator.base}), (result) =>
+    @buildBody @buildQuery(paging), (result) =>
       @decorateWithSorting()
 
-      @paginator.init(result.total, result.count)
-      @buildPaginator paginatorEl
+      if @paginator?
+        @paginator.init(result.total, result.count)
+        @buildPaginator paginatorEl
 
       @dispatchLoaded result
       @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, @handleDeleteItem
@@ -75,7 +91,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   handleDeleteItem: (e) =>
     @repo.delete e.target, =>
       @buildBody @buildQuery(), (result) =>
-        @paginator.refresh result
+        if @paginator?
+          @paginator.refresh result
 
   ###*
     @protected
@@ -85,8 +102,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   buildQuery: (opts = {}) ->
     @query.order = opts.column if opts.column?
     @query.direction = opts.direction if opts.direction?
-    @query.base = opts.base ? @paginator.base
-    @query.offset = if opts.offset? then opts.offset else @paginator.offset
+    @query.base = opts.base ? @paginator?.base
+    @query.offset = if opts.offset? then opts.offset else @paginator?.offset
     @query
 
   ###*
@@ -107,7 +124,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
   refresh: ->
     @buildBody @buildQuery(), (result) =>
-      @paginator.refresh result
+      @paginator?.refresh result
 
   ###*
     @protected
@@ -127,7 +144,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
     @repo.load query, (data, result) =>
       for model in data
-        row = @rowBuilder.build model
+        row = @rowBuilder.build model, @showActions
         row.listen wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn
         row.listen wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton
 
