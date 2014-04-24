@@ -130,3 +130,13 @@ class wzk.ui.grid.Body extends goog.ui.Container
   handleMouseDown: (e) ->
     if @enabled_
       @setMouseButtonPressed true
+
+  ###*
+    @param {Object} model
+  ###
+  selectIfContains: (model) ->
+    @forEachChild (child) =>
+      if child.getModel()['id'] is model['id']
+        child.setSelected true
+        @listen goog.ui.Component.EventType.ACTION, ->
+          child.setSelected false

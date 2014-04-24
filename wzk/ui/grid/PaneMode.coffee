@@ -43,7 +43,15 @@ class wzk.ui.grid.PaneMode
   ###
   watchOn: (grid) ->
     grid.listen wzk.ui.grid.Grid.EventType.SELECTED_ITEM, @handleSelected
+    grid.listen wzk.ui.grid.Grid.EventType.LOADED, @handleLoadedGrid
     @loadModel()
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleLoadedGrid: (e) =>
+    e.currentTarget.selectIfContains @modelToSelect if @modelToSelect
 
   ###*
     @protected
@@ -62,14 +70,14 @@ class wzk.ui.grid.PaneMode
 
   ###*
     @protected
-    @param {wzk.resource.Model} model
+    @param {wzk.resource.Model} modelToSelect
   ###
-  loadSnippets: (model) =>
-    @ss.set wzk.ui.grid.PaneMode.PARAM, model['id']
+  loadSnippets: (@modelToSelect) =>
+    @ss.set wzk.ui.grid.PaneMode.PARAM, @modelToSelect['id']
     A = wzk.ui.grid.PaneMode.ATTRS
     for el in @dom.all '.snippet[data-web-link]'
       link = @parseLink String goog.dom.dataset.get(el, A.LINK)
-      url = model['_web_links'][link.link]
+      url = @modelToSelect['_web_links'][link.link]
 
       if link.index?
         url = url[link.index]

@@ -236,3 +236,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.resource.Query} query
   ###
   setQuery: (@query) ->
+
+  ###*
+    @param {Object} model
+  ###
+  selectIfContains: (model) ->
+    @rows.selectIfContains model
