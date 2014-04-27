@@ -36,6 +36,7 @@ class wzk.ui.grid.CellFormatter
   ###
   toStr: (value) ->
     value = new wzk.resource.Model value if goog.isObject value
+    return value["_verbose"] if value["_verbose"]?
     String value
 
   ###*
