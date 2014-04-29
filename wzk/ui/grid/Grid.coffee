@@ -139,21 +139,31 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {function(Object)|null=} doAfter
   ###
   buildBody: (query, doAfter = null) ->
+    @doAfter = doAfter if doAfter?
+    @repo.load query, @handleData
+
+  ###*
+    Allows to re-render grid without reloading from repository
+    @protected
+    @param {Array.<Object>} data
+    @param {Object} result
+  ###
+  handleData: (data, result) =>
     if @rows.isInDocument()
       @rows.destroyChildren()
 
-    @repo.load query, (data, result) =>
-      for model in data
-        row = @rowBuilder.build model, @showActions
-        row.listen wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn
-        row.listen wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton
+    for model in data
+      row = @rowBuilder.build model, @showActions
+      row.listen wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn
+      row.listen wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton
 
-      unless @rows.isInDocument()
-        @rows.render @table
-      @rows.listen goog.ui.Component.EventType.ACTION, @handleSelectedItem
+    unless @rows.isInDocument()
+      @rows.render @table
+    @rows.listen goog.ui.Component.EventType.ACTION, @handleSelectedItem
 
-      result.count = data.length
-      doAfter result if doAfter?
+    result.count = data.length
+    @doAfter result if @doAfter?
+    data
 
   ###*
     @protected
