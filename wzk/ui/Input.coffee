@@ -73,6 +73,8 @@ class wzk.ui.Input extends goog.ui.Control
   handleInputChange: (e) =>
     if e?.target?.value?
       @setContent e.target.value
+    else
+      @setContent @getElement().value
 
   ###*
     @protected
