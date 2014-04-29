@@ -38,3 +38,10 @@ class wzk.ui.form.RemoteButton extends goog.ui.Button
   createDom: ->
     @addClassName 'remote-button'
     super()
+
+  ###*
+    @override
+  ###
+  decorate: (element) ->
+    element.setAttribute 'type', 'button'
+    super(element)
