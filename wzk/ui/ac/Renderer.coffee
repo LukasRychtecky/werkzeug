@@ -93,7 +93,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputValueChange
     @input.render @container
 
-    if @select.hasAttribute 'placeholder'
+    if @select.hasAttribute 'placeholder' and (not @readonly)
       @input.getElement().setAttribute 'placeholder', @select.getAttribute 'placeholder'
 
   ###*
