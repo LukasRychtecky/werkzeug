@@ -14,6 +14,7 @@ class wzk.ui.LinkRenderer extends wzk.ui.ComponentRenderer
     a = super component
     a.innerHTML = ''
     a.href = component.getHref()
+    a.title = component.getTitle()
     span = component.getDomHelper().el 'span', {}, component.getCaption()
     a.appendChild span
     a
