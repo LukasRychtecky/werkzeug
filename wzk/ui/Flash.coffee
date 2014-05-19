@@ -24,10 +24,9 @@ class wzk.ui.Flash extends wzk.ui.Component
     @param {boolean=} closable if closable is undefined and severity is error then closable is set to false otherwise to true
     @return {Array.<wzk.ui.FlashMessage>}
   ###
-  addMessage: (text, severity = 'info', fadeOut = undefined, closable = undefined) ->
+  addMessage: (text, severity = 'info', fadeOut = undefined, closable = true) ->
     notError = severity isnt 'error'
     fadeOut = notError if fadeOut is undefined
-    closable = notError if closable is undefined
 
     msgs = if goog.isArray(text) then text else [text]
     flashes = []
