@@ -32,7 +32,10 @@ class wzk.net.FlashMiddleware
     @flash.addError @msgs['error']
 
   loading: ->
-    @flash.addMessage @msgs['loading'], 'info', false, false
+    msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: @msgs['loading'], severity: 'info', fadeOut: false, closable: false
+    msg.addClass 'loading'
+    @flash.addChild msg
+    [msg]
 
   clearAll: ->
     @flash.clearAll()
