@@ -2,8 +2,13 @@ goog.require 'wzk.ui.zippy.InnerZippy'
 
 class wzk.ui.zippy.CollapsableList extends wzk.ui.Component
 
-  constructor: (params) ->
-    super(params)
+  ###*
+    @const {string}
+  ###
+  @ACTIVE: 'active'
+
+  constructor: (@params) ->
+    super(@params)
 
   ###*
     @override
@@ -21,5 +26,6 @@ class wzk.ui.zippy.CollapsableList extends wzk.ui.Component
       uls = @dom.all('ul', li)
       if uls.length > 0
         ul = uls.item(0)
-        zippy = new wzk.ui.zippy.InnerZippy(li, ul, @dom)
+        expanded = goog.dom.classes.has li, wzk.ui.zippy.CollapsableList.ACTIVE
+        zippy = new wzk.ui.zippy.InnerZippy(li, ul, @dom, expanded, @params.target)
         @makeCollapsable ul
