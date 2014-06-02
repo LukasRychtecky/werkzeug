@@ -40,7 +40,8 @@ class wzk.ui.ClearableInput extends wzk.ui.Input
     goog.style.setElementShown @clrBtn.getElement(), false
 
   showClearButton: ->
-    goog.style.setElementShown @clrBtn.getElement(), true
+    unless @getElement().getAttribute("readonly")
+      goog.style.setElementShown @clrBtn.getElement(), true
 
   ###*
     @override
