@@ -23,4 +23,5 @@ class wzk.ui.zippy.InnerZippy extends goog.ui.AnimatedZippy
       if goog.dom.classes.has e.target, @target
         super(e)
     else
+      super(e)
       e.stopPropagation()
