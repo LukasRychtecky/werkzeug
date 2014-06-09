@@ -4,6 +4,10 @@ goog.require 'wzk.app.Register'
 goog.require 'wzk.net.XhrFactory'
 goog.require 'wzk.ui.Flash'
 goog.require 'wzk.ui.grid'
+goog.require 'wzk.ui.form'
+goog.require 'wzk.ui.inlineform'
+goog.require 'wzk.ui.ac'
+goog.require 'wzk.ui.tooltip'
 goog.require 'wzk.uri.Frag'
 goog.require 'goog.History'
 goog.require 'wzk.stor.StateStorage'
@@ -98,6 +102,29 @@ class wzk.app.App
 
     @on 'table.grid', (table, dom, xhrFac, opts) ->
       wzk.ui.grid.build table, dom, xhrFac, opts.app.getRegister(), opts.app.getStorage('g')
+
+    @on '.remote-button', (el, dom, xhrFac) ->
+      wzk.ui.form.buildRemoteButton el, dom, xhrFac
+
+    @on 'form.ajax', (form, dom, xhrFac) ->
+      wzk.ui.form.ajaxifyForm form, dom, xhrFac
+
+    @on '*[data-modal]', (el, dom, xhrFac, opts) ->
+      wzk.ui.form.openFormInModal el, dom, xhrFac, opts.app
+
+    @on 'select.fulltext-search', (el, dom) ->
+      el = (`/** @type {HTMLSelectElement} */`) el
+      wzk.ui.ac.buildSelectAutoCompleteNative el, dom
+
+    @on 'select.fulltext-search-multiple', (el, dom) ->
+      el = (`/** @type {HTMLSelectElement} */`) el
+      wzk.ui.ac.buildExtSelectboxFromSelectNative el, dom
+
+    @on 'fieldset.inline', (el, dom) ->
+      wzk.ui.inlineform.buildDynamicButton el, dom
+
+    @on '*[data-title]', (el, dom) ->
+      wzk.ui.tooltip.tooltipy el, dom
 
   ###*
     @param {string} k
