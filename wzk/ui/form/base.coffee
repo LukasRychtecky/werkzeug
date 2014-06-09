@@ -39,9 +39,20 @@ wzk.ui.form.formFields2Json = (parent, skipCsrf = true, filterByName = /INITIAL_
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
 ###
-wzk.ui.form.ajaxifyForm = (form, dom, xhrFac) ->
+wzk.ui.form.restifyForm = (form, dom, xhrFac) ->
   client = new wzk.resource.Client xhrFac
   new wzk.ui.form.RestForm(client, dom).decorate form
+
+###*
+  @param {Element} el
+  @param {wzk.dom.Dom} dom
+  @param {wzk.net.XhrFactory} xhrFac
+###
+wzk.ui.form.ajaxifyForm = (el, dom, xhrFac) ->
+  client = new wzk.resource.Client xhrFac
+  form = new wzk.ui.form.AjaxForm client, dom
+  form.cleanAfterSubmit true
+  form.decorate el
 
 ###*
   @param {Element} el
