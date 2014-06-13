@@ -10,7 +10,8 @@ class wzk.ui.grid.CellRenderer extends wzk.ui.ComponentRenderer
   createDom: (component) ->
     dom = component.getDomHelper()
     td = dom.el @tag, @buildAttrs(component)
-    wrapper = dom.el 'span', 'cell-content', component.getCaption()
+    wrapper = dom.el 'span', 'cell-content'
+    wrapper.innerHTML = component.getCaption()
     td.appendChild wrapper
     td
 
