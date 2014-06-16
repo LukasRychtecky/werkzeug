@@ -4,7 +4,7 @@ class wzk.ui.popup.Popup extends wzk.ui.Control
     @enum {string}
   ###
   @CLS:
-    HIDDEN: 'hidden'
+    OPEN: 'open'
 
   ###*
     @param {Object} params
@@ -21,10 +21,7 @@ class wzk.ui.popup.Popup extends wzk.ui.Control
     @override
     @param {Element} element
   ###
-  decorateInternal: (element) ->
-    toggleId = goog.dom.dataset.get element, 'toggle'
-    @toggleElement = @dom.one "##{toggleId}"
-
+  decorateInternal: (@element) ->
     ###
       Do not use ACTION event as propagation must be stopped. If you would stop
       propagation on ACTION event, CLICK event would be fired on body and popup
@@ -36,7 +33,7 @@ class wzk.ui.popup.Popup extends wzk.ui.Control
     goog.events.listen element, goog.events.EventType.TOUCHSTART, @handleToggle
     goog.events.listen @dom.one('body'), goog.events.EventType.TOUCHSTART, @handleClose
 
-    super(element)
+    super(@element)
 
   ###*
     @protected
@@ -61,6 +58,6 @@ class wzk.ui.popup.Popup extends wzk.ui.Control
   ###
   toggle: ->
     if @shown
-      goog.dom.classes.remove @toggleElement, wzk.ui.popup.Popup.CLS.HIDDEN
+      goog.dom.classes.add @element, wzk.ui.popup.Popup.CLS.OPEN
     else
-      goog.dom.classes.add @toggleElement, wzk.ui.popup.Popup.CLS.HIDDEN
+      goog.dom.classes.remove @element, wzk.ui.popup.Popup.CLS.OPEN
