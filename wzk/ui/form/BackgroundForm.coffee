@@ -21,7 +21,7 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
   ###
   constructor: (@client, @dom) ->
     super()
-    @btn = null
+    @btns = []
     @clean = false
 
   ###*
@@ -30,11 +30,14 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
   decorate: (form) ->
     return unless form?
 
-    dispatcher = form.querySelector '.btn-save'
-    return unless dispatcher
+    dispatchers = @dom.all '.btn-save', form
+    return unless dispatchers
 
-    @btn = new goog.ui.Button()
-    @btn.decorate dispatcher
+    @btns = []
+    for dispatcher in dispatchers
+      btn = new goog.ui.Button()
+      btn.decorate dispatcher
+      @btns.push btn
 
     @hangListener form
     @removeDefaultBehaviour form
@@ -52,17 +55,18 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
     @param {Element} form
   ###
   hangListener: (form) ->
-    @btn.listen goog.ui.Component.EventType.ACTION, =>
-      @btn.setEnabled false
+    for btn in @btns
+      btn.listen goog.ui.Component.EventType.ACTION, =>
+        btn.setEnabled false
 
-      name = @btn.getElement().getAttribute 'name'
-      value = @btn.getElement().getAttribute 'value'
+        name = btn.getElement().getAttribute 'name'
+        value = btn.getElement().getAttribute 'value'
 
-      if name?
-        hidden = @dom.createDom  'input', {type: 'hidden', name: name, value: value}
-        @dom.appendChild form, hidden
+        if name?
+          hidden = @dom.createDom  'input', {type: 'hidden', name: name, value: value}
+          @dom.appendChild form, hidden
 
-      @send form
+        @send form
 
   ###*
     @param {Element} form
@@ -88,3 +92,10 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
     @param {*} res
   ###
   onError: (res) ->
+
+  ###*
+    @param {boolean} enable
+  ###
+  setButtonsEnabled: (enable) ->
+    for btn in @btns
+      btn.setEnabled enable

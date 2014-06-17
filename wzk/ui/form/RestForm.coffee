@@ -47,7 +47,7 @@ class wzk.ui.form.RestForm extends wzk.ui.form.BackgroundForm
   ###
   onError: (json) =>
     super json
-    @btn.setEnabled true
+    @setButtonsEnabled true
     @showErrors json?['errors']
 
   ###*
@@ -55,7 +55,7 @@ class wzk.ui.form.RestForm extends wzk.ui.form.BackgroundForm
   ###
   onSuccess: (data) =>
     super data
-    @btn.setEnabled true
+    @setButtonsEnabled true
     @notifier.hideAll()
     @dispatchEvent wzk.ui.form.BackgroundForm.EventType.SAVED
 

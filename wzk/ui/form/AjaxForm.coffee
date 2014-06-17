@@ -43,7 +43,7 @@ class wzk.ui.form.AjaxForm extends wzk.ui.form.BackgroundForm
   onError: (html) =>
     super html
     return unless html?
-    @btn.setEnabled true
+    @setButtonsEnabled true
     snippet = @dom.htmlToDocumentFragment html
     form = snippet.querySelector 'form'
     @decorate form
@@ -54,5 +54,5 @@ class wzk.ui.form.AjaxForm extends wzk.ui.form.BackgroundForm
   ###
   onSuccess: (data) =>
     super data
-    @btn.setEnabled true
+    @setButtonsEnabled true
     @dispatchEvent new goog.events.Event(wzk.ui.form.BackgroundForm.EventType.SAVED, data)
