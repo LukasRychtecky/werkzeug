@@ -56,7 +56,8 @@ class wzk.ui.form.BackgroundForm extends goog.events.EventTarget
   ###
   hangListener: (form) ->
     for btn in @btns
-      btn.listen goog.ui.Component.EventType.ACTION, =>
+      btn.listen goog.ui.Component.EventType.ACTION, (event) =>
+        btn = event.target
         btn.setEnabled false
 
         name = btn.getElement().getAttribute 'name'
