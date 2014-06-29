@@ -106,11 +106,10 @@ wzk.ui.ac.buildExtSelectboxFromSelectInternal = (select, dom) ->
   @param {wzk.dom.Dom} dom
 ###
 wzk.ui.ac.buildCustomRenderer = (select, dom) ->
+  customRenderer = null
   # if any option has 'data-image' attribute, use custom renderer
   if select.querySelector("option[data-image]")?
     customRenderer = new wzk.ui.ac.PictureCustomRenderer(dom)
-  else
-    customRenderer = null
   customRenderer
 
 ###*

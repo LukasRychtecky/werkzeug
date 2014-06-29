@@ -36,7 +36,7 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
 
     @input.listen wzk.ui.Input.EventType.VALUE_CHANGE, @handleInputValueChange
 
-    @openBtn = new wzk.ui.OpenIcon()
+    @openBtn = new wzk.ui.OpenIcon dom: @dom
     @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
 
     @cont.listen wzk.ui.TagContainer.EventType.ADD_TAG, (e) =>
@@ -54,10 +54,10 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
     @param {HTMLSelectElement} select
   ###
   decorate: (select, data) ->
-    unless select.form?
-      throw new Error("Select must be in form!")
+    unless select.hasAttribute 'multiple'
+      throw new Error 'For select-one use wzk.ui.ac.SelectAutoComplete'
 
-    @render(select, data)
+    @render select, data
 
     if select.disabled
       @setEnabled false

@@ -1,4 +1,5 @@
 goog.require 'wzk.ui.Input'
+goog.require 'wzk.ui.CloseIcon'
 
 class wzk.ui.ClearableInput extends wzk.ui.Input
 
@@ -14,7 +15,7 @@ class wzk.ui.ClearableInput extends wzk.ui.Input
   constructor: (@dom) ->
     super(null, null, @dom)
 
-    @clrBtn = new wzk.ui.CloseIcon()
+    @clrBtn = new wzk.ui.CloseIcon dom: @dom
     @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
 
   ###*

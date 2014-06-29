@@ -1,4 +1,5 @@
 goog.require 'goog.dom.dataset'
+goog.require 'wzk.resource.Model'
 
 class wzk.ui.ac.NativeDataProvider
 
@@ -24,20 +25,19 @@ class wzk.ui.ac.NativeDataProvider
   ###*
     @protected
     @param {Element} option
-    @return {wzk.resource.Model} model
+    @return {wzk.resource.Model}
   ###
   buildModel: (option) ->
     id = option.getAttribute 'value'
-    unless !!id
+    unless id?
       return null
 
-    data = {
+    data =
       _obj_name: @dom.getTextContent option
       id: id
-    }
 
     photo = goog.dom.dataset.get option, wzk.ui.ac.NativeDataProvider.DATA.PHOTO
-    if !!photo
+    if photo?
       data["photo"] = photo
 
-    new wzk.resource.Model(data)
+    new wzk.resource.Model data

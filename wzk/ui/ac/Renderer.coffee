@@ -62,7 +62,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     @readonly = @select.hasAttribute('readonly')
 
     # create input element and attach it to dom
-    @container = @dom.createDom wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
+    @container = @dom.el wzk.ui.ac.Renderer.TAGS.ITEM, wzk.ui.ac.Renderer.CLS.ITEM
 
     if @customRenderer?
       @imgOrPlaceholder = @customRenderer.createImageOrPlaceholder()
@@ -81,7 +81,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     if @readonly
       @input.getElement().setAttribute 'readonly', 'true'
     else
-      @openBtn = new wzk.ui.OpenIcon()
+      @openBtn = new wzk.ui.OpenIcon dom: @dom
       @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
       @openBtn.render @container
 

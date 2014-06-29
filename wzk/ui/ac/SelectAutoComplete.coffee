@@ -3,6 +3,7 @@ goog.require 'wzk.ui.ac.PictureCustomRenderer'
 goog.require 'wzk.ui.ac.ArrayMatcher'
 goog.require 'wzk.ui.ac.AutoComplete'
 goog.require 'wzk.ui.ac.SelectOneStorage'
+goog.require 'wzk.dom.Dom'
 
 class wzk.ui.ac.SelectAutoComplete
 
@@ -43,6 +44,8 @@ class wzk.ui.ac.SelectAutoComplete
     @param {Element} select
   ###
   decorate: (@select) ->
+    if select.hasAttribute 'multiple'
+      throw new Error 'For select-multiple use wzk.ui.ac.ExtSelectbox'
     @renderer.decorate @select
     @stor = new wzk.ui.ac.SelectOneStorage @dom, @select
     @renderer.listen wzk.ui.ac.Renderer.EventType.CLEAN, @handleClean
