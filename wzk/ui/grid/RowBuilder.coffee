@@ -21,7 +21,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     row.setModel model
     @rows.addChild row, true
     for col in @cols
-      @buildCell(model, col, row)
+      @buildCell model, col, row
 
     if model['_class_names']?
       row.addClassName cls for cls in model['_class_names']
@@ -67,8 +67,14 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     @param {wzk.ui.grid.Row} row
   ###
   buildCell: (model, col, row) ->
-    cell = row.addCell @formatter.format(model, col)
+    cell = new wzk.ui.grid.Cell dom: @dom
+    if model['_default_action']
+      link = new wzk.ui.Link dom: @dom, href: model['_web_links'][model['_default_action']], caption: @formatter.format(model, col)
+      cell.addChild link
+    else
+      cell.setCaption @formatter.format(model, col)
     cell.addClass col
+    row.addChild cell
     cell
 
   ###*
