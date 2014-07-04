@@ -2,6 +2,7 @@ goog.provide 'wzk.ui'
 
 goog.require 'wzk.dom.Dom'
 goog.require 'wzk.ui.Flash'
+goog.require 'goog.dom.classes'
 goog.require 'goog.dom.dataset'
 
 ###*
@@ -20,3 +21,15 @@ wzk.ui.loadSnippet = (el, dom, xhrFac) ->
   url = String goog.dom.dataset.get el, 'snippetOnload'
   if url
     xhrFac.build().send url, 'GET', '', {}
+
+###*
+  @param {Element} el
+  @param {wzk.dom.Dom} dom
+###
+wzk.ui.navbarToggle = (el, dom) ->
+  goog.events.listen el, goog.events.EventType.CLICK, ->
+    goog.dom.classes.toggle el, 'collapsed'
+
+    target = goog.dom.dataset.get el, 'target'
+    menu = dom.cls String target
+    goog.dom.classes.toggle menu, 'in'

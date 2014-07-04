@@ -126,6 +126,12 @@ class wzk.app.App
     @on '*[data-title]', (el, dom) ->
       wzk.ui.tooltip.tooltipy el, dom
 
+    @on '.navbar-toggle', (el, dom) ->
+      wzk.ui.navbarToggle el, dom
+
+    @on '*[data-snippet-onload]', (el, dom, xhrFac) ->
+      wzk.ui.loadSnippet el, dom, xhrFac
+
   ###*
     @param {string} k
     @return {wzk.stor.StateStorage}
