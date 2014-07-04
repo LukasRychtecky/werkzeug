@@ -9,11 +9,12 @@ class wzk.ui.Link extends wzk.ui.Component
       renderer: {wzk.ui.LinkRenderer}
       href: {string}
       title: {string}
+      target: {string}
   ###
   constructor: (params) ->
     params.renderer ?= wzk.ui.LinkRenderer.getInstance()
     super params
-    {@href, @caption, @title} = params
+    {@href, @caption, @title, @target} = params
     @href ?= ''
     @caption ?= ''
     @title ?= @caption
@@ -29,3 +30,9 @@ class wzk.ui.Link extends wzk.ui.Component
   ###
   getTitle: ->
     @title
+
+  ###*
+    @return {string}
+  ###
+  getTarget: ->
+    @target
