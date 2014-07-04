@@ -121,8 +121,8 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     @param {wzk.ui.grid.Cell} cell
   ###
   buildWebAction: (action, model, cell) ->
-    link = new wzk.ui.Link dom: @dom, href: model['_web_links'][action['name']], caption: action['verbose_name']
-    link.addClass(@getClass(action))
+    link = new wzk.ui.Link dom: @dom, href: model['_web_links'][action['name']], caption: action['verbose_name'], target: action['target']
+    link.addClass @getClass(action)
     cell.addChild link
 
   ###*
