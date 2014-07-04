@@ -23,7 +23,7 @@ class wzk.resource.Query
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
 
   putDefaultExtraFields: ->
-    @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links']
+    @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
 
   ###*
     @return {string}
