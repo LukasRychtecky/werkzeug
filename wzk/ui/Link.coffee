@@ -10,13 +10,16 @@ class wzk.ui.Link extends wzk.ui.Component
       href: {string}
       title: {string}
       target: {string}
+      caption: {string} an escapted caption
+      htmlCaption: {string} a non-escapted caption, it overrides a caption
   ###
   constructor: (params) ->
     params.renderer ?= wzk.ui.LinkRenderer.getInstance()
     super params
-    {@href, @caption, @title, @target} = params
+    {@href, @caption, @htmlCaption, @title, @target} = params
     @href ?= ''
     @caption ?= ''
+    @htmlCaption ?= ''
     @title ?= @caption
 
   ###*
@@ -36,3 +39,9 @@ class wzk.ui.Link extends wzk.ui.Component
   ###
   getTarget: ->
     @target
+
+  ###*
+    @return {string}
+  ###
+  getHTMLCaption: ->
+    @htmlCaption
