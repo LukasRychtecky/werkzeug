@@ -69,7 +69,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
   buildCell: (model, col, row) ->
     cell = new wzk.ui.grid.Cell dom: @dom
     if model['_default_action']
-      link = new wzk.ui.Link dom: @dom, href: model['_web_links'][model['_default_action']], caption: @formatter.format(model, col)
+      link = new wzk.ui.Link dom: @dom, href: model['_web_links'][model['_default_action']], htmlCaption: @formatter.format(model, col)
       cell.addChild link
     else
       cell.setCaption @formatter.format(model, col)
