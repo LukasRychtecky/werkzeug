@@ -44,6 +44,12 @@ class wzk.resource.Query
     @extraFields.push field
 
   ###*
+    @param {string} field
+  ###
+  removeExtraField: (field) ->
+    goog.array.remove @extraFields, field
+
+  ###*
     @return {string}
   ###
   composeExtraFields: ->
