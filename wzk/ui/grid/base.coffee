@@ -66,6 +66,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   msgr.decorate dom.getParentElement table
 
   if wzk.ui.grid.PaneMode.usePane table
+    query.removeExtraField '_default_action'
     mode = new wzk.ui.grid.PaneMode client, dom, reg, ss, query
     mode.watchOn grid
 
