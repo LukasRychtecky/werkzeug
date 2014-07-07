@@ -19,13 +19,13 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
       <input id="id_external-inline-file-MAX_NUM_FORMS" name="external-inline-file-MAX_NUM_FORMS" type="hidden" value="2">
       <table class="form">
         <thead>
-        <tr>
+        <tr class="inline-header">
           <th>File</th>
           <th>Delete</th>
         </tr>
         </thead>
         <tbody>
-        <tr class="odd">
+        <tr class="odd inline-line">
           <td class="field">
             <input id="id_external-inline-file-__prefix__-message" name="external-inline-file-__prefix__-message" type="hidden">
             <input id="id_external-inline-file-__prefix__-id" name="external-inline-file-__prefix__-id" type="hidden">
