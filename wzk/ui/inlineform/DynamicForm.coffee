@@ -56,7 +56,6 @@ class wzk.ui.inlineform.DynamicForm
 
     goog.style.setElementShown btn, enabled
 
-
   ###*
     @protected
     @param {goog.events.Event} e
@@ -99,10 +98,10 @@ class wzk.ui.inlineform.DynamicForm
   ###*
     @protected
     @param {Element} fieldset
-    @return {Element}
+    @return {NodeList.<Element>}
   ###
   findRows: (fieldset) ->
-    @dom.all 'table tbody tr', fieldset
+    @dom.clss 'inline-line', fieldset
 
   ###*
     @protected
@@ -116,5 +115,5 @@ class wzk.ui.inlineform.DynamicForm
     @param {Element} row
   ###
   removeDutyFromHiddenInputs: (row) ->
-    for input in row.querySelectorAll 'input, select'
+    for input in @dom.all 'input, select', row
       input.removeAttribute 'required'

@@ -13,7 +13,7 @@ class wzk.ui.inlineform.RowDecorator extends wzk.ui.Component
     @override
   ###
   decorateInternal: (element) ->
-    for row in @dom.all 'tr', element
+    for row in @dom.clss 'inline-line', element
       @addRemoveIcon row
     undefined
 
@@ -36,6 +36,6 @@ class wzk.ui.inlineform.RowDecorator extends wzk.ui.Component
     @return {Element} returns last checkbox in
   ###
   getRemovingCheckbox: (row) ->
-    el = @dom.lastChildOfType row, 'td'
+    el = @dom.getLastElementChild row
     el = @dom.one wzk.ui.inlineform.RowBuilder.CHECKBOX_SELECTOR, el
     return el
