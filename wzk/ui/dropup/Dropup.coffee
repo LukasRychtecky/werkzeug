@@ -73,7 +73,7 @@ class wzk.ui.dropup.Dropup
   open: ->
     @height ?= @getHeight()
     goog.style.setElementShown @dropupElement, true
-    goog.dom.classes.remove @dropupElement, wzk.ui.dropup.Dropup.CSS.COLLAPSE
+    goog.dom.classes.remove el, wzk.ui.dropup.Dropup.CSS.COLLAPSE for el in [@dropupElement, @dropupButton]
     animation = @getAnimation(0, @height)
 
     animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
@@ -89,7 +89,7 @@ class wzk.ui.dropup.Dropup
 
     animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
       goog.style.setElementShown @dropupElement, false
-      goog.dom.classes.add @dropupElement, wzk.ui.dropup.Dropup.CSS.COLLAPSE
+      goog.dom.classes.add el, wzk.ui.dropup.Dropup.CSS.COLLAPSE for el in [@dropupElement, @dropupButton]
       @swapClasses()
 
     animation.play()
