@@ -11,14 +11,14 @@ class wzk.resource.Query
     BOTH: 'BOTH'
 
   ###*
-    @param {string=} path
+    @param {string=} uri
   ###
-  constructor: (@path = '') ->
+  constructor: (uri = '') ->
     @order = null
     @direction = null
     @base ?= 10
     @offset ?= 0
-    @uri = new goog.Uri @path
+    @uri = new goog.Uri uri
     @extraFields = []
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
 
@@ -72,7 +72,7 @@ class wzk.resource.Query
     @return {string}
   ###
   composeGet: (id) ->
-    [@composePath(), id].join '/'
+    [@uri.getPath(), id].join '/'
 
   ###*
     @param {string} par
