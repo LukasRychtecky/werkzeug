@@ -8,6 +8,10 @@ suite 'wzk.resource.Query', ->
     path = '/user/api'
     query = new Query path
 
+  test 'Should compose a GET request without parameters', ->
+    query = new Query "#{path}?first_name__contains=aster&role=1"
+    assert.equal query.composeGet(1), "#{path}/1"
+
   test 'Should return a path with filters', ->
     query.filter 'first_name__contains', 'aster'
     query.filter 'role', '1'
