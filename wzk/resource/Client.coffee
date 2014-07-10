@@ -25,6 +25,7 @@ class wzk.resource.Client
     REFERRER: 'X-Referer'
     EXTRA_FIELDS: 'X-Extra-Fields'
     SERIALIZATION_FORMAT: 'X-Serialization-Format'
+    REQUESTED_WITH: 'X-Requested-With'
 
   ###*
     @constructor
@@ -244,7 +245,9 @@ class wzk.resource.Client
     xhr = @xhrFac.build()
 
     xhr.listenOnce goog.net.EventType.SUCCESS, =>
-      if @isHtmlResponse(xhr)
+      if xhr.getResponseHeader('Location')?
+        @xhrFac.getLocation().assign xhr.getResponseHeader('Location')
+      else if @isHtmlResponse(xhr)
         onError xhr.getResponseText()
       else if @isJsonResponse(xhr)
         onSuccess (`/** @type {Object} */`) xhr.getResponseJson() ? {}
@@ -254,6 +257,7 @@ class wzk.resource.Client
     headers =
       'Accept': 'text/html,application/json'
       'Content-Type': 'application/x-www-form-urlencoded'
+    headers[wzk.resource.Client.X_HEADERS.REQUESTED_WITH] = 'XMLHttpRequest'
     @send url, 'POST', xhr, content, headers
 
   ###*
@@ -270,8 +274,11 @@ class wzk.resource.Client
 
     iframeIO.listen goog.net.EventType.SUCCESS, (event) =>
       response = event.target.getResponseJson()
-      onSuccess response
-      @xhrFac.applyJsonResponse response
+      if response['location']?
+        @xhrFac.getLocation().assign response['location']
+      else
+        onSuccess response
+        @xhrFac.applyJsonResponse response
 
     iframeIO.listen goog.net.EventType.ERROR, (event) ->
       onError event.target.getResponseText()
@@ -294,6 +301,7 @@ class wzk.resource.Client
   ###*
     @protected
     @param {HTMLFormElement} form
+    @return {boolean}
   ###
   formContainsFile: (form) ->
     for fileInput in form.querySelectorAll('input[type=file]')
