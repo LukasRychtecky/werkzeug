@@ -103,3 +103,9 @@ class wzk.net.XhrFactory
   isJsonReponse: (xhr) ->
     type = xhr.getResponseHeader 'Content-Type'
     type? and type.indexOf('json') isnt -1
+
+  ###*
+    @return {Location}
+  ###
+  getLocation: ->
+    @dom.getWindow().location
