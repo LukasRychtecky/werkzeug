@@ -9,6 +9,7 @@ class wzk.ui.ac.ExtSelectboxStorageHandler
     @param {wzk.ui.ac.ExtSelectboxStorage} storage
   ###
   constructor: (@select, @storage) ->
+    @cont = null
 
   ###*
     @param {Array.<wzk.resource.Model>} data
@@ -16,9 +17,9 @@ class wzk.ui.ac.ExtSelectboxStorageHandler
     @param {Object=} customRenderer
     @param {boolean=} readonly
   ###
-  load: (data, cont, customRenderer, readonly) ->
+  load: (data, @cont, customRenderer, readonly) ->
     @storage.load(data, cont, customRenderer, readonly)
-    @hangListener(cont)
+    goog.events.listen @select.form, goog.events.EventType.SUBMIT, @handleStore if @select.form?
 
   ###*
     @param {wzk.ui.TagContainer} cont
@@ -43,6 +44,5 @@ class wzk.ui.ac.ExtSelectboxStorageHandler
   ###*
     @protected
   ###
-  hangListener: (cont) ->
-    goog.events.listen @select.form, goog.events.EventType.SUBMIT, (e) =>
-      @store(cont)
+  handleStore: =>
+    @store @cont
