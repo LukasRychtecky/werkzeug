@@ -27,8 +27,6 @@ class wzk.ui.Flash extends wzk.ui.Component
   addMessage: (text, severity = 'info', fadeOut = undefined, closable = true) ->
     notError = severity isnt 'error'
     fadeOut = notError if fadeOut is undefined
-    unless notError
-      closable = false
 
     msgs = if goog.isArray(text) then text else [text]
     flashes = []

@@ -21,7 +21,7 @@ suite 'wzk.ui.Flash', ->
     assert.equal flashes.length, 1
     msg = flashes.pop()
     assert.isFalse msg.fadeOut
-    assert.isFalse msg.closable
+    assert.isTrue msg.closable
 
   test 'Should add an info message with a close icon and without a fade out', ->
     flashes = flash.addMessage 'Info', 'info', false
