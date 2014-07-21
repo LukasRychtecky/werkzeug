@@ -29,8 +29,7 @@ class wzk.ui.ac.NativeDataProvider
   ###
   buildModel: (option) ->
     id = option.getAttribute 'value'
-    unless id?
-      return null
+    return null if not id? or id is ''
 
     data =
       _obj_name: @dom.getTextContent option
