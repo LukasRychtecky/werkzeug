@@ -17,14 +17,14 @@ suite 'wzk.ui.ac', ->
     return false if icon? and icon.style.display? and icon.style.display is 'none'
     icon isnt null
 
-  buildDOM = (multiple, readonly = false) ->
+  buildDOM = (multiple, readonly = false, selected = true) ->
     doc = jsdom("""
       <html><head></head>
       <body>
         <select#{if multiple then ' multiple' else ''}#{if readonly then ' readonly' else ''}>
-          <option value="0">a</option>
+          <option value="">---</option>
           <option value="1">b</option>
-          <option value="2" selected>c</option>
+          <option value="2"#{if selected then ' selected' else ''}>c</option>
           <option value="4">d</option>
         </select>
       </body>
@@ -33,6 +33,11 @@ suite 'wzk.ui.ac', ->
 
     dom = new wzk.dom.Dom doc
     select = dom.one 'select'
+
+  test 'An empty option should be ignored', ->
+    buildDOM false, false, false
+    wzk.ui.ac.buildSelectAutoCompleteNative select, dom
+    assert.isNull dom.one('.ac-buttons .goog-control').value
 
   test 'Should decorate a native select', ->
     buildDOM false
