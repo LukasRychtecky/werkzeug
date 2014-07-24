@@ -71,9 +71,11 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
     mode = new wzk.ui.grid.PaneMode client, dom, reg, ss, query
     mode.watchOn grid
 
-  if goog.dom.dataset.has table, wzk.ui.grid.Updater.UPDATE_URL
-    url = goog.dom.dataset.get(table, wzk.ui.grid.Updater.UPDATE_URL)
-    updater = new wzk.ui.grid.Updater grid, url, new wzk.resource.Client(xhrFac)
+  if goog.dom.dataset.has table, wzk.ui.grid.Updater.DATA.URL
+    url = String(goog.dom.dataset.get table, wzk.ui.grid.Updater.DATA.URL)
+    interval = parseInt goog.dom.dataset.get(table, wzk.ui.grid.Updater.DATA.INTERVAL), 10
+    interval = null if isNaN interval
+    updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac), url, interval
     updater.start()
 
   grid
