@@ -1,25 +1,27 @@
 class wzk.ui.grid.Updater
 
   ###*
-    @const
-    @type {string}
+    @enum {string}
   ###
-  @UPDATE_URL: 'updateUrl'
+  @DATA:
+    URL: 'updateUrl'
+    INTERVAL: 'updateInterval'
 
   ###*
     @const
-    @type {int}
+    @type {number}
   ###
   @REFRESH_INTERVAL: 3000
 
   ###*
     @constructor
     @param {wzk.ui.grid.Grid} grid
-    @param {string} url
     @param {wzk.resource.Client} client
+    @param {string} url
+    @param {number=} interval
   ###
-  constructor: (@grid, @url, @client) ->
-    @timer = new goog.Timer wzk.ui.grid.Updater.REFRESH_INTERVAL
+  constructor: (@grid, @client, @url, interval = wzk.ui.grid.Updater.REFRESH_INTERVAL) ->
+    @timer = new goog.Timer interval
     @timer.listen goog.Timer.TICK, @fetch
 
   start: ->
@@ -34,9 +36,10 @@ class wzk.ui.grid.Updater
 
   ###*
     @protected
-    @param {wzk.resource.Model} data
+    @param {wzk.resource.Model|Array.<wzk.resource.Model>} data
+    @param {Object} result
   ###
-  update: (data) =>
+  update: (data, result) =>
     if data['count-changed'] > 0
       @grid.refresh()
     @timer.start()
