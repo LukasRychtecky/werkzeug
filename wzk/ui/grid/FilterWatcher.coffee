@@ -16,15 +16,15 @@ class wzk.ui.grid.FilterWatcher
     @param {wzk.dom.Dom} dom
   ###
   constructor: (@grid, @query, @dom) ->
-    @fields = []
-    @initialCheck = false
+    @fields = {}
+    @initialCheck = true
 
   ###*
     @param {Element} table
   ###
   watchOn: (table) ->
-    for field in table.querySelectorAll 'thead *[data-filter]'
-      @fields.push field
+    for field in @dom.all 'thead *[data-filter]', table
+      @fields[field.name.split('__').pop()] = field
       @listen field
 
     @grid.listen wzk.ui.grid.Grid.EventType.LOADED, @handleLoad
@@ -34,10 +34,14 @@ class wzk.ui.grid.FilterWatcher
     @param {goog.events.Event} e
   ###
   handleLoad: (e) =>
-    unless @initialCheck
-      for field in @fields
+    if @initialCheck
+      @query.each (k, v) =>
+        if @fields[k]?
+          goog.dom.forms.setValue @fields[k], v[0]
+    else
+      for k, field of @fields
         @filter field
-      @initialCheck = true
+    @initialCheck = false
 
   ###*
     @protected
