@@ -110,3 +110,13 @@ class wzk.resource.Query
     return false if actual is val
     return false if actual is undefined and val is ''
     true
+
+  ###*
+    Iterates over GET params, a passed function gets a key and a value
+
+    @param {function(string, Array)} func
+  ###
+  each: (func) ->
+    qd = @uri.getQueryData()
+    for k in qd.getKeys()
+      func k, qd.getValues k
