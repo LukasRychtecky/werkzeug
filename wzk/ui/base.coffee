@@ -4,6 +4,7 @@ goog.require 'wzk.dom.Dom'
 goog.require 'wzk.ui.Flash'
 goog.require 'goog.dom.classes'
 goog.require 'goog.dom.dataset'
+goog.require 'wzk.net.XhrConfig'
 
 ###*
   @param {Document} doc
@@ -20,7 +21,7 @@ wzk.ui.buildFlash = (doc) ->
 wzk.ui.loadSnippet = (el, dom, xhrFac) ->
   url = String goog.dom.dataset.get el, 'snippetOnload'
   if url
-    xhrFac.build().send url, 'GET', '', {}
+    xhrFac.build(new wzk.net.XhrConfig()).send url, 'GET', '', {}
 
 ###*
   @param {Element} el

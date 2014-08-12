@@ -14,6 +14,7 @@ goog.require 'wzk.num'
 goog.require 'wzk.ui.grid.PaneMode'
 goog.require 'wzk.ui.grid.PaginatorHandler'
 goog.require 'wzk.ui.grid.Updater'
+goog.require 'wzk.net.XhrConfig'
 
 ###*
   @param {Element} table
@@ -73,9 +74,9 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
 
   if goog.dom.dataset.has table, wzk.ui.grid.Updater.DATA.URL
     url = String(goog.dom.dataset.get table, wzk.ui.grid.Updater.DATA.URL)
-    interval = parseInt goog.dom.dataset.get(table, wzk.ui.grid.Updater.DATA.INTERVAL), 10
-    interval = null if isNaN interval
-    updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac), url, interval
+    interval = wzk.num.parseDec String goog.dom.dataset.get(table, wzk.ui.grid.Updater.DATA.INTERVAL)
+    xhrConfig = new wzk.net.XhrConfig loading: false
+    updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac, '', xhrConfig), url, interval
     updater.start()
 
   grid

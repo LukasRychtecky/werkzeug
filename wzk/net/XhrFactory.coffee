@@ -39,51 +39,69 @@ class wzk.net.XhrFactory
     undefined
 
   ###*
+    @param {wzk.net.XhrConfig} config
     @return {wzk.net.XhrIo}
   ###
-  build: ->
-    xhr = @buildXhr()
-
-    xhr.listen goog.net.EventType.ERROR, =>
-      if @isJsonReponse xhr
-        response = xhr.getResponseJson()
-        @flash.clearAll()
-        @applyJsonResponse(response)
-      else
-        @flash.error()
-
-    xhr.listen goog.net.EventType.COMPLETE, =>
-      if xhr.getStatus() isnt 204
-        try
-          response = xhr.getResponseJson()
-          @flash.clearAll()
-          @applyJsonResponse(response)
-        catch error
+  build: (config = new wzk.net.XhrConfig()) ->
+    xhr = @buildXhr config
+    xhr.listen goog.net.EventType.ERROR, @handleError
+    xhr.listen goog.net.EventType.COMPLETE, @handleComplete
     xhr
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleError: (e) =>
+    xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
+    if @isJsonReponse xhr
+      response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
+      config = e.target.getConfig()
+      @flash.clearAll() if config.flash
+      @applyJsonResponse response, config
+    else
+      @flash.error() unless e.target.getConfig().flash
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleComplete: (e) =>
+    xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
+    if xhr.getStatus() isnt 204
+      config = e.target.getConfig()
+      response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
+      @flash.clearAll() if config.flash
+      @applyJsonResponse response, config
+
 
   ###*
     Applies json response
     @param {Object} json response
+    @param {wzk.net.XhrConfig} config
   ###
-  applyJsonResponse: (json) ->
-    @flash.apply json
-    @snip.apply json
+  applyJsonResponse: (json, config) ->
+    @flash.apply json if config.flash
+    @snip.apply json if config.snippet
 
   ###*
     @suppress {checkTypes}
     @protected
+    @param {wzk.net.XhrConfig} config
     @return {wzk.net.XhrIo}
   ###
-  buildXhr: ->
+  buildXhr: (config) ->
     xhr = new wzk.net.XhrIo()
+    xhr.setConfig config
     @xhrs.push xhr
     xhr.id_ = @_i
     @_i++
 
     xhr.addMiddleware @auth
 
-    xhr.listen wzk.net.XhrIo.Events.SEND, =>
-      if @_running is 0
+    xhr.listen wzk.net.XhrIo.Events.SEND, (e) =>
+      config = e.target.getConfig()
+      if @_running is 0 and config.flash and config.loading
         flashes = @flash.loading()
         @_flashLoading = flashes.pop()
       @_running++
