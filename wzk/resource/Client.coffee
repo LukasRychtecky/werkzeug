@@ -10,6 +10,7 @@ goog.require 'wzk.resource.UrlExpert'
 goog.require 'wzk.resource.Model'
 goog.require 'wzk.resource.ModelBuilder'
 goog.require 'wzk.resource.Query'
+goog.require 'wzk.net.XhrConfig'
 
 class wzk.resource.Client
 
@@ -31,8 +32,9 @@ class wzk.resource.Client
     @constructor
     @param {wzk.net.XhrFactory} xhrFac
     @param {string=} context
+    @param {wzk.net.XhrConfig=} xhrConfig
   ###
-  constructor: (@xhrFac, @context = '') ->
+  constructor: (@xhrFac, @context = '', @xhrConfig = new wzk.net.XhrConfig()) ->
     @headers = {}
     @headers[goog.net.XhrIo.CONTENT_TYPE_HEADER] = 'application/json'
     @headers['Accept'] = 'application/json'
@@ -71,7 +73,7 @@ class wzk.resource.Client
   ###
   find: (modelOrUrl, onSuccess, onError = null, query = null) ->
     X = wzk.resource.Client.X_HEADERS
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
       if onSuccess?
@@ -121,10 +123,10 @@ class wzk.resource.Client
     @param {Function=} onError
   ###
   get: (modelOrUrl, onFetch, onError = null) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
-      onFetch @builder.build(xhr.getResponseJson())
+      onFetch @builder.build xhr.getResponseJson()
 
     @listenOnError xhr, onError
 
@@ -138,7 +140,7 @@ class wzk.resource.Client
     @param {Function=} onError
   ###
   delete: (model, onSuccess = null, onError = null) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess() if onSuccess?
@@ -156,7 +158,7 @@ class wzk.resource.Client
     @param {Function=} onError
   ###
   create: (model, onSuccess = null, onError = null) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess xhr.getResponseJson() if onSuccess?
@@ -174,7 +176,7 @@ class wzk.resource.Client
     @param {Function=} onError
   ###
   update: (model, onSuccess = null, onError = null) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess xhr.getResponseJson() if onSuccess?
@@ -195,7 +197,7 @@ class wzk.resource.Client
     @param {boolean=} responseAsModel
   ###
   request: (url, method, content = {}, onSuccess = null, onError = null, responseAsModel = false) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
       onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else xhr.getResponseJson()) if onSuccess
@@ -212,7 +214,7 @@ class wzk.resource.Client
     @param {function()|null=} onError
   ###
   sniff: (url, onSuccess, onError = null) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
       onSuccess xhr.getResponseText()
 
@@ -232,7 +234,7 @@ class wzk.resource.Client
 
     content = goog.json.serialize content if goog.isObject(content)
 
-    xhr = @xhrFac.build() unless xhr?
+    xhr = @xhrFac.build @xhrConfig unless xhr?
     xhr.send url, method, content, headers ? @headers
 
   ###*
@@ -242,7 +244,7 @@ class wzk.resource.Client
     @param {function(string=)} onError
   ###
   postForm: (url, content, onSuccess, onError) ->
-    xhr = @xhrFac.build()
+    xhr = @xhrFac.build @xhrConfig
 
     xhr.listenOnce goog.net.EventType.SUCCESS, =>
       if xhr.getResponseHeader('Location')?
@@ -278,7 +280,7 @@ class wzk.resource.Client
         @xhrFac.getLocation().assign response['location']
       else
         onSuccess response
-        @xhrFac.applyJsonResponse response
+        @xhrFac.applyJsonResponse response, @xhrConfig
 
     iframeIO.listen goog.net.EventType.ERROR, (event) ->
       onError event.target.getResponseText()

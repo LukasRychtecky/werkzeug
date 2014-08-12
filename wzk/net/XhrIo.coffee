@@ -1,6 +1,5 @@
-goog.provide 'wzk.net.XhrIo'
-
 goog.require 'goog.net.XhrIo'
+goog.require 'wzk.net.XhrConfig'
 
 class wzk.net.XhrIo extends goog.net.XhrIo
 
@@ -17,8 +16,20 @@ class wzk.net.XhrIo extends goog.net.XhrIo
   constructor: (fac) ->
     super fac
     @middlewares = []
+    @xhrConfig = new wzk.net.XhrConfig()
     @listen goog.net.EventType.COMPLETE, =>
       @dispatchEvent wzk.net.XhrIo.Events.DONE
+
+  ###*
+    @return {wzk.net.XhrConfig}
+  ###
+  getConfig: ->
+    @xhrConfig
+
+  ###*
+    @param {wzk.net.XhrConfig} xhrConfig
+  ###
+  setConfig: (@xhrConfig) ->
 
   ###*
     @param {wzk.net.HeadersMiddleware} midware
