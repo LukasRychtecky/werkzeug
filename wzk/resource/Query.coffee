@@ -21,6 +21,7 @@ class wzk.resource.Query
     @uri = new goog.Uri uri
     @extraFields = []
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
+    @accept = 'application/json'
 
   putDefaultExtraFields: ->
     @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
@@ -120,3 +121,14 @@ class wzk.resource.Query
     qd = @uri.getQueryData()
     for k in qd.getKeys()
       func k, qd.getValues k
+
+  ###*
+    @param {string} accept
+  ###
+  setAccept: (@accept) ->
+
+  ###*
+    @return {string}
+  ###
+  getAccept: ->
+    @accept

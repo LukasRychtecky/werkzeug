@@ -29,6 +29,12 @@ class wzk.resource.Client
     REQUESTED_WITH: 'X-Requested-With'
 
   ###*
+    @enum {string}
+  ###
+  @HEADERS:
+    ACCEPT: 'Accept'
+
+  ###*
     @constructor
     @param {wzk.net.XhrFactory} xhrFac
     @param {string=} context
@@ -94,6 +100,7 @@ class wzk.resource.Client
       headers[X.REFERRER] = query.referer if query.referer?
       headers[X.EXTRA_FIELDS] = query.composeExtraFields() if query.hasExtraFields()
       headers[X.SERIALIZATION_FORMAT] = query.getSerFormat()
+      headers[wzk.resource.Client.HEADERS.ACCEPT] = query.getAccept()
 
     method = 'GET'
 
@@ -195,16 +202,17 @@ class wzk.resource.Client
     @param {Function=} onSuccess
     @param {Function=} onError
     @param {boolean=} responseAsModel
+    @param {Object.<string, string>=} headers
   ###
-  request: (url, method, content = {}, onSuccess = null, onError = null, responseAsModel = false) ->
+  request: (url, method, content = {}, onSuccess = null, onError = null, responseAsModel = false, headers = {}) ->
     xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
-      onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else xhr.getResponseJson()) if onSuccess
+      onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else xhr.getResponse()) if onSuccess
 
     @listenOnError xhr, onError
 
-    @send url, method, xhr, content
+    @send url, method, xhr, content, headers
 
   ###*
     Loads a Html snippet from a server.

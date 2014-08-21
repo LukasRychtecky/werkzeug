@@ -26,7 +26,7 @@ class wzk.ui.form.RemoteButtonDecorator
     @param {wzk.net.XhrFactory} xhrFac
   ###
   constructor: (@dom, @xhrFac) ->
-    @btn = new wzk.ui.form.RemoteButton null, null, dom
+    @btn = new wzk.ui.form.RemoteButton dom: dom
     @client = new wzk.resource.Client @xhrFac
     @url = ''
     @method = ''
