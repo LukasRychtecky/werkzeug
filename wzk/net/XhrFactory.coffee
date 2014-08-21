@@ -54,8 +54,8 @@ class wzk.net.XhrFactory
   ###
   handleError: (e) =>
     xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
-    if @isJsonReponse xhr
-      response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
+    if @isJsonResponse xhr
+      response = (`/** @type {Object} */`) xhr.getResponseJson()
       config = e.target.getConfig()
       @flash.clearAll() if config.flash
       @applyJsonResponse response, config
@@ -68,12 +68,11 @@ class wzk.net.XhrFactory
   ###
   handleComplete: (e) =>
     xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
-    if xhr.getStatus() isnt 204
+    if xhr.getStatus() isnt 204 and @isJsonResponse xhr
       config = e.target.getConfig()
       response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
       @flash.clearAll() if config.flash
       @applyJsonResponse response, config
-
 
   ###*
     Applies json response
@@ -118,7 +117,7 @@ class wzk.net.XhrFactory
     @param {wzk.net.XhrIo} xhr
     @return {boolean}
   ###
-  isJsonReponse: (xhr) ->
+  isJsonResponse: (xhr) ->
     type = xhr.getResponseHeader 'Content-Type'
     type? and type.indexOf('json') isnt -1
 

@@ -15,6 +15,7 @@ goog.require 'wzk.ui.grid.PaneMode'
 goog.require 'wzk.ui.grid.PaginatorHandler'
 goog.require 'wzk.ui.grid.Updater'
 goog.require 'wzk.net.XhrConfig'
+goog.require 'wzk.ui.grid.ExportButton'
 
 ###*
   @param {Element} table
@@ -78,5 +79,10 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
     xhrConfig = new wzk.net.XhrConfig loading: false
     updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac, '', xhrConfig), url, interval
     updater.start()
+
+  exportEl = dom.cls wzk.ui.grid.ExportButton.CLS, dom.getParentElement(table)
+  if exportEl?
+    exportBtn = new wzk.ui.grid.ExportButton dom: dom, watcher: watcher, client: new wzk.resource.Client(xhrFac)
+    exportBtn.decorate exportEl
 
   grid

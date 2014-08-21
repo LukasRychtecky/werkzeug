@@ -64,3 +64,9 @@ class wzk.ui.grid.FilterWatcher
       @query.filter name, val
       @grid.setQuery @query
       @grid.refresh()
+
+  ###*
+    @return {wzk.resource.Query}
+  ###
+  getQuery: ->
+    @query
