@@ -7,6 +7,13 @@ class wzk.net.AuthMiddleware extends wzk.net.HeadersMiddleware
   ###
   @HEADER:
     AUTH: 'Authorization'
+    CSRF: 'X-CsrfToken'
+
+  ###*
+    @enum {string}
+  ###
+  @COOKIES:
+    CSRF: 'csrftoken'
 
   ###*
     @param {Document} doc
@@ -19,7 +26,11 @@ class wzk.net.AuthMiddleware extends wzk.net.HeadersMiddleware
     @param {Object} headers
   ###
   apply: (headers) ->
-    auth  = @cookies.get wzk.net.AuthMiddleware.HEADER.AUTH
-    if auth?
-      headers[wzk.net.AuthMiddleware.HEADER.AUTH] = auth
+    csrf = @cookies.get wzk.net.AuthMiddleware.COOKIES.CSRF
+    if csrf
+      headers[wzk.net.AuthMiddleware.HEADER.CSRF] = csrf
+    else
+      auth  = @cookies.get wzk.net.AuthMiddleware.HEADER.AUTH
+      if auth?
+        headers[wzk.net.AuthMiddleware.HEADER.AUTH] = auth
     undefined # Coffee & Closure
