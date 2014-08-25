@@ -107,7 +107,7 @@ class wzk.net.XhrFactory
 
     xhr.listen wzk.net.XhrIo.Events.DONE, =>
       @_running--
-      if @_running is 0
+      if @_running is 0 and @_flashLoading?
         @_flashLoading.destroy()
 
     xhr
