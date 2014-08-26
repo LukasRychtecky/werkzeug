@@ -20,12 +20,19 @@ class wzk.ui.grid.Updater
     @param {string} url
     @param {number=} interval
   ###
-  constructor: (@grid, @client, @url, interval = wzk.ui.grid.Updater.REFRESH_INTERVAL) ->
-    @timer = new goog.Timer interval
+  constructor: (@grid, @client, @url, @interval = wzk.ui.grid.Updater.REFRESH_INTERVAL) ->
+    @timer = new goog.Timer @interval
     @timer.listen goog.Timer.TICK, @fetch
 
+  ###*
+    @protected
+    @return {boolean}
+  ###
+  shouldTick: ->
+    @interval > 1
+
   start: ->
-    @timer.start()
+    @timer.start() if @shouldTick()
 
   ###*
     @protected
