@@ -68,11 +68,17 @@ class wzk.net.XhrFactory
   ###
   handleComplete: (e) =>
     xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
-    if xhr.getStatus() isnt 204 and @isJsonResponse xhr
+    if xhr.getStatus() isnt 204
       config = e.target.getConfig()
-      response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
-      @flash.clearAll() if config.flash
-      @applyJsonResponse response, config
+
+      try
+        # we cannot check response type because of IE
+        # snippets must be sent with text/plain instead of application/json
+        response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
+        @flash.clearAll() if config.flash
+        @applyJsonResponse response, config
+      catch error
+        # TODO log error
 
   ###*
     Applies json response
