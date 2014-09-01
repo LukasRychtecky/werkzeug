@@ -142,7 +142,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     @return {wzk.ui.form.RemoteButton}
   ###
   buildRemoteButton: (action, model, row, cell) ->
-    btn = new wzk.ui.form.ActionButton action['verbose_name'], undefined, @dom
+    btn = new wzk.ui.form.ActionButton content: action['verbose_name'], dom: @dom
     btnData =
       model: model
       action: action

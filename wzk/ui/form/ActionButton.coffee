@@ -1,12 +1,10 @@
 class wzk.ui.form.ActionButton extends wzk.ui.form.RemoteButton
 
   ###*
-    @param {goog.ui.ControlContent=} content
-    @param {goog.ui.ButtonRenderer=} renderer
-    @param {goog.dom.DomHelper=} dom
+    @param {Object} params
   ###
-  constructor: (content, renderer, dom) ->
-    super(content, renderer, dom)
+  constructor: (params) ->
+    super params
 
   ###*
     Sends a request on a given model with a given method
