@@ -73,10 +73,10 @@ class wzk.ui.dropup.Dropup
   open: ->
     @height ?= @getHeight()
     goog.style.setElementShown @dropupElement, true
-    goog.dom.classes.remove el, wzk.ui.dropup.Dropup.CSS.COLLAPSE for el in [@dropupElement, @dropupButton]
     animation = @getAnimation(0, @height)
 
     animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
+      goog.dom.classes.remove el, wzk.ui.dropup.Dropup.CSS.COLLAPSE for el in [@dropupElement, @dropupButton]
       @swapClasses()
 
     animation.play()
@@ -105,7 +105,7 @@ class wzk.ui.dropup.Dropup
         goog.dom.classes.addRemove @caretElement, C.ARROW_LEFT, C.ARROW_UP
       else
         goog.dom.classes.addRemove @caretElement, C.ARROW_UP, C.ARROW_LEFT
-
+  
   ###*
     Gets animation object and set's starting height and ending height
     @protected
@@ -114,15 +114,19 @@ class wzk.ui.dropup.Dropup
   ###
   getAnimation: (start, stop) ->
     animation = new goog.fx.Animation [start],[stop], @duration
+    spanWidth = () =>
+      goog.style.setHeight(@dropupElement, stop)
+    
+    setTimeout(spanWidth, @duration)
 
     # set animation step callback
     animation.listen goog.fx.Animation.EventType.ANIMATE, (event) =>
-      goog.style.setHeight(@dropupElement,  event.coords[0])
+      goog.style.setHeight(@dropupElement, event.coords[0])
 
     animation.listen goog.fx.Animation.EventType.BEGIN, (event) =>
       @animationLock = true
 
-    animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
+    animation.listen goog.fx.Animation.EventType.END, (event) =>
       @animationLock = false
 
     animation
