@@ -105,7 +105,7 @@ class wzk.ui.dropup.Dropup
         goog.dom.classes.addRemove @caretElement, C.ARROW_LEFT, C.ARROW_UP
       else
         goog.dom.classes.addRemove @caretElement, C.ARROW_UP, C.ARROW_LEFT
- 
+
   ###*
     Gets animation object and set's starting height and ending height
     @protected
