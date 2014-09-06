@@ -98,4 +98,4 @@ class wzk.ui.grid.ExportButton extends wzk.ui.Button
   ###
   encodeUtf8: (s) ->
     win = @dom.getWindow()
-    goog.crypt.base64.encodeString win.unescape win.encodeURIComponent s
+    goog.crypt.base64.encodeString win.unescape win['encodeURIComponent'](s)
