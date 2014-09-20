@@ -256,7 +256,7 @@ class wzk.resource.Client
 
     xhr.listenOnce goog.net.EventType.SUCCESS, =>
       if xhr.getResponseHeader('Location')?
-        @xhrFac.getLocation().assign xhr.getResponseHeader('Location')
+        @reload xhr.getResponseHeader('Location')
       else if @isHtmlResponse(xhr)
         onError xhr.getResponseText()
       else if @isJsonResponse(xhr)
@@ -269,6 +269,14 @@ class wzk.resource.Client
       'Content-Type': 'application/x-www-form-urlencoded'
     headers[wzk.resource.Client.X_HEADERS.REQUESTED_WITH] = 'XMLHttpRequest'
     @send url, 'POST', xhr, content, headers
+
+  ###*
+    @protected
+    @param {string} location
+  ###
+  reload: (location) ->
+    @xhrFac.getLocation().assign location
+    @xhrFac.getLocation().reload true
 
   ###*
     Posts given form in Iframe
@@ -285,7 +293,7 @@ class wzk.resource.Client
     iframeIO.listen goog.net.EventType.SUCCESS, (event) =>
       response = event.target.getResponseJson()
       if response['location']?
-        @xhrFac.getLocation().assign response['location']
+        @reload response['location']
       else
         onSuccess response
         @xhrFac.applyJsonResponse response, @xhrConfig
