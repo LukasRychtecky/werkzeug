@@ -21,6 +21,8 @@ class wzk.ui.inlineform.DynamicForm
     @formNum = 0
     @MAX_FORMS = 1000
     @config = null
+    @builder = null
+    @listener = null
 
   ###*
     Allow dynamic adding table rows. A fieldset argument is HTMLFieldSetElement (but should works with basic Element) which contains a table and a trigger button.
@@ -30,31 +32,31 @@ class wzk.ui.inlineform.DynamicForm
     @param {boolean=} enabled
   ###
   dynamic: (fieldset, enabled = true) ->
-    btn = fieldset.querySelector('.dynamic')
+    @btn = fieldset.querySelector('.dynamic')
     # If a fieldset has no dynamic button, it's not a dynamic form
-    return unless btn?
+    return unless @btn?
 
     @initInputs(fieldset)
     expert = new wzk.ui.inlineform.FieldExpert(parseInt(@formNum, 10))
 
     rows = @findRows fieldset
     row = rows[rows.length - 1] # prototype row, intended to be cloned
-    builder = new wzk.ui.inlineform.RowBuilder(row, expert, @dom)
+    @builder = new wzk.ui.inlineform.RowBuilder(row, expert, @dom)
 
     if rows.length > 1
       for rowIndex in [0..rows.length - 2]
-        builder.decorateRow rows[rowIndex]
+        @builder.decorateRow rows[rowIndex]
 
     if enabled
-      @hangAddRowListener builder, btn
+      @listener = goog.events.listen @btn, goog.events.EventType.CLICK, @handleClick
 
-      builder.listen wzk.ui.inlineform.RowBuilder.EventType.DELETE, @handleRowDelete
+      @builder.listen wzk.ui.inlineform.RowBuilder.EventType.DELETE, @handleRowDelete
     else
-      builder.setEnabled false
+      @builder.setEnabled false
 
     @removeInputsForCloning row
 
-    goog.style.setElementShown btn, enabled
+    goog.style.setElementShown @btn, enabled
 
   ###*
     @protected
@@ -69,17 +71,23 @@ class wzk.ui.inlineform.DynamicForm
 
   ###*
     @protected
-    @param {wzk.ui.inlineform.RowBuilder} builder
-    @param {Element} btn
   ###
-  hangAddRowListener: (builder, btn) ->
-    listener = goog.events.listen btn, goog.events.EventType.CLICK, =>
-      builder.addRow()
-      @formNum++
-      @config.store @formNum
-      if @formNum is @MAX_FORMS
-        goog.dom.classes.add(btn, 'disabled')
-        goog.events.unlistenByKey(listener)
+  handleClick: =>
+    row = @builder.addRow()
+    @formNum++
+    @config.store @formNum
+    if @formNum is @MAX_FORMS
+      goog.dom.classes.add(@btn, 'disabled')
+      goog.events.unlistenByKey(@listener)
+    @openFileDialog row
+
+  ###*
+    @protected
+    @param {Element} row
+  ###
+  openFileDialog: (row) ->
+    input = @dom.one 'input[type=file]', row
+    input.click() if input
 
   ###*
     Loads Django's InlineForms config data
