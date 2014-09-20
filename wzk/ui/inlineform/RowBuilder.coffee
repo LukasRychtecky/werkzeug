@@ -60,6 +60,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @fixIdsAndNames(cloned)
     @parent.appendChild(cloned)
     @expert.next()
+    cloned
 
   ###*
     @param {Element} row
