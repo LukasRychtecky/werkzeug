@@ -14,6 +14,7 @@ class wzk.ui.form.RemoteButtonDecorator
     METHOD: 'method'
     URL: 'url'
     DATA: 'data'
+    STATE: 'state'
 
   ###*
     @enum {string}
@@ -44,11 +45,22 @@ class wzk.ui.form.RemoteButtonDecorator
     @btn.decorate @btnEl
     @parseParams()
     @btn.listen goog.ui.Component.EventType.ACTION, @handleAction
+    @invokeFromHash btn
+
+  ###*
+    @protected
+    @param {Element} btn
+  ###
+  invokeFromHash: (btn) ->
+    return unless @state
+    if @dom.getWindow().location.hash is '#' + @state
+      @handleAction()
 
   ###*
     @protected
   ###
   handleAction: =>
+    @dom.getWindow().location.hash = @state if @state
     @btn.call @client, @url, @method, @data, @onSuccess
 
   ###*
@@ -61,6 +73,7 @@ class wzk.ui.form.RemoteButtonDecorator
     @data = goog.dom.dataset.get(@btnEl, D.DATA) ? {}
     @postAction = String goog.dom.dataset.get(@btnEl, D.POST_ACTION)
     @postElement = String goog.dom.dataset.get(@btnEl, D.POST_ELEMENT)
+    @state = goog.dom.dataset.get(@btnEl, D.STATE)
 
   ###*
     @protected
