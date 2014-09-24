@@ -132,7 +132,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   removeValues: (row) ->
     for field in row.querySelectorAll('input')
-      field.value = '' if field.type isnt 'hidden'
+      field.value = field.getAttribute('value') if field.type isnt 'hidden'
 
   ###*
     @param {boolean} enabled
