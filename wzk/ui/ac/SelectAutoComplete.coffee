@@ -69,9 +69,9 @@ class wzk.ui.ac.SelectAutoComplete
     @param {Array} data
   ###
   load: (@data) ->
-    matcher = new wzk.ui.ac.ArrayMatcher @data, false
+    @matcher = new wzk.ui.ac.ArrayMatcher @data, false
     @handler = new wzk.ui.ac.InputHandler null, null, false
-    @ac = new wzk.ui.ac.AutoComplete matcher, @renderer, @handler
+    @ac = new wzk.ui.ac.AutoComplete @matcher, @renderer, @handler
     @ac.setTarget(@renderer.getInput().getElement())  # sets target element where to attach suggest box
 
     @handler.attachAutoComplete @ac
@@ -98,3 +98,13 @@ class wzk.ui.ac.SelectAutoComplete
   ###
   afterSelect: (row) ->
     @renderer.updateImage row
+
+  ###*
+    @param {wzk.resource.Model} model
+  ###
+  addModel: (model) ->
+    opt = @dom.el 'option', value: model['pk']
+    @dom.setTextContent opt, model.toString()
+    @select.appendChild opt
+    @data.push model
+    @matcher.setRows @data

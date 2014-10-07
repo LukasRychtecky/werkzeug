@@ -24,12 +24,14 @@ wzk.ui.ac.buildSelectAutoComplete = (select, dom, xhrFac) ->
 ###*
   @param {HTMLSelectElement} select
   @param {wzk.dom.Dom} dom
+  @return {wzk.ui.ac.SelectAutoComplete}
 ###
 wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
   ac = wzk.ui.ac.buildSelectAutocompleteInternal select, dom
   dataProvider = new wzk.ui.ac.NativeDataProvider()
   dataProvider.load select, dom, (data) ->
     ac.load data
+  ac
 
 ###*
   @param {HTMLSelectElement} select
@@ -78,6 +80,7 @@ wzk.ui.ac.buildRestDataProvider = (select, xhrFac, onLoad) ->
 ###*
   @param {HTMLSelectElement} select
   @param {wzk.dom.Dom} dom
+  @return {wzk.ui.ac.SelectAutoComplete}
 ###
 wzk.ui.ac.buildSelectAutocompleteInternal = (select, dom) ->
   customRenderer = wzk.ui.ac.buildCustomRenderer(select, dom)
