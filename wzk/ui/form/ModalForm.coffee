@@ -1,6 +1,6 @@
 goog.provide 'wzk.ui.form.ModalForm'
 
-goog.require 'goog.ui.Dialog'
+goog.require 'wzk.ui.dialog.Dialog'
 goog.require 'wzk.ui.form.AjaxForm'
 goog.require 'wzk.ui.form.BackgroundForm'
 goog.require 'goog.events.EventTarget'
@@ -20,38 +20,43 @@ class wzk.ui.form.ModalForm extends goog.events.EventTarget
     @param {wzk.dom.Dom} dom
     @param {wzk.resource.Client} client
     @param {string} url
-    @param {wzk.app.App} appInstance
+    @param {string} form a snippet name
   ###
-  constructor: (@dom, @client, @url, @appInstance) ->
+  constructor: (@dom, @client, @url, @form) ->
     super()
-    @dialog = new goog.ui.Dialog undefined, undefined, @dom
+    @dialog = new wzk.ui.dialog.Dialog undefined, undefined, @dom
     @dialog.setButtonSet null
     @ajax = new wzk.ui.form.AjaxForm @client, @dom
-    @hangSavedListener()
+    @ajax.listen wzk.ui.form.BackgroundForm.EventType.SAVED, @handleSave
+    @ajax.listen wzk.ui.form.BackgroundForm.EventType.ERROR, @handleResponse
 
   ###*
     @suppress {checkTypes}
   ###
   open: ->
-    @client.sniff @url, (html) =>
-      @dialog.setContent html
+    @client.sniff @url, @handleResponse
+
+  ###*
+    @protected
+    @param {Object} response
+  ###
+  handleResponse: (response) =>
+    if response['snippets'][@form]
+      @dialog.setContent response['snippets'][@form]
       el = @dialog.getContentElement()
-      @appInstance.process el
-      @ajax.decorate el.querySelector 'form'
+      @ajax.decorate @dom.one('form', el)
       @dialog.setVisible true
 
   ###*
-    @suppress {checkTypes}
     @protected
+    @param {goog.events.Event} e
   ###
-  hangSavedListener: ->
-    @ajax.listen wzk.ui.form.BackgroundForm.EventType.SAVED, (e) =>
+  handleSave: (e) =>
+    if e.target and e.target['snippets']
+      @handleResponse e.target
+    else
       @dialog.setVisible false
       @dispatchEvent new goog.events.Event(wzk.ui.form.ModalForm.EventType.SUCCESS_CLOSE, e.target)
-
-    @ajax.listen wzk.ui.form.BackgroundForm.EventType.ERROR, (e) =>
-      @dom.removeChildren @dialog.getContentElement()
-      @dialog.getContentElement().appendChild e.target
 
   ###*
     @param {string} title

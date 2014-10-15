@@ -7,6 +7,7 @@ goog.require 'goog.dom.forms'
 goog.require 'wzk.resource.Client'
 goog.require 'wzk.ui.form.RemoteButton'
 goog.require 'wzk.ui.form.RemoteButtonDecorator'
+goog.require 'wzk.ui.form.RelatedObjectLookup'
 
 ###*
   @param {Element} form
@@ -58,24 +59,19 @@ wzk.ui.form.ajaxifyForm = (el, dom, xhrFac) ->
   @param {Element} el
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
-  @param {wzk.app.App} appInstance
-###
-wzk.ui.form.openFormInModal = (el, dom, xhrFac, appInstance) ->
-  url = goog.dom.dataset.get el, 'modal'
-  client = new wzk.resource.Client xhrFac
-  modal = new wzk.ui.form.ModalForm dom, client, String(url), appInstance
-  modal.setTitle el.title if el.title
-
-  goog.events.listen el, goog.events.EventType.CLICK, ->
-    modal.open()
-
-###*
-  @param {Element} el
-  @param {wzk.dom.Dom} dom
-  @param {wzk.net.XhrFactory} xhrFac
   @return {wzk.ui.form.RemoteButtonDecorator}
 ###
 wzk.ui.form.buildRemoteButton = (el, dom, xhrFac) ->
   btn = new wzk.ui.form.RemoteButtonDecorator dom, xhrFac
   btn.decorate el
   btn
+
+###*
+  @param {Element} el
+  @param {wzk.dom.Dom} dom
+  @param {wzk.net.XhrFactory} xhrFac
+###
+wzk.ui.form.buildRelatedObjectLookup = (el, dom, xhrFac) ->
+  client = new wzk.resource.Client xhrFac
+  lookup = new wzk.ui.form.RelatedObjectLookup dom, client
+  lookup.decorate el

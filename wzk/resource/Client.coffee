@@ -215,20 +215,26 @@ class wzk.resource.Client
     @send url, method, xhr, content, headers
 
   ###*
-    Loads a Html snippet from a server.
+    Loads a Html snippet from a server. First it tries to parse a response as a JSON.
+    If the response is a JSON returns it. Otherwise return response as a string.
 
     @param {string} url
-    @param {function(string)} onSuccess
+    @param {function(Object)} onSuccess
     @param {function()|null=} onError
   ###
   sniff: (url, onSuccess, onError = null) ->
     xhr = @xhrFac.build @xhrConfig
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
-      onSuccess xhr.getResponseText()
+      res = null
+      try
+        res = xhr.getResponseJson()
+      catch err
+        res = xhr.getResponseText()
+      onSuccess res
 
     @listenOnError xhr, onError
 
-    @send url, 'GET', xhr, null, {'Accept': 'text/html'}
+    @send url, 'GET', xhr, null, {'Accept': 'text/html,application/json'}
 
   ###*
     @protected
@@ -259,8 +265,12 @@ class wzk.resource.Client
         @reload xhr.getResponseHeader('Location')
       else if @isHtmlResponse(xhr)
         onError xhr.getResponseText()
-      else if @isJsonResponse(xhr)
-        onSuccess (`/** @type {Object} */`) xhr.getResponseJson() ? {}
+      else
+        try
+          # try parse response as JSON
+          onSuccess (`/** @type {Object} */`) xhr.getResponseJson() ? {}
+        catch e
+          onSuccess {}
 
     @listenOnError xhr, onError
 

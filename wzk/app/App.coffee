@@ -109,10 +109,7 @@ class wzk.app.App
     @on 'form.ajax', (form, dom, xhrFac) ->
       wzk.ui.form.ajaxifyForm form, dom, xhrFac
 
-    @on '*[data-modal]', (el, dom, xhrFac, opts) ->
-      wzk.ui.form.openFormInModal el, dom, xhrFac, opts.app
-
-    @on 'select.fulltext-search', (el, dom) ->
+    @on '.select.fulltext-search', (el, dom) ->
       el = (`/** @type {HTMLSelectElement} */`) el
       wzk.ui.ac.buildSelectAutoCompleteNative el, dom
 
@@ -131,6 +128,9 @@ class wzk.app.App
 
     @on '*[data-snippet-onload]', (el, dom, xhrFac) ->
       wzk.ui.loadSnippet el, dom, xhrFac
+
+    @on '.related-button', (el, dom, xhrFac) ->
+      wzk.ui.form.buildRelatedObjectLookup el, dom, xhrFac
 
   ###*
     @param {string} k
