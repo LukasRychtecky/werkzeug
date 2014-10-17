@@ -17,6 +17,14 @@ goog.require 'wzk.dom.Dom'
 goog.require 'wzk.net.FlashMiddleware'
 goog.require 'wzk.debug.ErrorReporter'
 
+###*
+  Provides asynchronous registering components. Every registered component is loaded asynchronously and independently
+  to others. If the component fails (throws an exception etc.) occured errors are handled automatically and it
+  does not block other components.
+
+  Every component takes wzk.net.XhrFactory instance, which is decorated with wzk.net.AuthMiddleware,
+  wzk.net.SnippetMiddleware and wzk.net.FlashMiddleware
+###
 class wzk.app.App
 
   constructor: ->
