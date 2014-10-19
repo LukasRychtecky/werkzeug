@@ -123,7 +123,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @renderBottomPaginator()
 
   refresh: ->
-    @buildBody @buildQuery(), (result) =>
+    @buildBody @buildQuery({offset: @query.offset}), (result) =>
+      result.offset = @query.offset
       @paginator?.refresh result
 
   ###*

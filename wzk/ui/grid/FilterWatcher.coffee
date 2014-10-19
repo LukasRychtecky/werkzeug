@@ -2,7 +2,13 @@ goog.require 'goog.dom.dataset'
 goog.require 'goog.dom.forms'
 goog.require 'wzk.events.lst'
 
-class wzk.ui.grid.FilterWatcher
+class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
+
+  ###*
+    @enum {string}
+  ###
+  @EventType:
+    CHANGED: 'filter-changed'
 
   ###*
     @enum {string}
@@ -16,6 +22,7 @@ class wzk.ui.grid.FilterWatcher
     @param {wzk.dom.Dom} dom
   ###
   constructor: (@grid, @query, @dom) ->
+    super()
     @fields = {}
     @initialCheck = true
 
@@ -25,7 +32,7 @@ class wzk.ui.grid.FilterWatcher
   watchOn: (table) ->
     for field in @dom.all 'thead *[data-filter]', table
       @fields[field.name.split('__').pop()] = field
-      @listen field
+      @watchField field
 
     @grid.listen wzk.ui.grid.Grid.EventType.LOADED, @handleLoad
 
@@ -47,7 +54,7 @@ class wzk.ui.grid.FilterWatcher
     @protected
     @param {Element} field
   ###
-  listen: (field) ->
+  watchField: (field) ->
     wzk.events.lst.onChangeOrKeyUp field, (e) =>
       el = (`/** @type {Element} */`) e.target
       @filter el
@@ -62,8 +69,15 @@ class wzk.ui.grid.FilterWatcher
     val = goog.dom.forms.getValue(el)
     if @query.isChanged name, val
       @query.filter name, val
+      @query.offset = 0
       @grid.setQuery @query
-      @grid.refresh()
+      @dispatchChanged()
+
+  ###*
+    @protected
+  ###
+  dispatchChanged: ->
+    @dispatchEvent new goog.events.Event(wzk.ui.grid.FilterWatcher.EventType.CHANGED, {})
 
   ###*
     @return {wzk.resource.Query}

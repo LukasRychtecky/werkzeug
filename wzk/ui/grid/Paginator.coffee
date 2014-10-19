@@ -123,9 +123,11 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {Object} result
       total: {number}
       count: {number}
+      offset: {number=}
   ###
   refresh: (result) ->
     {@total, @count} = result
+    @offset = result.offset if result.offset?
     @calculatePageCount()
     @renderer.clearPagingAndResult @
     @decorateInternal @getElement()
