@@ -12,7 +12,7 @@ goog.require 'wzk.ui.grid.FilterWatcher'
 goog.require 'wzk.uri'
 goog.require 'wzk.num'
 goog.require 'wzk.ui.grid.PaneMode'
-goog.require 'wzk.ui.grid.PaginatorHandler'
+goog.require 'wzk.ui.grid.StateHolder'
 goog.require 'wzk.ui.grid.Updater'
 goog.require 'wzk.net.XhrConfig'
 goog.require 'wzk.ui.grid.ExportButton'
@@ -49,21 +49,20 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   client.setDefaultExtraFields query
   client.setDefaultHeader wzk.resource.Client.X_HEADERS.SERIALIZATION_FORMAT, query.verbose()
 
-  pagHandler = new wzk.ui.grid.PaginatorHandler ss
+  stateHolder = new wzk.ui.grid.StateHolder ss
 
-  paginator = new wzk.ui.grid.Paginator base: pagHandler.getBase(), page: pagHandler.getPage()
-
-  pagHandler.handle paginator
+  paginator = new wzk.ui.grid.Paginator base: stateHolder.getBase(), page: stateHolder.getPage()
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 
   grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator
   grid.decorate table
 
-  pagHandler.setBase paginator.getBase()
-
   watcher = new wzk.ui.grid.FilterWatcher grid, query, dom
   watcher.watchOn table
+
+  stateHolder.handle paginator, watcher
+  stateHolder.setBase paginator.getBase()
 
   msgr = new wzk.ui.grid.Messenger grid
   msgr.decorate dom.getParentElement table
