@@ -137,8 +137,8 @@ class wzk.app.App
     @on '*[data-snippet-onload]', (el, dom, xhrFac) ->
       wzk.ui.loadSnippet el, dom, xhrFac
 
-    @on '.related-button', (el, dom, xhrFac) ->
-      wzk.ui.form.buildRelatedObjectLookup el, dom, xhrFac
+    @on '.related-button', (el, dom, xhrFac, opts) ->
+      wzk.ui.form.buildRelatedObjectLookup el, dom, xhrFac, opts.app.getRegister()
 
   ###*
     @param {string} k

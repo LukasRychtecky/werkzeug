@@ -4,7 +4,12 @@ goog.require 'wzk.ui.ac'
 
 class wzk.ui.form.RelatedObjectLookup
 
-  constructor: (@dom, @client) ->
+  ###*
+    @param {wzk.dom.Dom} dom
+    @param {wzk.resource.Client} client
+    @param {wzk.app.Register} register
+  ###
+  constructor: (@dom, @client, @register) ->
 
   ###*
     @protected
@@ -14,8 +19,11 @@ class wzk.ui.form.RelatedObjectLookup
   data: (attr) ->
     String goog.dom.dataset.get(@el, attr)
 
+  ###*
+    @param {Element} el
+  ###
   decorate: (@el) ->
-    @modal = new wzk.ui.form.ModalForm @dom, @client, @data('url'), @data('form')
+    @modal = new wzk.ui.form.ModalForm @dom, @client, @data('url'), @data('form'), @register
     @modal.setTitle @el.title if @el.title
 
     @related = @dom.getElement @data('related')
