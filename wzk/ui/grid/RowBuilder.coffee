@@ -26,7 +26,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     if model['_class_names']?
       row.addClassName cls for cls in model['_class_names']
 
-    if (model['_actions']? and (not goog.array.isEmpty(model['_actions']))) and showActions
+    if (goog.isArray(model['_actions']) and not goog.array.isEmpty(model['_actions'])) and showActions
       @buildActionsCell row, model
 
     row
@@ -55,10 +55,10 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     for col in @cols
       @buildCell(model, col, row).render rowElement
 
-    if goog.array.isEmpty model['_actions']
-      row.addCell('').render()
-    else
+    if goog.isArray(model['_actions']) and not goog.array.isEmpty(model['_actions'])
       @buildActionsCell(row, model).render rowElement
+    else
+      row.addCell('').render()
 
   ###*
     @protected
