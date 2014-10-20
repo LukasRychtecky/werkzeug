@@ -48,6 +48,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
 
   client.setDefaultExtraFields query
   client.setDefaultHeader wzk.resource.Client.X_HEADERS.SERIALIZATION_FORMAT, query.verbose()
+  client.setDefaultHeader wzk.resource.Client.X_HEADERS.EXTRA_FIELDS, query.composeExtraFields()
 
   stateHolder = new wzk.ui.grid.StateHolder ss
 

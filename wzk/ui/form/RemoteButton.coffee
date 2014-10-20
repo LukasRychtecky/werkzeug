@@ -63,7 +63,9 @@ class wzk.ui.form.RemoteButton extends wzk.ui.Button
     uri = new goog.Uri url
     for param, field of @fields
       uri.setParameterValue param, goog.dom.forms.getValue field
-    [uri.getPath(), uri.getQuery()].join '?'
+    parts = [uri.getPath()]
+    parts.push uri.getQuery() if uri.getQuery()
+    parts.join '?'
 
   ###*
     @protected

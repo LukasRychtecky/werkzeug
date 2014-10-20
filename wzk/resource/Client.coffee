@@ -35,6 +35,12 @@ class wzk.resource.Client
     ACCEPT: 'Accept'
 
   ###*
+    @enum {string}
+  ###
+  @CONTENT_TYPE:
+    APP_JSON: 'application/json'
+
+  ###*
     @constructor
     @param {wzk.net.XhrFactory} xhrFac
     @param {string=} context
@@ -42,8 +48,8 @@ class wzk.resource.Client
   ###
   constructor: (@xhrFac, @context = '', @xhrConfig = new wzk.net.XhrConfig()) ->
     @headers = {}
-    @headers[goog.net.XhrIo.CONTENT_TYPE_HEADER] = 'application/json'
-    @headers['Accept'] = 'application/json'
+    @headers[goog.net.XhrIo.CONTENT_TYPE_HEADER] = wzk.resource.Client.CONTENT_TYPE.APP_JSON
+    @headers['Accept'] = wzk.resource.Client.CONTENT_TYPE.APP_JSON
     @expert = new wzk.resource.UrlExpert()
     @builder = new wzk.resource.ModelBuilder()
 
@@ -211,6 +217,7 @@ class wzk.resource.Client
       onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else xhr.getResponse()) if onSuccess
 
     @listenOnError xhr, onError
+    goog.object.extend headers, @headers
 
     @send url, method, xhr, content, headers
 
@@ -246,10 +253,21 @@ class wzk.resource.Client
   ###
   send: (url, method, xhr = null, content = null, headers = null) ->
 
-    content = goog.json.serialize content if goog.isObject(content)
+    if goog.isObject content
+      content = goog.json.serialize content
+
+      unless goog.array.find goog.object.getKeys(headers), @containsContentType
+        headers[goog.net.XhrIo.CONTENT_TYPE_HEADER] = wzk.resource.Client.CONTENT_TYPE.APP_JSON
 
     xhr = @xhrFac.build @xhrConfig unless xhr?
     xhr.send url, method, content, headers ? @headers
+
+  ###*
+    @param {string} header
+    @return {boolean}
+  ###
+  containsContentType: (header) ->
+    goog.string.caseInsensitiveEquals goog.net.XhrIo.CONTENT_TYPE_HEADER, header
 
   ###*
     @param {string} url
