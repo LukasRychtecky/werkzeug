@@ -70,8 +70,9 @@ wzk.ui.form.buildRemoteButton = (el, dom, xhrFac) ->
   @param {Element} el
   @param {wzk.dom.Dom} dom
   @param {wzk.net.XhrFactory} xhrFac
+  @param {wzk.app.Register} register
 ###
-wzk.ui.form.buildRelatedObjectLookup = (el, dom, xhrFac) ->
+wzk.ui.form.buildRelatedObjectLookup = (el, dom, xhrFac, register) ->
   client = new wzk.resource.Client xhrFac
-  lookup = new wzk.ui.form.RelatedObjectLookup dom, client
+  lookup = new wzk.ui.form.RelatedObjectLookup dom, client, register
   lookup.decorate el

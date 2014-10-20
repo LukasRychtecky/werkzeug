@@ -21,8 +21,9 @@ class wzk.ui.form.ModalForm extends goog.events.EventTarget
     @param {wzk.resource.Client} client
     @param {string} url
     @param {string} form a snippet name
+    @param {wzk.app.Register} register
   ###
-  constructor: (@dom, @client, @url, @form) ->
+  constructor: (@dom, @client, @url, @form, @register) ->
     super()
     @dialog = new wzk.ui.dialog.Dialog undefined, undefined, @dom
     @dialog.setButtonSet null
@@ -45,6 +46,7 @@ class wzk.ui.form.ModalForm extends goog.events.EventTarget
       @dialog.setContent response['snippets'][@form]
       el = @dialog.getContentElement()
       @ajax.decorate @dom.one('form', el)
+      @register.process el
       @dialog.setVisible true
 
   ###*
