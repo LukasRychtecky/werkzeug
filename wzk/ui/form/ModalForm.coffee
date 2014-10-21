@@ -11,6 +11,12 @@ class wzk.ui.form.ModalForm extends goog.events.EventTarget
   ###*
     @enum {string}
   ###
+  @CLS:
+    AJAX: 'ajax'
+
+  ###*
+    @enum {string}
+  ###
   @EventType:
     SUCCESS_CLOSE: 'success-close'
 
@@ -45,7 +51,10 @@ class wzk.ui.form.ModalForm extends goog.events.EventTarget
     if response['snippets'][@form]
       @dialog.setContent response['snippets'][@form]
       el = @dialog.getContentElement()
-      @ajax.decorate @dom.one('form', el)
+      form = @dom.one('form', el)
+      if goog.dom.classes.has form, wzk.ui.form.ModalForm.CLS.AJAX
+        goog.dom.classes.remove form, wzk.ui.form.ModalForm.CLS.AJAX
+      @ajax.decorate form
       @register.process el
       @dialog.setVisible true
 
