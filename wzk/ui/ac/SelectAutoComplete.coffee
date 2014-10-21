@@ -37,7 +37,7 @@ class wzk.ui.ac.SelectAutoComplete
     input.setValue model.toString()
     @handler.attachInput input.getElement()
     input.showClearButton() if input.getValue()
-
+    @dom.select @select, model['pk']
     @afterSelect model
 
   ###*
