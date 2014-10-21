@@ -71,6 +71,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
       @query.filter name, val
       @query.offset = 0
       @grid.setQuery @query
+      @grid.refresh()
       @dispatchChanged()
 
   ###*
