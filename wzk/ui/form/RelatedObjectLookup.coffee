@@ -27,8 +27,7 @@ class wzk.ui.form.RelatedObjectLookup
     @modal.setTitle @el.title if @el.title
 
     @related = @dom.getElement @data('related')
-    if @related and goog.dom.classes.has @related, 'fulltext-search'
-      #if @related and goog.dom.classes.has @related, 'related-fulltext-search'
+    if @related and goog.dom.classes.has @related, 'related-fulltext-search'
       @related = (`/** @type {HTMLSelectElement} */`) @related
       @ac = wzk.ui.ac.buildSelectAutoCompleteNative @related, @dom
       @modal.listen wzk.ui.form.ModalForm.EventType.SUCCESS_CLOSE, @handleSave
