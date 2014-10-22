@@ -117,7 +117,7 @@ class wzk.app.App
     @on 'form.ajax', (form, dom, xhrFac) ->
       wzk.ui.form.ajaxifyForm form, dom, xhrFac
 
-    @on '.select.fulltext-search', (el, dom) ->
+    @on 'select.fulltext-search', (el, dom) ->
       el = (`/** @type {HTMLSelectElement} */`) el
       wzk.ui.ac.buildSelectAutoCompleteNative el, dom
 
