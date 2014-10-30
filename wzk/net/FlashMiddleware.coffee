@@ -18,10 +18,14 @@ class wzk.net.FlashMiddleware
 
   ###*
     @param {Object} res
+    @param {number} status
   ###
-  apply: (res) ->
+  apply: (res, status) ->
     if res['errors']?
-      @flash.addError res['errors']
+      if goog.isArray(res['errors']) or goog.isString(res['errors'])
+        @flash.addError res['errors']
+      else if @msgs[String(status)]?
+        @flash.addError @msgs[String(status)]
 
     msgs = res['messages'] ? res['message']
     if msgs?

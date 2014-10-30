@@ -58,7 +58,7 @@ class wzk.net.XhrFactory
       response = (`/** @type {Object} */`) xhr.getResponseJson()
       config = e.target.getConfig()
       @flash.clearAll() if config.flash
-      @applyJsonResponse response, config
+      @applyJsonResponse response, config, xhr.getStatus()
     else
       @flash.error() unless e.target.getConfig().flash
 
@@ -76,7 +76,7 @@ class wzk.net.XhrFactory
         # snippets must be sent with text/plain instead of application/json
         response = (`/** @type {wzk.net.XhrIo} */`) xhr.getResponseJson()
         @flash.clearAll() if config.flash
-        @applyJsonResponse response, config
+        @applyJsonResponse response, config, xhr.getStatus()
       catch error
         # TODO log error
 
@@ -84,9 +84,10 @@ class wzk.net.XhrFactory
     Applies json response
     @param {Object} json response
     @param {wzk.net.XhrConfig} config
+    @param {number} status
   ###
-  applyJsonResponse: (json, config) ->
-    @flash.apply json if config.flash
+  applyJsonResponse: (json, config, status) ->
+    @flash.apply json, status if config.flash
     @snip.apply json if config.snippet
 
   ###*
