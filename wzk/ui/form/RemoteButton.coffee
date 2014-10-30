@@ -7,6 +7,10 @@ goog.require 'goog.Uri'
 ###
 class wzk.ui.form.RemoteButton extends wzk.ui.Button
 
+  @EVENTS:
+    SUCCESS: 'remote-button-success'
+    ERROR: 'remote-button-error'
+
   ###*
     @enum {string}
   ###
@@ -36,8 +40,31 @@ class wzk.ui.form.RemoteButton extends wzk.ui.Button
     handleSuccess = (response) =>
       @setEnabled true
       onSuccess(response) if onSuccess?
+      @dispatchSuccess response
 
-    client.request url, method, content, handleSuccess, null, responseByModel
+    client.request url, method, content, handleSuccess, @handleError, responseByModel
+
+  ###*
+    @protected
+    @param {Object} response
+  ###
+  handleError: (response) =>
+    @setEnabled true
+    @dispatchError response
+
+  ###*
+    @protected
+    @param {Object} response
+  ###
+  dispatchSuccess: (response) ->
+    @dispatchEvent new goog.events.Event(wzk.ui.form.RemoteButton.EVENTS.SUCCESS, response)
+
+  ###*
+    @protected
+    @param {Object} response
+  ###
+  dispatchError: (response) ->
+    @dispatchEvent new goog.events.Event(wzk.ui.form.RemoteButton.EVENTS.ERROR, response)
 
   ###*
     @override
