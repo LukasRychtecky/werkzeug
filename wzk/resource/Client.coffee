@@ -214,12 +214,26 @@ class wzk.resource.Client
     xhr = @xhrFac.build @xhrConfig
 
     goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
-      onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else xhr.getResponse()) if onSuccess
+      if onSuccess
+        onSuccess(if responseAsModel then @builder.build(xhr.getResponseJson()) else @tryResponseAsJson(xhr))
 
     @listenOnError xhr, onError
     goog.object.extend headers, @headers
 
     @send url, method, xhr, content, headers
+
+  ###*
+    @protected
+    @param {wzk.net.XhrIo} xhr
+    @return {*}
+  ###
+  tryResponseAsJson: (xhr) ->
+    res = null
+    try
+      res = xhr.getResponseJson()
+    catch err
+      res = xhr.getResponseText()
+    res
 
   ###*
     Loads a Html snippet from a server. First it tries to parse a response as a JSON.
@@ -231,12 +245,8 @@ class wzk.resource.Client
   ###
   sniff: (url, onSuccess, onError = null) ->
     xhr = @xhrFac.build @xhrConfig
-    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, ->
-      res = null
-      try
-        res = xhr.getResponseJson()
-      catch err
-        res = xhr.getResponseText()
+    goog.events.listenOnce xhr, goog.net.EventType.SUCCESS, =>
+      res = (`/** @type {Object} */`) @tryResponseAsJson(xhr)
       onSuccess res
 
     @listenOnError xhr, onError
@@ -324,7 +334,7 @@ class wzk.resource.Client
         @reload response['location']
       else
         onSuccess response
-        @xhrFac.applyJsonResponse response, @xhrConfig
+        @xhrFac.applyJsonResponse response, @xhrConfig, 200
 
     iframeIO.listen goog.net.EventType.ERROR, (event) ->
       onError event.target.getResponseText()
