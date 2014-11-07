@@ -132,3 +132,11 @@ class wzk.resource.Query
   ###
   getAccept: ->
     @accept
+
+  ###*
+    Returns new clone of the uri object
+
+    @return {goog.Uri}
+  ###
+  cloneUri: ->
+    @uri.clone()
