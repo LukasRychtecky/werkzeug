@@ -80,9 +80,9 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
     updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac, '', xhrConfig), url, interval
     updater.start()
 
-  exportEl = dom.cls wzk.ui.grid.ExportLink.CLS, dom.getParentElement(table)
-  if exportEl?
+  exportElements = dom.clss wzk.ui.grid.ExportLink.CLS, dom.getParentElement(table)
+  for el in exportElements
     exportBtn = new wzk.ui.grid.ExportLink dom: dom, watcher: watcher, client: new wzk.resource.Client(xhrFac)
-    exportBtn.decorate exportEl
+    exportBtn.decorate el
 
   grid

@@ -26,6 +26,7 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
     'json': 'application/json'
     'yaml': 'application/x-yaml'
     'picle': 'application/python-pickle'
+    'pdf': 'application/pdf'
 
   ###*
     @param {Object} params
