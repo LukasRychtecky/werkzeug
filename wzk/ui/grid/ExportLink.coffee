@@ -1,5 +1,6 @@
 goog.require 'goog.dom.dataset'
 goog.require 'goog.crypt.base64'
+goog.require 'goog.Uri'
 
 class wzk.ui.grid.ExportLink extends wzk.ui.Link
 
@@ -44,6 +45,7 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
   decorateInternal: (el) ->
     super el
     goog.events.listen el, goog.events.EventType.CLICK, @handleAction
+    @implicitUriParams = new goog.Uri(@getElement().href).getQueryData()
     undefined
 
   ###*
@@ -73,4 +75,6 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
   handleAction: (e) =>
     uri = @watcher.getQuery().cloneUri()
     uri.setParameterValue '_accept', @getType()
+    for k in @implicitUriParams.getKeys() when not uri.getParameterValue(k)?
+      uri.setParameterValue k, @implicitUriParams.getValues k
     @getElement().href = uri.toString()
