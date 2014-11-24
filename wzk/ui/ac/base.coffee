@@ -41,7 +41,7 @@ wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
 wzk.ui.ac.buildSelectAutoCompleteRest = (select, dom, xhrFac) ->
   ac = wzk.ui.ac.buildSelectAutocompleteInternal select, dom
   dataProvider = new wzk.ui.ac.RestDataProvider()
-  wzk.ui.ac.addExtraFields dataProvider
+  wzk.ui.ac.addFields dataProvider
   dataProvider.load select, xhrFac, (data) ->
     ac.load data
 
@@ -73,7 +73,7 @@ wzk.ui.ac.buildExtSelectboxFromSelectRest = (select, dom, xhrFac) ->
 ###
 wzk.ui.ac.buildRestDataProvider = (select, xhrFac, onLoad) ->
   dataProvider = new wzk.ui.ac.RestDataProvider()
-  wzk.ui.ac.addExtraFields dataProvider
+  wzk.ui.ac.addFields dataProvider
   dataProvider.load select, xhrFac, (data) ->
     onLoad(data)
 
@@ -119,6 +119,6 @@ wzk.ui.ac.buildCustomRenderer = (select, dom) ->
   @protected
   @param {wzk.ui.ac.RestDataProvider} dataProvider
 ###
-wzk.ui.ac.addExtraFields = (dataProvider) ->
-  dataProvider.addExtraField '_obj_name'
-  dataProvider.addExtraField 'photo'
+wzk.ui.ac.addFields = (dataProvider) ->
+  dataProvider.addField '_obj_name'
+  dataProvider.addField 'photo'

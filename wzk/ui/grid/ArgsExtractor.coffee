@@ -13,12 +13,24 @@ class wzk.ui.grid.ArgsExtractor
     @param {Element} table
   ###
   constructor: (@table) ->
+    @cols = null
+    @restFields = null
 
   ###*
+    @param {boolean=} force
     @return {Array.<string>}
   ###
-  parseColumns: ->
-    @splitAttr 'cols'
+  parseColumns: (force = false) ->
+    return @cols if @cols and not force
+    @cols = @splitAttr 'cols'
+
+  ###*
+    @param {boolean=} force
+    @return {Array.<string>}
+  ###
+  parseRestFields: (force = false) ->
+    return @restFields if @restFields and not force
+    @restFields = @splitAttr 'restFields'
 
   ###*
     @return {Object}

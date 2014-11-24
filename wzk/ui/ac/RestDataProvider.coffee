@@ -18,7 +18,7 @@ class wzk.ui.ac.RestDataProvider
     client = new wzk.resource.Client(xhrFac)
 
     if @query?
-      client.setDefaultExtraFields @query
+      client.setDefaultFields @query
 
     client.find url, (data) ->
       callback(data)
@@ -26,5 +26,5 @@ class wzk.ui.ac.RestDataProvider
   ###*
     @param {string} field
   ###
-  addExtraField: (field) ->
-    @query.addExtraField field
+  addField: (field) ->
+    @query.addField field
