@@ -60,7 +60,7 @@ class wzk.net.XhrFactory
       @flash.clearAll() if config.flash
       @applyJsonResponse response, config, xhr.getStatus()
     else
-      @flash.error() unless e.target.getConfig().flash
+      @flash.error() if e.target.getConfig().flash
 
   ###*
     @protected

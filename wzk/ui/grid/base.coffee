@@ -44,11 +44,12 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   extractor = new wzk.ui.grid.ArgsExtractor table
   repo = new wzk.ui.grid.Repository client
   query = new wzk.resource.Query parser.parseResource(table)
-  query.putDefaultExtraFields()
+  for field in extractor.parseRestFields()
+    query.addField field
 
-  client.setDefaultExtraFields query
+  client.setDefaultFields query
   client.setDefaultHeader wzk.resource.Client.X_HEADERS.SERIALIZATION_FORMAT, query.verbose()
-  client.setDefaultHeader wzk.resource.Client.X_HEADERS.EXTRA_FIELDS, query.composeExtraFields()
+  client.setDefaultHeader wzk.resource.Client.X_HEADERS.FIELDS, query.composeFields()
 
   stateHolder = new wzk.ui.grid.StateHolder ss
 
@@ -69,7 +70,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
   msgr.decorate dom.getParentElement table
 
   if wzk.ui.grid.PaneMode.usePane table
-    query.removeExtraField '_default_action'
+    query.removeField '_default_action'
     mode = new wzk.ui.grid.PaneMode client, dom, reg, ss, query
     mode.watchOn grid
 

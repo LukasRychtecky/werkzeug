@@ -25,6 +25,7 @@ class wzk.resource.Client
     DIRECTION: 'X-Direction'
     REFERRER: 'X-Referer'
     EXTRA_FIELDS: 'X-Extra-Fields'
+    FIELDS: 'X-Fields'
     SERIALIZATION_FORMAT: 'X-Serialization-Format'
     REQUESTED_WITH: 'X-Requested-With'
 
@@ -63,8 +64,8 @@ class wzk.resource.Client
   ###*
     @param {wzk.resource.Query} query
   ###
-  setDefaultExtraFields: (query) ->
-    @headers[wzk.resource.Client.X_HEADERS.EXTRA_FIELDS] = query.composeExtraFields() if query.hasExtraFields()
+  setDefaultFields: (query) ->
+    @headers[wzk.resource.Client.X_HEADERS.FIELDS] = query.composeFields() if query.hasFields()
 
   ###*
     @protected
@@ -104,7 +105,7 @@ class wzk.resource.Client
       headers[X.ORDER] = query.order if query.order?
       headers[X.DIRECTION] = query.direction if query.direction?
       headers[X.REFERRER] = query.referer if query.referer?
-      headers[X.EXTRA_FIELDS] = query.composeExtraFields() if query.hasExtraFields()
+      headers[X.FIELDS] = query.composeFields() if query.hasFields()
       headers[X.SERIALIZATION_FORMAT] = query.getSerFormat()
       headers[wzk.resource.Client.HEADERS.ACCEPT] = query.getAccept()
 

@@ -23,7 +23,7 @@ class wzk.resource.Query
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
     @accept = 'application/json'
 
-  putDefaultExtraFields: ->
+  putDefaultFields: ->
     @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
 
   ###*
@@ -41,25 +41,25 @@ class wzk.resource.Query
   ###*
     @param {string} field
   ###
-  addExtraField: (field) ->
+  addField: (field) ->
     @extraFields.push field
 
   ###*
     @param {string} field
   ###
-  removeExtraField: (field) ->
+  removeField: (field) ->
     goog.array.remove @extraFields, field
 
   ###*
     @return {string}
   ###
-  composeExtraFields: ->
+  composeFields: ->
     @extraFields.join ','
 
   ###*
     @return {boolean}
   ###
-  hasExtraFields: ->
+  hasFields: ->
     @extraFields.length > 0
 
   ###*
