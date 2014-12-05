@@ -12,4 +12,4 @@ class wzk.ui.IconRenderer extends wzk.ui.ComponentRenderer
     @override
   ###
   createDom: (icon) ->
-    icon.getDomHelper().el 'button', {'class': @classes}, @character
+    icon.getDomHelper().el 'div', {'class': [@classes, 'btn-icon'].join(' ')}, @character
