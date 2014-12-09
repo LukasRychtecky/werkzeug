@@ -37,8 +37,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###*
     @enum {string}
   ###
-  @DATA:
-    SHOW_ACTIONS: 'showActions'
+  @CLS:
+    ACTIONS: 'actions'
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -62,9 +62,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Element} table
   ###
   decorate: (@table) ->
-    if goog.dom.dataset.has @table, wzk.ui.grid.Grid.DATA.SHOW_ACTIONS
-      if goog.dom.dataset.get(@table, wzk.ui.grid.Grid.DATA.SHOW_ACTIONS) is 'false'
-        @showActions = false
+    if @dom.cls wzk.ui.grid.Grid.CLS.ACTIONS, @table
+      @showActions = false
 
     @removeBody()
     paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
