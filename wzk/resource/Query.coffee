@@ -35,6 +35,18 @@ class wzk.resource.Query
   ###*
     @return {string}
   ###
+  both: ->
+    @serFormat = wzk.resource.Query.S_FORMAT.BOTH
+
+  ###*
+    @return {string}
+  ###
+  raw: ->
+    @serFormat = wzk.resource.Query.S_FORMAT.RAW
+
+  ###*
+    @return {string}
+  ###
   getSerFormat: ->
     @serFormat
 
