@@ -1,6 +1,6 @@
-goog.require 'goog.dom.dataset'
-goog.require 'goog.dom.forms'
-goog.require 'wzk.events.lst'
+goog.require 'wzk.ui.grid.Filter'
+goog.require 'wzk.ui.grid.FilterExtended'
+goog.require 'wzk.dom.classes'
 
 class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
 
@@ -9,12 +9,6 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###
   @EventType:
     CHANGED: 'filter-changed'
-
-  ###*
-    @enum {string}
-  ###
-  @DATA:
-    FILTER: 'filter'
 
   ###*
     @param {wzk.ui.grid.Grid} grid
@@ -31,10 +25,21 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###
   watchOn: (table) ->
     for field in @dom.all 'thead *[data-filter]', table
-      @fields[field.name.split('__').pop()] = field
-      @watchField field
+      filter = @buildFilter field
+      @fields[filter.getName()] = filter
+      @watchField filter
 
     @grid.listen wzk.ui.grid.Grid.EventType.LOADED, @handleLoad
+
+  ###*
+    @protected
+    @param {Element} field
+    @return {wzk.ui.grid.Filter}
+  ###
+  buildFilter: (field) ->
+    if wzk.dom.classes.hasAny(field, ['date', 'datetime']) or field.type in ['number', 'date', 'datetime']
+      return new wzk.ui.grid.FilterExtended @dom, field
+    new wzk.ui.grid.Filter @dom, field
 
   ###*
     @protected
@@ -44,7 +49,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     if @initialCheck
       @query.each (k, v) =>
         if @fields[k]?
-          goog.dom.forms.setValue @fields[k], v[0]
+          @fields[k].setValue v[0]
     else
       for k, field of @fields
         @filter field
@@ -52,23 +57,25 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
 
   ###*
     @protected
-    @param {Element} field
+    @param {wzk.ui.grid.Filter} filter
   ###
-  watchField: (field) ->
-    wzk.events.lst.onChangeOrKeyUp field, (e) =>
-      el = (`/** @type {Element} */`) e.target
-      @filter el
+  watchField: (filter) ->
+    goog.events.listen filter, wzk.ui.grid.Filter.EVENTS.CHANGE, @handleChange
 
   ###*
     @protected
-    @param {Element} el
+    @param {goog.events.Event} e
   ###
-  filter: (el) ->
-    D = wzk.ui.grid.FilterWatcher.DATA
-    name = String goog.dom.dataset.get(el, D.FILTER)
-    val = goog.dom.forms.getValue(el)
-    if @query.isChanged name, val
-      @query.filter name, val
+  handleChange: (e) =>
+    filter = (`/** @type {wzk.ui.grid.Filter} */`) e.currentTarget
+    @filter filter
+
+  ###*
+    @protected
+    @param {wzk.ui.grid.Filter} filter
+  ###
+  filter: (filter) ->
+    if filter.apply @query
       @query.offset = 0
       @grid.setQuery @query
       @grid.refresh()

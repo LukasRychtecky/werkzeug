@@ -13,6 +13,12 @@ goog.require 'goog.json'
 class wzk.ui.form.Field extends wzk.ui.Component
 
   ###*
+    @enum {string}
+  ###
+  @EVENTS:
+    CHANGE: 'change'
+
+  ###*
     @constructor
     @extends {wzk.ui.Component}
     @param {Object} params
@@ -46,6 +52,7 @@ class wzk.ui.form.Field extends wzk.ui.Component
   ###
   afterRendering: ->
     @setValue @value
+    @hangListeners()
 
   ###*
     @param {*} val
@@ -83,3 +90,23 @@ class wzk.ui.form.Field extends wzk.ui.Component
 
   focus: ->
     @getElement()?.focus()
+
+  ###*
+    @override
+  ###
+  decorate: (el) ->
+    super el
+    @hangListeners()
+
+  ###*
+    @protected
+  ###
+  hangListeners: ->
+    goog.events.listen @getElement(), goog.events.EventType.CHANGE, @handleChange
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleChange: (e) =>
+    @dispatchEvent new goog.events.Event(wzk.ui.form.Field.EVENTS.CHANGE, e)
