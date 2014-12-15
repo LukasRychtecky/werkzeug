@@ -62,7 +62,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Element} table
   ###
   decorate: (@table) ->
-    if @dom.cls wzk.ui.grid.Grid.CLS.ACTIONS, @table
+    unless @dom.cls wzk.ui.grid.Grid.CLS.ACTIONS, @table
       @showActions = false
 
     @removeBody()
