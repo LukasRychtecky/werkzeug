@@ -2,6 +2,8 @@ goog.require 'wzk.ui.Input'
 goog.require 'wzk.ui.OpenIcon'
 goog.require 'wzk.ui.ClearableInput'
 goog.require 'goog.style'
+goog.require 'wzk.num'
+goog.require 'goog.dom.dataset'
 
 class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
@@ -11,6 +13,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
   @TAGS:
     ITEM: 'span'
     CONTAINER: 'ul'
+    GROUP: 'ul'
     ROW: 'li'
     ITEMS_CONTAINER: 'div'
 
@@ -33,6 +36,12 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
     OPEN: 'open'
 
   ###*
+    @enum {string}
+  ###
+  @DATA:
+    ITEM_VALUE: 'value'
+
+  ###*
     Class for rendering the results of an auto-complete in a drop down list.
 
     @param {wzk.dom.Dom} dom
@@ -44,6 +53,7 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         highlighting should be applied to each row of data. Standard highlighting
         bolds every matching substring for a given token in each row. True by
         default.
+    @suppress {accessControls}
   ###
   constructor: (@dom, @imagePlaceholder, @customRenderer, rightAlign, useStandardHighlighting) ->
     super(null, customRenderer, rightAlign, useStandardHighlighting)
@@ -84,6 +94,16 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       @openBtn = new wzk.ui.OpenIcon dom: @dom
       @openBtn.listen goog.ui.Component.EventType.ACTION, @handleOpen
       @openBtn.render @container
+
+  ###*
+    @param {wzk.ui.TagContainer} tagContainer
+  ###
+  setTagContainer: (@tagContainer) =>
+
+  ###*
+    @param {Array} initialData
+  ###
+  setInitialData: (@initialData) =>
 
   ###*
     @protected
@@ -171,12 +191,159 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       el.id = goog.ui.IdGenerator.getInstance().getNextUniqueId()
 
       @dom.appendChild @container, el
-
       # Add this object as an event handler
       goog.events.listen el, goog.events.EventType.CLICK, @handleClick_, false, @
       goog.events.listen el, goog.events.EventType.MOUSEDOWN, @handleMouseDown_, false, @
       goog.events.listen el, goog.events.EventType.MOUSEOVER, @handleMouseOver_, false, @
       undefined # Coffee & Closure
+
+  ###*
+    @override
+    @suppress {accessControls}
+  ###
+  redraw: =>
+    @maybeCreateElement_()
+    if @tagContainer?
+      @selectedRows = @tagContainer.getTags()
+
+    if @topAlign_
+      @element_.style.visibility = 'hidden'
+
+    if @widthProvider_
+      width = @widthProvider_.clientWidth + 'px'
+      @element_.style.minWidth = width
+
+    @rowDivs_.length = 0
+    @dom_.removeChildren(@element_)
+
+    if @customRenderer_ and @customRenderer_.render
+      @customRenderer_.render(this, @element_, @rows_, @token_)
+    else
+      curRow = null
+      groupedRows = @createNestedRows @rows_
+      @renderNestedRows groupedRows, curRow
+
+    if @rows_.length is 0
+      @dismiss()
+      return
+    else
+      @show()
+
+    @reposition()
+    goog.style.setUnselectable(@element_, true)
+
+  ###*
+    @protected
+    @param {Array|Object} rows
+    @param {Element|null} curRow
+    @suppress {accessControls}
+  ###
+  renderNestedRows: (rows, curRow) =>
+    for row in rows
+      if row instanceof Array
+        groupLi = @buildGroupLi @getGroupName row
+        groupUl = @dom.el wzk.ui.ac.Renderer.TAGS.GROUP
+        groupLi.appendChild groupUl
+        for subrow in row
+          if @isSelected subrow
+            continue
+          groupUl.appendChild @renderRowHtml(subrow, @token_)
+        @appendRow groupLi, curRow
+        curRow = groupLi
+      else
+        if @isSelected row
+          continue
+        row = @renderRowHtml(row, @token_)
+        @appendRow row, curRow
+        curRow = row
+
+
+  ###*
+    @protected
+    @param {wzk.resource.Model} row
+    @return {boolean}
+  ###
+  isSelected: (row) =>
+    @selectedRows? and @selectedRows[row['data'].toString()]?
+
+  ###*
+    @protected
+    @param {Array} groupRows
+    @return {string}
+  ###
+  getGroupName: (groupRows) ->
+    return  if groupRows[0] then groupRows[0]['group'] else ''
+
+  ###*
+    @protected
+    @param {Element} row
+    @param {Element} curRow
+    @suppress {accessControls}
+  ###
+  appendRow: (row, curRow) =>
+    if @topAlign_
+      @element_.insertBefore(row, curRow)
+    else
+      @dom_.appendChild(@element_, row)
+
+  ###*
+    @protected
+    @return {Element}
+  ###
+  buildGroupLi: (groupName) =>
+    return @dom.el wzk.ui.ac.Renderer.TAGS.ROW, '', groupName
+
+  ###*
+    @protected
+    @param {Array} rows
+    @return {Object}
+  ###
+  createNestedRows: (rows) ->
+    groupsDict = {}
+    output = []
+    counter = 0
+    for row in rows
+      if row['group']?
+        if groupsDict[row['group']]?
+          output[groupsDict[row['group']]].push row
+        else
+          groupsDict[row['group']] = counter
+          output[groupsDict[row['group']]] = [row]
+          counter++
+      else
+        output.push row
+        counter++
+    output
+
+  ###*
+    @override
+    @suppress {accessControls}
+  ###
+  handleClick_: (e) =>
+    row = (`/** @type {Element} */`) e.target
+    index = @getIndexOfRow row
+    if index > -1
+      this.dispatchEvent({
+        type: goog.ui.ac.AutoComplete.EventType.SELECT,
+        row: row.id
+        rowEl: row
+        index: index
+        value: e.target.getAttribute  'value'
+      })
+
+    e.stopPropagation()
+
+  ###*
+    @param {Element} row
+    @return {number}
+    @suppress {accessControls}
+  ###
+  getIndexOfRow: (row) =>
+    nullIndex = -1
+    for i, optRow of @rows_
+      if optRow['data']['id'] is goog.dom.dataset.get row, wzk.ui.ac.Renderer.DATA.ITEM_VALUE
+        return wzk.num.parseDec i
+    nullIndex
 
   ###*
     Render a row by creating a div and then calling row rendering callback or
@@ -197,8 +364,10 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
 
     goog.a11y.aria.setRole node, goog.a11y.aria.Role.OPTION
 
-    if @customRenderer_ and @customRenderer_.renderRow
-      @customRenderer_.renderRow row, token, node
+    goog.dom.dataset.set node, 'value', row['data']['id']
+
+    if @customRenderer and @customRenderer.renderRow
+      @customRenderer.renderRow row, token, node
     else
       @renderRowContents_ row, token, node
 

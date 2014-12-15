@@ -156,11 +156,10 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   iterOverOptions: (select, val, clbk) ->
     val = String val
-    for opt in @getChildren select
+    for opt in @all 'option', select
       if opt.value is val
         if clbk opt
           break
-
 
   ###*
     Selects given value in a HTMLSelectElement
