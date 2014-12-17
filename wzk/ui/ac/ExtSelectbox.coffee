@@ -64,13 +64,15 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
 
   ###*
     @param {HTMLSelectElement} selectbox
-    @param {Array.<wzk.resource.Model>} data
+    @param {Array} data
   ###
   render: (selectbox, @data) ->
     @matcher = new wzk.ui.ac.ArrayMatcher(@data, false)
     @autoComplete = new wzk.ui.ac.AutoComplete(@matcher, @renderer, @inputHandler)
     @hideOriginSelect(selectbox)
     @cont.renderAfter(selectbox)
+    @renderer.setTagContainer @cont
+    @renderer.setInitialData @data
 
     readonly = selectbox.hasAttribute('readonly')
     unless readonly
