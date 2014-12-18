@@ -32,7 +32,7 @@ class wzk.ui.ac.AutoComplete extends goog.ui.ac.AutoComplete
     indexToHilite = if preserveHilited then @getIndexOfId(@hiliteId_) else -1
 
     @firstRowId_ += @rows_.length
-    @rows_ = rows
+    @rows_ = @omitSelectedRows rows
     rendRows = []
     for i, row of @rows_
       rendRow =
@@ -63,49 +63,27 @@ class wzk.ui.ac.AutoComplete extends goog.ui.ac.AutoComplete
     return
 
   ###*
-    @override
+    @param {Array} rows
+    @return {Array}
   ###
-  handleEvent: (e) =>
-    if e.target is @renderer_
-      switch e.type
-        when goog.ui.ac.AutoComplete.EventType.HILITE
-          @hiliteId((`/** @type {number} */`) (e.row))
-          break
-
-        when goog.ui.ac.AutoComplete.EventType.SELECT
-          @handleSelect(e)
-          break
-
-        when goog.ui.ac.AutoComplete.EventType.CANCEL_DISMISS
-          @cancelDelayedDismiss()
-          break
-
-        when goog.ui.ac.AutoComplete.EventType.DISMISS
-          @dismissOnDelay()
-          break
+  omitSelectedRows: (rows) =>
+    return (row for row in rows when not @isSelected(row, @renderer_.getSelectedRows()))
 
   ###*
     @protected
-    @param {goog.events.Event} e
+    @param {wzk.resource.Model} row
+    @param {Array} selectedRows
+    @return {boolean}
   ###
-  handleSelect: (e) =>
-    rowDisabled = false
-    if goog.isNumber(e.row)
-      rowId = e.row
-      index = if e['index']? then e['index'] else this.getIndexOfId(rowId)
-      row = if e['rowEl']? then e['rowEl'] else this.rows_[index]
-
-      rowDisabled = !!row and @matcher_.isRowDisabled and
-          @matcher_.isRowDisabled(row)
-      if row? and not rowDisabled and @hiliteId_ isnt rowId
-        @hiliteId(rowId)
-    @selectHilited(e['index']) unless rowDisabled
+  isSelected: (row, selectedRows) =>
+    selectedRows[row.toString()]?
 
   ###*
     @override
     @suppress {checkTypes|accessControls}
   ###
-  selectHilited: (index) =>
+  selectHilited: =>
+    index =  @getIndexOfId(@hiliteId_)
     if index != -1
       selectedRow = @rows_[index]
       suppressUpdate = @selectionHandler_.selectRow(selectedRow)

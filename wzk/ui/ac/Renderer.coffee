@@ -198,13 +198,18 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
       undefined # Coffee & Closure
 
   ###*
+    @return {Object}
+  ###
+  getSelectedRows: =>
+    return {} if not @tagContainer?
+    @tagContainer.getTags()
+
+  ###*
     @override
     @suppress {accessControls}
   ###
   redraw: =>
     @maybeCreateElement_()
-    if @tagContainer?
-      @selectedRows = @tagContainer.getTags()
 
     if @topAlign_
       @element_.style.visibility = 'hidden'
@@ -245,26 +250,13 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         groupUl = @dom.el wzk.ui.ac.Renderer.TAGS.GROUP
         groupLi.appendChild groupUl
         for subrow in row
-          if @isSelected subrow
-            continue
           groupUl.appendChild @renderRowHtml(subrow, @token_)
         @appendRow groupLi, curRow
         curRow = groupLi
       else
-        if @isSelected row
-          continue
         row = @renderRowHtml(row, @token_)
         @appendRow row, curRow
         curRow = row
-
-
-  ###*
-    @protected
-    @param {wzk.resource.Model} row
-    @return {boolean}
-  ###
-  isSelected: (row) =>
-    @selectedRows? and @selectedRows[row['data'].toString()]?
 
   ###*
     @protected
@@ -314,36 +306,6 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         output.push row
         counter++
     output
-
-  ###*
-    @override
-    @suppress {accessControls}
-  ###
-  handleClick_: (e) =>
-    row = (`/** @type {Element} */`) e.target
-    index = @getIndexOfRow row
-    if index > -1
-      this.dispatchEvent({
-        type: goog.ui.ac.AutoComplete.EventType.SELECT,
-        row: row.id
-        rowEl: row
-        index: index
-        value: e.target.getAttribute  'value'
-      })
-
-    e.stopPropagation()
-
-  ###*
-    @param {Element} row
-    @return {number}
-    @suppress {accessControls}
-  ###
-  getIndexOfRow: (row) =>
-    nullIndex = -1
-    for i, optRow of @rows_
-      if optRow['data']['id'] is goog.dom.dataset.get row, wzk.ui.ac.Renderer.DATA.ITEM_VALUE
-        return wzk.num.parseDec i
-    nullIndex
 
   ###*
     Render a row by creating a div and then calling row rendering callback or
