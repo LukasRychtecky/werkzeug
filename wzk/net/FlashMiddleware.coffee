@@ -26,6 +26,8 @@ class wzk.net.FlashMiddleware
         @flash.addError res['errors']
       else if @msgs[String(status)]?
         @flash.addError @msgs[String(status)]
+    else if res['error']?
+      @flash.addError res['error']
 
     msgs = res['messages'] ? res['message']
     if msgs?
