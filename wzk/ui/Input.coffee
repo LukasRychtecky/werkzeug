@@ -18,6 +18,21 @@ class wzk.ui.Input extends goog.ui.Control
     @setAllowTextSelection(true)
     @setContent('') unless content?
     @wrapperEl = null
+    @placeholder = ''
+
+
+  ###*
+    @param {string|null} placeholder
+  ###
+  setPlaceholder: (@placeholder) ->
+    @placeholder = '' unless @placeholder?
+    @getElement().setAttribute('placeholder', String(@placeholder)) if @getElement()
+
+  ###*
+    @return {string|null}
+  ###
+  getPlaceholder: ->
+    @placeholder
 
   ###*
     @override

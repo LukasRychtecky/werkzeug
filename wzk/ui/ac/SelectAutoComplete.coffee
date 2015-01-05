@@ -17,6 +17,7 @@ class wzk.ui.ac.SelectAutoComplete
     @select = null
     @handler = null
     @stor = null
+    @input = null
 
   ###*
     @protected
@@ -32,11 +33,10 @@ class wzk.ui.ac.SelectAutoComplete
     @param {wzk.resource.Model} model
   ###
   setDefaultValue: (model) ->
-    input = @renderer.getInput()
-    @handler.detachInput input.getElement()
-    input.setValue model.toString()
-    @handler.attachInput input.getElement()
-    input.showClearButton() if input.getValue()
+    @handler.detachInput @input.getElement()
+    @input.setValue model.toString()
+    @handler.attachInput @input.getElement()
+    @input.showClearButton() if @input.getValue()
     @dom.select @select, model['pk']
     @afterSelect model
 
@@ -50,6 +50,8 @@ class wzk.ui.ac.SelectAutoComplete
     @stor = new wzk.ui.ac.SelectOneStorage @dom, @select
     @renderer.listen wzk.ui.ac.Renderer.EventType.CLEAN, @handleClean
     @renderer.listen wzk.ui.ac.Renderer.EventType.OPEN, @handleOpen
+    @input = @renderer.getInput()
+    @input.setPlaceholder(@select.getAttribute('placeholder')) if @select.hasAttribute('placeholder')
 
   ###*
     @protected
