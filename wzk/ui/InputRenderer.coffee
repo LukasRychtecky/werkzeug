@@ -24,6 +24,7 @@ class wzk.ui.InputRenderer extends goog.ui.ControlRenderer
     input.getDomHelper().el('input',
       'type': 'text'
       'class': @getClassNames(input).join(' ')
+      'placeholder': input.getPlaceholder()
     )
 
 goog.addSingletonGetter wzk.ui.InputRenderer
