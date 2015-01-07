@@ -2,7 +2,9 @@ bower_components/
 node_modules/
 var/
 
+.idea
+
 .DS_Store
 
-.idea
+*/.DS_Store
 
