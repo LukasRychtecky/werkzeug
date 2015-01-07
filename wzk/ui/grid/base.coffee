@@ -23,10 +23,11 @@ goog.require 'wzk.ui.grid.ExportLink'
   @param {wzk.net.XhrFactory} factory
   @param {wzk.app.Register} reg
   @param {wzk.stor.StateStorage} ss
+  @param {Object=} params
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.build = (table, dom, factory, reg, ss) ->
-  wzk.ui.grid.buildGrid table, dom, factory, reg, ss, wzk.ui.grid.Grid
+wzk.ui.grid.build = (table, dom, factory, reg, ss, params = {}) ->
+  wzk.ui.grid.buildGrid table, dom, factory, reg, ss, wzk.ui.grid.Grid, params
 
 ###*
   @param {Element} table
@@ -35,15 +36,21 @@ wzk.ui.grid.build = (table, dom, factory, reg, ss) ->
   @param {wzk.app.Register} reg
   @param {wzk.stor.StateStorage} ss
   @param {Function} ctor
+  @param {Object=} params
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
+wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, params = {}) ->
   parser = new wzk.resource.AttrParser()
   ctx = parser.parseContext table
   client = new wzk.resource.Client xhrFac, ctx
   extractor = new wzk.ui.grid.ArgsExtractor table
   repo = new wzk.ui.grid.Repository client
   query = new wzk.resource.Query parser.parseResource(table)
+  if params['exportButtonsEl']?
+    exportButtonsEl = params['exportButtonsEl']
+  exportButtonsEl ?= dom.one wzk.ui.grid.Grid.SELECTORS.EXPORT_BUTTONS
+  exportButtonsEl ?= dom.getParentElement(table)
+
   for field in extractor.parseRestFields()
     query.addField field
 
@@ -81,7 +88,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor) ->
     updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac, '', xhrConfig), url, interval
     updater.start()
 
-  exportElements = dom.clss wzk.ui.grid.ExportLink.CLS, dom.getParentElement(table)
+  exportElements = dom.clss wzk.ui.grid.ExportLink.CLS, exportButtonsEl
   for el in exportElements
     exportBtn = new wzk.ui.grid.ExportLink dom: dom, watcher: watcher, client: new wzk.resource.Client(xhrFac)
     exportBtn.decorate el

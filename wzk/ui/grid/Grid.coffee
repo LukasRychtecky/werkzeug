@@ -41,6 +41,12 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     ACTIONS: 'actions'
 
   ###*
+    @enum {string}
+  ###
+  @SELECTORS:
+    EXPORT_BUTTONS: '.export-buttons'
+
+  ###*
     @param {wzk.dom.Dom} dom
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
