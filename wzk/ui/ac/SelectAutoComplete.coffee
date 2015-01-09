@@ -110,3 +110,9 @@ class wzk.ui.ac.SelectAutoComplete
     @select.appendChild opt
     @data.push model
     @matcher.setRows @data
+
+  ###*
+    Exits the DOM and remove the element from DOM
+  ###
+  destroy: ->
+    @input.destroy()
