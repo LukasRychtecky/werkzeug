@@ -1,6 +1,6 @@
 {
     "name": "werkzeug",
-    "version": "0.7.2",
+    "version": "0.7.3",
     "author": "Lukas Rychtecky <lukas.rychtecky@gmail.com>",
     "repository": {
         "type": "git",
