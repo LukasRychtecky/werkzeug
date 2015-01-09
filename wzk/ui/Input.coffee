@@ -114,3 +114,10 @@ class wzk.ui.Input extends goog.ui.Control
   ###
   makeRequired: (required = true) ->
     @getElement().required = if required then 'required' else undefined
+
+  ###*
+    Exits the DOM and remove the element from DOM
+  ###
+  destroy: ->
+    @exitDocument()
+    @dom.removeNode @getElement()
