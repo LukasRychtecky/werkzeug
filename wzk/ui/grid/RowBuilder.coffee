@@ -19,7 +19,7 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
   build: (model, showActions = true) ->
     row = new wzk.ui.grid.Row dom: @dom, confirm: @confirm
     row.setModel model
-    @rows.addChild row, true
+    @rows.addChild row, false
     for col in @cols
       @buildCell model, col, row
 
