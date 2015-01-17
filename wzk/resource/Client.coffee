@@ -22,7 +22,6 @@ class wzk.resource.Client
     BASE: 'X-Base'
     OFFSET: 'X-Offset'
     ORDER: 'X-Order'
-    DIRECTION: 'X-Direction'
     REFERRER: 'X-Referer'
     EXTRA_FIELDS: 'X-Extra-Fields'
     FIELDS: 'X-Fields'
@@ -102,8 +101,7 @@ class wzk.resource.Client
       goog.object.extend headers, @headers
       headers[X.BASE] = query.base if query.base?
       headers[X.OFFSET] = query.offset if query.offset?
-      headers[X.ORDER] = query.order if query.order?
-      headers[X.DIRECTION] = query.direction if query.direction?
+      headers[X.ORDER] = query.sorting.toString()
       headers[X.REFERRER] = query.referer if query.referer?
       headers[X.FIELDS] = query.composeFields() if query.hasFields()
       headers[X.SERIALIZATION_FORMAT] = query.getSerFormat()

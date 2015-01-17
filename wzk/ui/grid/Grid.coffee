@@ -105,8 +105,6 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @return {wzk.resource.Query}
   ###
   buildQuery: (opts = {}) ->
-    @query.order = opts.column if opts.column?
-    @query.direction = opts.direction if opts.direction?
     @query.base = opts.base ? @paginator?.base
     @query.offset = if opts.offset? then opts.offset else @paginator?.offset
     @query
@@ -205,9 +203,17 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @sorter = new wzk.ui.grid.Sorter @dom
     @sorter.decorate @table
 
-    @sorter.listen wzk.ui.grid.Sorter.EventType.SORT, (e) =>
-      @buildBody @buildQuery(e.target), (result) =>
-        @paginator.refresh result
+    @sorter.listen(wzk.ui.grid.Sorter.EVENTS.SORT, @handleSort)
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleSort: (e) =>
+    header = (`/** @type {wzk.ui.grid.THeader} */`) e.target
+    @query.sort(header.getName(), header.getDirection())
+    @buildBody @buildQuery(), (result) =>
+      @paginator.refresh result
 
   ###*
     @protected

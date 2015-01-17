@@ -1,6 +1,8 @@
 goog.require 'goog.Uri'
+goog.require 'wzk.resource.Sorting'
 
 class wzk.resource.Query
+
 
   ###*
     @enum {string}
@@ -11,11 +13,18 @@ class wzk.resource.Query
     BOTH: 'BOTH'
 
   ###*
+    @enum {number}
+  ###
+  @DIRECTION:
+    ASC: 1
+    DESC: 2
+    NO: 3
+
+  ###*
     @param {string=} uri
   ###
   constructor: (uri = '') ->
-    @order = null
-    @direction = null
+    @sorting = new wzk.resource.Sorting()
     @base ?= 10
     @offset ?= 0
     @uri = new goog.Uri uri
@@ -152,3 +161,41 @@ class wzk.resource.Query
   ###
   cloneUri: ->
     @uri.clone()
+
+  ###*
+    Sorts a query set ascending by a given nameumn name
+    @param {string} name
+  ###
+  sortAsc: (name) ->
+    @sorting.asc name
+
+  ###*
+    Sorts a query set descending by a given nameumn name
+    @param {string} name
+  ###
+  sortDesc: (name) ->
+    @sorting.desc name
+
+  ###*
+    Remove a given nameumn name from a query set
+    @param {string} name
+  ###
+  sortNo: (name) ->
+    @sorting.remove name
+
+  ###*
+    Sorts a query set by given a nameumn name and a direction.
+    {@see wzk.resource.Query.DIRECTION}
+    @param {string} name
+    @param {number} direction
+  ###
+  sort: (name, direction) ->
+    switch direction
+      when wzk.resource.Query.DIRECTION.ASC
+        @sortAsc name
+      when wzk.resource.Query.DIRECTION.DESC
+        @sortDesc name
+      when wzk.resource.Query.DIRECTION.NO
+        @sortNo name
+      else
+        throw Error "Given invalid sort direction #{direction}"
