@@ -1,125 +1,35 @@
-goog.provide 'wzk.ui.grid.Sorter'
-
 goog.require 'goog.events'
-goog.require 'goog.events.EventType'
-goog.require 'goog.dom.classes'
-goog.require 'goog.events.EventTarget'
-goog.require 'goog.dom.dataset'
+goog.require 'goog.object'
+goog.require 'wzk.ui.grid.THeader'
 
 class wzk.ui.grid.Sorter extends goog.events.EventTarget
 
   ###*
     @enum {string}
   ###
-  @EventType:
+  @EVENTS:
     SORT: 'sort'
 
   ###*
-    @enum {string}
-  ###
-  @DIRECTION:
-    ASC: 'ASC'
-    DESC: 'DESC'
-
-  ###*
-    @enum {string}
-  ###
-  @CLASSES:
-    ASC: 'goog-tablesorter-sorted'
-    DESC: 'goog-tablesorter-sorted-reverse'
-
-  ###*
-    @constructor
-    @extends {goog.events.EventTarget}
-    @param {goog.dom.DomHelper} dom
+    @param {wzk.dom.Dom} dom
   ###
   constructor: (@dom) ->
     super()
     @table = null
+    @headers = []
 
   ###*
     @param {Element} table
   ###
   decorate: (@table) ->
-    for th in table.querySelectorAll '.sortable'
-      @hangListener th
-      @createColNameIfMissing th
+    for th in @dom.clss('sortable', table)
+      header = new wzk.ui.grid.THeader(@dom, th)
+      goog.events.listen header, goog.object.getValues(wzk.ui.grid.THeader.EVENTS), @handleSort
+      @headers.push header
 
   ###*
     @protected
-    @param {Element} th
+    @param {goog.events.Event} e
   ###
-  hangListener: (th) ->
-    goog.events.listen th, goog.events.EventType.CLICK, (e) =>
-      dir = wzk.ui.grid.Sorter.DIRECTION.ASC
-      col = @getKey th
-      C = wzk.ui.grid.Sorter.CLASSES
-
-      if goog.dom.classes.has th, C.ASC
-        @applyDesc th
-        dir = wzk.ui.grid.Sorter.DIRECTION.DESC
-      else if goog.dom.classes.has th, C.DESC
-        @applyNoSort th
-      else
-        @applyAsc th
-
-      @applyNoSortForOthers th
-
-      @dispatchSort col, dir
-
-  ###*
-    @protected
-    @param {Element} th
-  ###
-  applyNoSort: (th) ->
-    goog.dom.classes.remove th, wzk.ui.grid.Sorter.CLASSES.ASC
-    goog.dom.classes.remove th, wzk.ui.grid.Sorter.CLASSES.DESC
-
-  ###*
-    @protected
-    @param {Element} th
-  ###
-  applyAsc: (th) ->
-    goog.dom.classes.add th, wzk.ui.grid.Sorter.CLASSES.ASC
-    goog.dom.classes.remove th, wzk.ui.grid.Sorter.CLASSES.DESC
-
-  ###*
-    @protected
-    @param {Element} th
-  ###
-  applyDesc: (th) ->
-    goog.dom.classes.remove th, wzk.ui.grid.Sorter.CLASSES.ASC
-    goog.dom.classes.add th, wzk.ui.grid.Sorter.CLASSES.DESC
-
-  ###*
-    @protected
-    @param {Element} sortedBy
-  ###
-  applyNoSortForOthers: (sortedBy) ->
-    key = @getKey sortedBy
-    for th in @table.querySelectorAll '.sortable'
-      @applyNoSort(th) if @getKey(th) isnt key
-
-  ###*
-    @protected
-    @param {Element} th
-  ###
-  getKey: (th) ->
-    goog.dom.dataset.get th, 'col'
-
-  ###*
-    @protected
-    @param {string} col
-    @param {string} dir
-  ###
-  dispatchSort: (col, dir) ->
-    @dispatchEvent new goog.events.Event(wzk.ui.grid.Sorter.EventType.SORT, {column: col, direction: dir})
-
-  ###*
-    @protected
-    @param {Element} th
-  ###
-  createColNameIfMissing: (th) ->
-    unless goog.dom.dataset.has th, 'col'
-      col = @dom.getTextContent th
-      goog.dom.dataset.set th, 'col', col.toLowerCase()
+  handleSort: (e) =>
+    @dispatchEvent new goog.events.Event(wzk.ui.grid.Sorter.EVENTS.SORT, e.target)
