@@ -3,8 +3,9 @@ goog.require 'goog.ui.InputDatePicker'
 goog.require 'goog.i18n.DateTimeFormat'
 goog.require 'goog.i18n.DateTimeParse'
 goog.require 'goog.testing.events'
+goog.require 'wzk.ui.CloseIcon'
 
-class wzk.ui.I18NInputDatePicker
+class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -16,6 +17,7 @@ class wzk.ui.I18NInputDatePicker
       useSimpleNavigationMenu {boolean} hides year selection
   ###
   constructor: (@dom, @pattern = "yyyy'-'MM'-'dd", @params) ->
+    super @dom
     @params = {} unless @params?
 
     @params.showToday ?= false
@@ -26,11 +28,12 @@ class wzk.ui.I18NInputDatePicker
   ###*
     @param {Element} el
     @return {goog.ui.InputDatePicker}
+    @suppress {checkTypes}
   ###
-  decorate: (el) ->
-    el.type = 'text'
+  decorate: (@el) ->
+    @el.type = 'text'
 
-    PATTERN = @getPattern el
+    PATTERN = @getPattern @el
     formatter = new goog.i18n.DateTimeFormat PATTERN
     parser = new goog.i18n.DateTimeParse PATTERN
 
@@ -42,11 +45,22 @@ class wzk.ui.I18NInputDatePicker
 
     picker = new goog.ui.InputDatePicker formatter, parser, datePicker
 
-    picker.listen goog.ui.DatePicker.Events.CHANGE, ->
-      goog.testing.events.fireBrowserEvent new goog.testing.events.Event(goog.events.EventType.CHANGE, el)
+    picker.listen goog.ui.DatePicker.Events.CHANGE, (e)  =>
+      goog.testing.events.fireBrowserEvent new goog.testing.events.Event(goog.events.EventType.CHANGE, @el)
+      @handleInputChange e
 
-    picker.decorate el
+    @clrBtn = new wzk.ui.CloseIcon dom: @dom
+    @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
+    @clrBtn.render @dom.getParentElement(@el)
+
+    picker.decorate @el
     picker
+
+  ###*
+    @override
+  ###
+  getElement: =>
+    @el
 
   ###*
     @protected
