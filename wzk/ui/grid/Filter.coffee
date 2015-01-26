@@ -50,7 +50,7 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
   ###
   getName: ->
     unless @name
-      @name = @el.name.split('__').pop()
+      @name = @getFilter().split('__').shift()
     @name
 
   ###*
@@ -69,7 +69,7 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @return {boolean}
   ###
   apply: (query) ->
-    changed = query.isChanged @getName(), @getValue()
+    changed = query.isChanged @getFilter(), @getValue()
     if changed
       query.filter @getFilter(), @getValue()
     changed
