@@ -1,6 +1,7 @@
 goog.require 'goog.dom.forms'
 goog.require 'wzk.events.lst'
 goog.require 'goog.dom.dataset'
+goog.require 'wzk.resource.FilterValue'
 
 class wzk.ui.grid.Filter extends goog.events.EventTarget
 
@@ -50,8 +51,24 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
   ###
   getName: ->
     unless @name
-      @name = @getFilter().split('__').shift()
+      @setOperatorAndName()
     @name
+
+  ###*
+    @return {string}
+  ###
+  getOperator: ->
+    unless @operator
+      @setOperatorAndName()
+    @operator
+
+  ###*
+    @protected
+  ###
+  setOperatorAndName: ->
+    toks = @getFilter().split('__')
+    @name = toks.shift()
+    @operator = toks.pop()
 
   ###*
     @return {string}
@@ -69,7 +86,8 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @return {boolean}
   ###
   apply: (query) ->
-    changed = query.isChanged @getFilter(), @getValue()
+    filter = new wzk.resource.FilterValue(@getName(), @getOperator(), @getValue())
+    changed = query.isChanged filter
     if changed
-      query.filter @getFilter(), @getValue()
+      query.filter filter
     changed
