@@ -15,7 +15,6 @@ class wzk.ui.grid.FilterExtended extends wzk.ui.grid.Filter
     @select.renderBefore field
     @select.setValue ''
     @select.listen wzk.ui.form.Field.EVENTS.CHANGE, @handleChange
-    @prev = @getFilter()
 
   ###*
     @override
@@ -30,9 +29,8 @@ class wzk.ui.grid.FilterExtended extends wzk.ui.grid.Filter
     @override
   ###
   apply: (query) ->
-    changed = @prev isnt @getValue() and query.isChanged(@getName(), @getValue())
+    filter = new wzk.resource.FilterValue(@getName(), String(@select.getValue()), @getValue())
+    changed = query.isChanged(filter)
     if changed
-      query.filter @prev, ''
-      query.filter @getFilter(), @getValue()
-      @prev = @getFilter()
+      query.filter filter
     changed
