@@ -105,6 +105,8 @@ class wzk.resource.Query
   ###
   filter: (filter) ->
     if filter.getValue()
+      prev = @filters[filter.getName()]
+      @uri.removeParameter(prev.getParamName()) if prev?
       @uri.setParameterValue filter.getParamName(), filter.getValue()
       @filters[filter.getName()] = filter
     else
