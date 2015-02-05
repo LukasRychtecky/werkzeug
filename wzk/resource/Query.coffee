@@ -1,5 +1,7 @@
 goog.require 'goog.Uri'
+goog.require 'goog.object'
 goog.require 'wzk.resource.Sorting'
+goog.require 'wzk.resource.FilterValue'
 
 class wzk.resource.Query
 
@@ -28,12 +30,13 @@ class wzk.resource.Query
     @base ?= 10
     @offset ?= 0
     @uri = new goog.Uri uri
-    @extraFields = []
+    @extraFields = ['id']
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
     @accept = 'application/json'
+    @filters = {}
 
   putDefaultFields: ->
-    @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
+    @extraFields = ['id', '_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
 
   ###*
     @return {string}
@@ -97,40 +100,43 @@ class wzk.resource.Query
     [@uri.getPath(), id].join '/'
 
   ###*
-    @param {string} par
-    @param {*} val
+    @param {wzk.resource.FilterValue} filter
     @return {wzk.resource.Query} this
   ###
-  filter: (par, val) ->
-    if val
-      @uri.setParameterValue par, val
+  filter: (filter) ->
+    if filter.getValue()
+      @uri.setParameterValue filter.getParamName(), filter.getValue()
+      @filters[filter.getName()] = filter
     else
-      @uri.removeParameter par
+      @uri.removeParameter filter.getParamName()
+      goog.object.remove @filters, filter.getName()
     @
 
   ###*
-    @param {string} par
+    @param {string} name
     @return {boolean}
   ###
-  hasFilter: (par) ->
-    Boolean @getFilter par
+  hasFilter: (name) ->
+    !!@filters[name]
 
   ###*
-    @param {string} par
-    @return {string|undefined}
+    @param {string} name
+    @return {wzk.resource.FilterValue}
   ###
-  getFilter: (par) ->
-    @uri.getParameterValue par
+  getFilter: (name) ->
+    @filters[name]
 
   ###*
-    @param {string} par
-    @param {*} val
+    @param {wzk.resource.FilterValue} filter
     @return {boolean}
   ###
-  isChanged: (par, val) ->
-    actual = @getFilter(par)
-    return false if actual is val
-    return false if actual is undefined and val is ''
+  isChanged: (filter) ->
+    actual = @getFilter filter.getName()
+    return false if not actual and (not filter.getValue()? or filter.getValue() is '')
+    return true unless actual
+    val = filter.getValue()
+    return false if actual.getValue() is val and actual.getOperator() is filter.getOperator()
+    return false if actual.getValue() is undefined and val is ''
     true
 
   ###*
