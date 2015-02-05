@@ -32,7 +32,7 @@ class wzk.ui.inlineform.DynamicForm
     @param {boolean=} enabled
   ###
   dynamic: (fieldset, enabled = true) ->
-    @btn = fieldset.querySelector('.dynamic')
+    @btn = @dom.cls('dynamic', fieldset)
     # If a fieldset has no dynamic button, it's not a dynamic form
     return unless @btn?
 
