@@ -103,7 +103,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @param {Element} row
   ###
   fixIdsAndNames: (row) ->
-    for field in @dom.all 'input, select', row
+    for field in @dom.all 'input, select, textarea', row
       for attr in ['name', 'id', 'data-for']
         if field[attr]?
           field[attr] = @expert.process(field[attr])

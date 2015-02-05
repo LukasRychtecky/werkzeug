@@ -27,6 +27,7 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
             <input id="id_external-inline-file-__prefix__-message" name="external-inline-file-__prefix__-message" type="hidden">
             <input id="id_external-inline-file-__prefix__-id" name="external-inline-file-__prefix__-id" type="hidden">
             <input id="id_external-inline-file-__prefix__-file" name="external-inline-file-__prefix__-file" type="file">
+            <textarea id="id_external-inline-file-__prefix__-note" name="external-inline-file-__prefix__-note"></textarea>
           </td>
           <td class="field">
             <input id="id_external-inline-file-__prefix__-DELETE" name="external-inline-file-__prefix__-DELETE" type="checkbox">
@@ -49,7 +50,9 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
 
     assert.equal parent.children.length, 2
     assert.isNotNull doc.getElementById 'id_external-inline-file-1-file'
-    assert.equal parent.children[1].className, 'even'
+    row = parent.children[1]
+    assert.equal row.className, 'even'
+    assert.equal row.querySelector('textarea').id, 'id_external-inline-file-1-note'
 
   test 'Should fire a delete event on click', (done) ->
     goog.events.listen builder, E.DELETE, (e) ->
