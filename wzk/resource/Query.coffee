@@ -30,13 +30,13 @@ class wzk.resource.Query
     @base ?= 10
     @offset ?= 0
     @uri = new goog.Uri uri
-    @extraFields = []
+    @extraFields = ['id']
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
     @accept = 'application/json'
     @filters = {}
 
   putDefaultFields: ->
-    @extraFields = ['_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
+    @extraFields = ['id', '_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
 
   ###*
     @return {string}
