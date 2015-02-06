@@ -19,6 +19,15 @@ class wzk.ui.Flash extends wzk.ui.Component
 
   ###*
     @param {string|Array.<string>} text
+    @param {boolean=} fadeOut if fadeOut is undefined and severity is error then fadeOut is set to false otherwise to true
+    @param {boolean=} closable if closable is undefined and severity is error then closable is set to false otherwise to true
+    @return {Array.<wzk.ui.FlashMessage>}
+  ###
+  success: (text, fadeOut = undefined, closable = true) ->
+    @addMessage text, 'success', fadeOut, closable
+
+  ###*
+    @param {string|Array.<string>} text
     @param {string=} severity
     @param {boolean=} fadeOut if fadeOut is undefined and severity is error then fadeOut is set to false otherwise to true
     @param {boolean=} closable if closable is undefined and severity is error then closable is set to false otherwise to true

@@ -52,6 +52,7 @@ class wzk.app.App
     @opts =
       app: @
       frag: @frag
+      flash: flash
 
     dom = new wzk.dom.Dom @doc
     snip = new wzk.net.SnippetMiddleware @reg, dom, @opts
@@ -109,7 +110,7 @@ class wzk.app.App
       flash.decorateOrRender el
 
     @on 'table.grid', (table, dom, xhrFac, opts) ->
-      wzk.ui.grid.build table, dom, xhrFac, opts.app.getRegister(), opts.app.getStorage('g')
+      wzk.ui.grid.build table, dom, xhrFac, opts.app.getRegister(), opts.app.getStorage('g'), opts.flash
 
     @on '.remote-button', (el, dom, xhrFac) ->
       wzk.ui.form.buildRemoteButton el, dom, xhrFac
