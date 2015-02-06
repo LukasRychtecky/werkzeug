@@ -32,11 +32,12 @@ wzk.ui.grid.Params = (params = {}) ->
   @param {wzk.net.XhrFactory} factory
   @param {wzk.app.Register} reg
   @param {wzk.stor.StateStorage} ss
+  @param {wzk.ui.Flash} flash
   @param {wzk.ui.grid.Params=} params
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.build = (table, dom, factory, reg, ss, params = new wzk.ui.grid.Params()) ->
-  wzk.ui.grid.buildGrid table, dom, factory, reg, ss, wzk.ui.grid.Grid, params
+wzk.ui.grid.build = (table, dom, factory, reg, ss, flash, params = new wzk.ui.grid.Params()) ->
+  wzk.ui.grid.buildGrid table, dom, factory, reg, ss, wzk.ui.grid.Grid, flash, params
 
 ###*
   @param {Element} table
@@ -45,10 +46,11 @@ wzk.ui.grid.build = (table, dom, factory, reg, ss, params = new wzk.ui.grid.Para
   @param {wzk.app.Register} reg
   @param {wzk.stor.StateStorage} ss
   @param {Function} ctor
+  @param {wzk.ui.Flash} flash
   @param {wzk.ui.grid.Params=} params
   @return {wzk.ui.grid.Grid}
 ###
-wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, params = new wzk.ui.grid.Params()) ->
+wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new wzk.ui.grid.Params()) ->
   parser = new wzk.resource.AttrParser()
   ctx = parser.parseContext table
   client = new wzk.resource.Client xhrFac, ctx
@@ -69,7 +71,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, params = new wzk.ui.
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 
-  grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator
+  grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator, flash
   grid.decorate table
 
   watcher = new wzk.ui.grid.FilterWatcher grid, query, dom

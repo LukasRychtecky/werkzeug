@@ -53,8 +53,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.ui.dialog.ConfirmDialog} confirm
     @param {wzk.resource.Query} query
     @param {wzk.ui.grid.Paginator} paginator
+    @param {wzk.ui.Flash} flash
   ###
-  constructor: (@dom, @repo, @cols, @confirm, @query, @paginator) ->
+  constructor: (@dom, @repo, @cols, @confirm, @query, @paginator, @flash) ->
     super()
     @table = null
     @tbody = null
@@ -194,6 +195,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     model = btn.getModel().model
     action = btn.getModel().action
     btn.call @repo.getClient(), model['_rest_links'][action['name']]['url'], action['method'], action['data'], (response) =>
+      @flash.success action['success_text']
       @rowBuilder.replaceRowByModel(response)
 
   ###*
