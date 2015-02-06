@@ -24,8 +24,9 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     @param {Element} table
   ###
   watchOn: (table) ->
+    extFiltersEnabled = goog.dom.classes.has table, wzk.ui.grid.FilterExtended.CLS.ENABLED_FILTERS
     for field in @dom.all 'thead *[data-filter]', table
-      filter = @buildFilter field
+      filter = @buildFilter field, extFiltersEnabled
       @fields[filter.getName()] = filter
       @watchField filter
 
@@ -34,12 +35,21 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###*
     @protected
     @param {Element} field
+    @param {boolean} extFiltersEnabled
     @return {wzk.ui.grid.Filter}
   ###
-  buildFilter: (field) ->
-    if wzk.dom.classes.hasAny(field, ['date', 'datetime']) or field.type in ['number', 'date', 'datetime']
+  buildFilter: (field, extFiltersEnabled) ->
+    if extFiltersEnabled and @isFilterAllowed(field)
       return new wzk.ui.grid.FilterExtended @dom, field
     new wzk.ui.grid.Filter @dom, field
+
+  ###*
+    @protected
+    @param {Element} field
+    @return {boolean}
+  ###
+  isFilterAllowed: (field) ->
+    wzk.dom.classes.hasAny(field, ['date', 'datetime']) or field.type in ['number', 'date', 'datetime']
 
   ###*
     @protected

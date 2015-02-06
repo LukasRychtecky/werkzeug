@@ -2,6 +2,14 @@ goog.require 'wzk.ui.form.Select'
 
 class wzk.ui.grid.FilterExtended extends wzk.ui.grid.Filter
 
+  @CLS:
+    ENABLED_FILTERS: 'extended-filters'
+    EXTENDED_FILTER: 'filter-extended'
+
+  ###*
+    @param {wzk.dom.Dom} dom
+    @param {Element} field
+  ###
   constructor: (dom, field) ->
     super dom, field
     @options =
@@ -11,7 +19,7 @@ class wzk.ui.grid.FilterExtended extends wzk.ui.grid.Filter
       'lte': '<='
       'lt': '<'
     @select = new wzk.ui.form.Select dom: dom, options: @options
-    @select.addClass 'filter-extended'
+    @select.addClass wzk.ui.grid.FilterExtended.CLS.EXTENDED_FILTER
     @select.renderBefore field
     @select.setValue ''
     @select.listen wzk.ui.form.Field.EVENTS.CHANGE, @handleChange
