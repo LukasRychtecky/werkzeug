@@ -45,9 +45,7 @@ class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
 
     picker = new goog.ui.InputDatePicker formatter, parser, datePicker
 
-    picker.listen goog.ui.DatePicker.Events.CHANGE, (e)  =>
-      goog.testing.events.fireBrowserEvent new goog.testing.events.Event(goog.events.EventType.CHANGE, @el)
-      @handleInputChange e
+    picker.listen goog.ui.DatePicker.Events.CHANGE, @handleChanged
 
     @clrBtn = new wzk.ui.CloseIcon dom: @dom
     @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
@@ -55,6 +53,14 @@ class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
 
     picker.decorate @el
     picker
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleChanged: (e) =>
+    goog.testing.events.fireBrowserEvent new goog.testing.events.Event(goog.events.EventType.CHANGE, @el)
+    @handleInputChange e
 
   ###*
     @override
