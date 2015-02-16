@@ -1,4 +1,5 @@
 goog.require 'wzk.obj'
+goog.require 'goog.object'
 
 class wzk.net.FlashMiddleware
 
@@ -21,11 +22,11 @@ class wzk.net.FlashMiddleware
     @param {number} status
   ###
   apply: (res, status) ->
+    return if @hasDefaultMsgFor status
+
     if res['errors']?
       if goog.isArray(res['errors']) or goog.isString(res['errors'])
         @flash.addError res['errors']
-      else if @msgs[String(status)]?
-        @flash.addError @msgs[String(status)]
     else if res['error']?
       @flash.addError res['error']
 
@@ -34,8 +35,23 @@ class wzk.net.FlashMiddleware
       for type, msg of msgs
         @flash.addMessage msg, type
 
-  error: ->
-    @flash.addError @msgs['error']
+  ###*
+    @protected
+    @param {number} status
+    @return {boolean}
+  ###
+  hasDefaultMsgFor: (status) ->
+    goog.object.containsKey(@msgs, String(status))
+
+  ###*
+    @param {number} status
+  ###
+  error: (status) ->
+    if @hasDefaultMsgFor status
+      strStatus = String status
+      @flash.addError(@msgs[strStatus]) if @msgs[strStatus]?
+    else
+      @flash.addError @msgs['error']
 
   loading: ->
     msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: @msgs['loading'], severity: 'info', fadeOut: false, closable: false
