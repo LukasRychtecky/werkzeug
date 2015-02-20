@@ -2,6 +2,7 @@ goog.require 'goog.dom.forms'
 goog.require 'wzk.events.lst'
 goog.require 'goog.dom.dataset'
 goog.require 'wzk.resource.FilterValue'
+goog.require 'wzk.dom.Dom'
 
 class wzk.ui.grid.Filter extends goog.events.EventTarget
 
@@ -10,6 +11,11 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
   ###
   @EVENTS:
     CHANGE: 'change'
+
+  ###*
+    @const {string}
+  ###
+  @SEPARATOR: '__'
 
   ###*
     @enum {string}
@@ -66,9 +72,9 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @protected
   ###
   setOperatorAndName: ->
-    toks = @getFilter().split('__')
-    @name = toks.shift()
-    @operator = toks.pop()
+    toks = @getFilter().split(wzk.ui.grid.Filter.SEPARATOR)
+    @operator = if toks.length > 1 then toks.pop() else ''
+    @name = toks.join wzk.ui.grid.Filter.SEPARATOR
 
   ###*
     @return {string}
