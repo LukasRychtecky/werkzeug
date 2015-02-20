@@ -31,3 +31,8 @@ class wzk.resource.FilterValue
   getParamName: ->
     return @name unless @operator
     [@name, @operator].join '__'
+
+  ###*
+    @param {*} value
+  ###
+  setValue: (@value) ->

@@ -101,3 +101,9 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###
   getQuery: ->
     @query
+
+  ###*
+    @return {wzk.ui.grid.Grid}
+  ###
+  getGrid: ->
+    @grid

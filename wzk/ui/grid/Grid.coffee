@@ -266,3 +266,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   selectIfContains: (model) ->
     @rows.selectIfContains model
+
+  ###*
+    @return {Array.<string>}
+  ###
+  getColumns: ->
+    @cols
