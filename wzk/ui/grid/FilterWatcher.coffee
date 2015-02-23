@@ -58,7 +58,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   handleLoad: (e) =>
     if @initialCheck
       @query.each (k, v) =>
-        if v[0]?
+        if v[0]? and @fields[k]?
           @fields[k].setValue v[0]
     for k, field of @fields
       @filter field
