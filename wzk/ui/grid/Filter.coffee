@@ -52,6 +52,9 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
   setValue: (val) ->
     goog.dom.forms.setValue @el, val
 
+  reset: ->
+    @setValue ''
+
   ###*
     @return {string}
   ###

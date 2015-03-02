@@ -86,15 +86,28 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   filter: (filter) ->
     if filter.apply @query
       @query.offset = 0
-      @grid.setQuery @query
-      @grid.refresh()
-      @dispatchChanged()
+      @filterGrid @query
+
+  ###*
+    @param {wzk.resource.Query} query
+    @protected
+  ###
+  filterGrid: (query) =>
+    @grid.setQuery query
+    @grid.refresh()
+    @dispatchChanged()
 
   ###*
     @protected
   ###
   dispatchChanged: ->
     @dispatchEvent new goog.events.Event(wzk.ui.grid.FilterWatcher.EventType.CHANGED, {})
+
+  reset: =>
+    for filterName, filter of @fields
+      filter.reset()
+      filter.apply @query
+    @filterGrid @query
 
   ###*
     @return {wzk.resource.Query}

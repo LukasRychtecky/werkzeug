@@ -272,3 +272,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   getColumns: ->
     @cols
+
+  ###*
+    @param {Array.<string>} cols
+  ###
+  setColumns: (@cols) ->

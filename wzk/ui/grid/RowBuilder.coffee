@@ -13,6 +13,11 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     super()
 
   ###*
+    @param {Array.<string>} cols
+  ###
+  setColumns: (@cols) ->
+
+  ###*
     @param {Object} model
     @param {boolean=} showActions
   ###
