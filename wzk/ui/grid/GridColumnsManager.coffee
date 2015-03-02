@@ -194,6 +194,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
   ###
   updateFilteringText: (state) =>
     hiddenFiltered = (@verboseCols[colName].toLowerCase() for colName, isVisible of state when not isVisible and @filterWatcher.getQuery().hasFilter(colName))
+
     if hiddenFiltered.length > 0
       @filteringTextEl.innerHTML = @filteringText.replace('%(columns)s', hiddenFiltered.join(', '))
       @dom.show @filteringTextEl
