@@ -29,9 +29,10 @@ class wzk.uri.Frag
   ###*
     @param {string} k
     @param {*} v
+    @param {boolean=} force default is false
   ###
-  setParam: (k, v) ->
-    if v? and v isnt ''
+  setParam: (k, v, force = false) ->
+    if v? and (v isnt '' or force)
       @uri.setParameterValue k, v
     else
       @removeParam k

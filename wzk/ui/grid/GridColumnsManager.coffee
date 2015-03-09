@@ -47,7 +47,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @table = @grid.getElement()
     @filteringText = ''
     @filteringTextEl = null
-    @lStorage = new app.stor.LocalStorage @dom.getWindow()['localStorage']
+    @lStorage = new wzk.stor.LocalStorage @dom.getWindow()['localStorage']
 
     @createStorage()
 
@@ -108,7 +108,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
   ###*
     @protected
   ###
-  getStorageKey: =>
+  getStorageKey: ->
     wzk.ui.grid.GridColumnsManager.STORAGE_KEY
 
   ###*
@@ -128,8 +128,8 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
   ###
   getInitialFilterStates: =>
     states = {}
-    for col in @allCols
-      states[col] = false
+    for filterName, filter of @filterWatcher.getFields()
+      states[filter.getName()] = filter.getValue() isnt ''
     states
 
   ###*
@@ -211,7 +211,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @protected
   ###
   deleteFilters: =>
-    @filterWatcher.reset()
+    @filterWatcher.resetFiltering()
 
   ###*
     @protected

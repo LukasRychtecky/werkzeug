@@ -50,12 +50,13 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.dom.Dom} dom
     @param {wzk.ui.grid.Repository} repo
     @param {Array.<string>} cols
+    @param {wzk.ui.grid.StateHolder} stateHolder
     @param {wzk.ui.dialog.ConfirmDialog} confirm
     @param {wzk.resource.Query} query
     @param {wzk.ui.grid.Paginator} paginator
     @param {wzk.ui.Flash} flash
   ###
-  constructor: (@dom, @repo, @cols, @confirm, @query, @paginator, @flash) ->
+  constructor: (@dom, @repo, @cols, @stateHolder, @confirm, @query, @paginator, @flash) ->
     super()
     @table = null
     @tbody = null
@@ -69,9 +70,9 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Element} table
   ###
   decorate: (@table) ->
+    @stateHolder.listen wzk.ui.grid.StateHolder.EventType.CHANGED, @refresh
     unless @dom.cls wzk.ui.grid.Grid.CLS.ACTIONS, @table
       @showActions = false
-
     @removeBody()
     paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
     if paginatorEl?
@@ -89,6 +90,12 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
       @dispatchLoaded result
       @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, @handleDeleteItem
+
+  ###*
+    @return {wzk.resource.Query}
+  ###
+  getQuery: ->
+    @stateHolder.getQuery()
 
   ###*
     @protected
@@ -126,7 +133,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
 
     @renderBottomPaginator()
 
-  refresh: ->
+  refresh: =>
+    @query = @getQuery()
     @buildBody @buildQuery({offset: @query.offset}), (result) =>
       result.offset = @query.offset
       @paginator?.refresh result

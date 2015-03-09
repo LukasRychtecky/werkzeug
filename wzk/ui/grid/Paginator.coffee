@@ -190,6 +190,10 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   getBases: ->
     @bases ? @defBases
 
+  setPage: (@page) ->
+    @offset = @offsetFromPage()
+    @calculatePageCount()
+
   ###*
     @param {number} base
     @param {number} page
@@ -197,11 +201,9 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   goToPage: (base, page) ->
     # change page only if base and page are different
     unless page is @page and base is @base
-      @page = page
       @base = base
-      @offset = @offsetFromPage()
       @renderer.setBase(@base)
-      @calculatePageCount()
+      @setPage page
       @dispatchGoToPage()
 
   ###*

@@ -110,7 +110,8 @@ class wzk.app.App
       flash.decorateOrRender el
 
     @on 'table.js-grid', (table, dom, xhrFac, opts) ->
-      wzk.ui.grid.build table, dom, xhrFac, opts.app.getRegister(), opts.app.getStorage('g'), opts.flash
+      gridIndex = dom.getIndexOf table, 'table.js-grid'
+      wzk.ui.grid.build table, dom, xhrFac, opts.app.getRegister(), opts.app.getStorage("g-#{gridIndex}"), opts.flash
 
     @on '.remote-button', (el, dom, xhrFac) ->
       wzk.ui.form.buildRemoteButton el, dom, xhrFac

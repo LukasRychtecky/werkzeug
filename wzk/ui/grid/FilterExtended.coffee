@@ -30,8 +30,28 @@ class wzk.ui.grid.FilterExtended extends wzk.ui.grid.Filter
   getFilter: ->
     orig = super()
     if @select.getValue()
-      return [orig, @select.getValue()].join '__'
+      return [orig, @getOperator()].join '__'
     orig
+
+  ###*
+    @override
+  ###
+  getOperator: ->
+    String @select.getValue()
+
+  ###*
+    @override
+  ###
+  reset: ->
+    @setValue ''
+    @setOperator ''
+
+  ###*
+    @override
+  ###
+  setOperator: (operator) ->
+    @operator = operator
+    @select.setValue String(operator)
 
   ###*
     @override

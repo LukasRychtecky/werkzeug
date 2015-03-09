@@ -34,6 +34,7 @@ class wzk.resource.Query
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
     @accept = 'application/json'
     @filters = {}
+    @defaultFilters = @parseDefaultFilters()
 
   putDefaultFields: ->
     @extraFields = ['id', '_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
@@ -100,6 +101,18 @@ class wzk.resource.Query
     [@uri.getPath(), id].join '/'
 
   ###*
+    @protected
+    @return {Object}
+  ###
+  parseDefaultFilters: ->
+    defaultFilters = {}
+    for filterName in @uri.getQueryData().getKeys()
+      defaultFilters[filterName] = @uri.getParameterValue filterName
+      @uri.removeParameter filterName
+
+    defaultFilters
+
+  ###*
     @param {wzk.resource.FilterValue} filter
     @return {wzk.resource.Query} this
   ###
@@ -127,6 +140,18 @@ class wzk.resource.Query
   ###
   getFilter: (name) ->
     @filters[name]
+
+  ###*
+    @return {Object}
+  ###
+  getFilters: ->
+    @filters
+
+  ###*
+    @return {Object}
+  ###
+  getDefaultFilters: ->
+    @defaultFilters
 
   ###*
     @param {wzk.resource.FilterValue} filter

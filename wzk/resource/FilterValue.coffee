@@ -1,6 +1,11 @@
 class wzk.resource.FilterValue
 
   ###*
+    @const {string}
+  ###
+  @SEPARATOR: '__'
+
+  ###*
     @param {string} name
     @param {string} operator
     @param {*} value
@@ -30,7 +35,14 @@ class wzk.resource.FilterValue
   ###
   getParamName: ->
     return @name unless @operator
-    [@name, @operator].join '__'
+    [@name, @operator].join wzk.resource.FilterValue.SEPARATOR
+
+  ###*
+    @param {string} paramName
+    @return {string}
+  ###
+  paramToName: (paramName) ->
+    paramName.split(wzk.resource.FilterValue.SEPARATOR)[0]
 
   ###*
     @param {*} value

@@ -72,11 +72,12 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 
-  grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator, flash
-  grid.decorate table
+  grid = new ctor dom, repo, extractor.parseColumns(), stateHolder, dialog, query, paginator, flash
 
-  watcher = new wzk.ui.grid.FilterWatcher grid, query, dom
-  watcher.watchOn table
+  watcher = new wzk.ui.grid.FilterWatcher grid, query, ss, dom
+  grid.setQuery watcher.watchOn(table)
+
+  grid.decorate table
 
   columnsManagerCls = parser.getAttr table, wzk.ui.grid.GridColumnsManager.DATA.GRID_DATA
   if columnsManagerCls
