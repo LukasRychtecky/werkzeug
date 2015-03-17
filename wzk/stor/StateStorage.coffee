@@ -15,6 +15,24 @@ class wzk.stor.StateStorage
     @frag.getParam @key k
 
   ###*
+    @return {Array}
+  ###
+  getAllKeys: ->
+    (@removePrefix key for key in @frag.uri.getQueryData().getKeys() when @hasPrefix key, @prefix)
+
+  ###*
+    @param {string} value
+    @param {string} prefix
+    @return {boolean}
+  ###
+  hasPrefix: (value, prefix) ->
+    (value.substring(0, prefix.length) is prefix)
+
+  removeOld: ->
+    for key in @getAllKeys()
+      @remove key
+
+  ###*
     @param {string} k
     @param {*} v
   ###
@@ -24,10 +42,11 @@ class wzk.stor.StateStorage
 
   ###*
     @param {Object} obj
+    @param {boolean=} force default is false
   ###
-  setAll: (obj) ->
+  setAll: (obj, force = false) ->
     for k, v of obj
-      @frag.setParam @key(k), v
+      @frag.setParam @key(k), v, force
     @updateFrag()
 
   ###*
@@ -50,3 +69,9 @@ class wzk.stor.StateStorage
   ###
   key: (k) ->
     [@prefix, k].join '-'
+
+  ###*
+    @return {string}
+  ###
+  removePrefix: (key) ->
+    key.replace @prefix + '-', ''

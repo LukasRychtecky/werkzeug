@@ -35,6 +35,22 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @dispatchEvent new goog.events.Event(wzk.ui.grid.Filter.EVENTS.CHANGE, e)
 
   ###*
+    @protected
+    @param {string} uriParam
+    @param {string} value
+  ###
+  fillFromUri: (uriParam, value) ->
+    @setValue value
+    @setOperator @parseOperator(uriParam)
+
+  ###*
+    @param {string} uriParam
+    @return {string}
+  ###
+  parseOperator: (uriParam) ->
+    if uriParam.search(wzk.ui.grid.Filter.SEPARATOR) > -1 then uriParam.split(wzk.ui.grid.Filter.SEPARATOR)[1] else ''
+
+  ###*
     @return {Element}
   ###
   getElement: ->
@@ -53,6 +69,14 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     goog.dom.forms.setValue @el, val
 
   ###*
+    @param {string} operator
+  ###
+  setOperator: (@operator) ->
+
+  reset: ->
+    @setValue ''
+
+  ###*
     @return {string}
   ###
   getName: ->
@@ -66,14 +90,14 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
   getOperator: ->
     unless @operator
       @setOperatorAndName()
-    @operator
+    String @operator
 
   ###*
     @protected
   ###
   setOperatorAndName: ->
     toks = @getFilter().split(wzk.ui.grid.Filter.SEPARATOR)
-    @operator = if toks.length > 1 then toks.pop() else ''
+    @setOperator if toks.length > 1 then toks.pop() else ''
     @name = toks.join wzk.ui.grid.Filter.SEPARATOR
 
   ###*
@@ -83,6 +107,26 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     unless @filter
       @filter = String goog.dom.dataset.get(@el, wzk.ui.grid.Filter.DATA.FILTER)
     @filter
+
+  ###*
+    @return {string}
+  ###
+  getParamName: ->
+    @getValueObj().getParamName()
+
+  ###*
+    @param {string} paramName
+    @return {string}
+  ###
+  paramToName: (paramName) ->
+    @getValueObj().paramToName(paramName)
+
+  ###*
+    @protected
+    @return {wzk.resource.FilterValue}
+  ###
+  getValueObj: =>
+    new wzk.resource.FilterValue(@getName(), @getOperator(), @getValue())
 
   ###*
     Applies a filter on a query object. Returns true if the filter has been changed,

@@ -17,6 +17,7 @@ goog.require 'wzk.ui.grid.StateHolder'
 goog.require 'wzk.ui.grid.Updater'
 goog.require 'wzk.net.XhrConfig'
 goog.require 'wzk.ui.grid.ExportLink'
+goog.require 'wzk.ui.grid.GridColumnsManager'
 
 ###*
   @constructor
@@ -71,11 +72,19 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 
-  grid = new ctor dom, repo, extractor.parseColumns(), dialog, query, paginator, flash
+  grid = new ctor dom, repo, extractor.parseColumns(), stateHolder, dialog, query, paginator, flash
+
+  watcher = new wzk.ui.grid.FilterWatcher grid, query, ss, dom
+  grid.setQuery watcher.watchOn(table)
+
   grid.decorate table
 
-  watcher = new wzk.ui.grid.FilterWatcher grid, query, dom
-  watcher.watchOn table
+  columnsManagerCls = parser.getAttr table, wzk.ui.grid.GridColumnsManager.DATA.GRID_DATA
+  if columnsManagerCls
+    columnsManagerEl = dom.cls columnsManagerCls
+    if columnsManagerEl
+      manager = new wzk.ui.grid.GridColumnsManager dom, watcher
+      manager.decorate columnsManagerEl
 
   stateHolder.handle paginator, watcher
   stateHolder.setBase paginator.getBase()

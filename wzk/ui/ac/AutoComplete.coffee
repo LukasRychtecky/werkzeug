@@ -75,7 +75,7 @@ class wzk.ui.ac.AutoComplete extends goog.ui.ac.AutoComplete
     @param {Array} selectedRows
     @return {boolean}
   ###
-  isSelected: (row, selectedRows) =>
+  isSelected: (row, selectedRows) ->
     selectedRows[row.toString()]?
 
   ###*

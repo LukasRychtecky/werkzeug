@@ -66,6 +66,19 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     @insertChildAt parent, child, 0
 
   ###*
+    Returns index of given element in document according to selector, returns -1 if selector does not match tested element.
+
+    @param {Element} testedEl
+    @param {string} selector
+    @return {number}
+  ###
+  getIndexOf: (testedEl, selector) ->
+    for el, i in @all selector
+      if el is testedEl
+        return i
+    -1
+
+  ###*
     Calls a given callback with a given element, forces to return an Element instance or null.
 
     @protected
