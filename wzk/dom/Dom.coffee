@@ -2,6 +2,7 @@ goog.provide 'wzk.dom.Dom'
 
 goog.require 'goog.dom.DomHelper'
 goog.require 'goog.style'
+goog.require 'goog.events'
 
 class wzk.dom.Dom extends goog.dom.DomHelper
 
@@ -227,3 +228,91 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###
   isIE: ->
     return goog.userAgent.IE
+
+  ###*
+    @protected
+    @param {string} tag
+    @param {string|Object} clss
+    @param {string|null} txt
+    @return {Element}
+  ###
+  uberEl_: (tag, clss, txt = null) ->
+    isStringTxt = typeof txt is 'string'
+    children = Array.prototype.slice.call(arguments, if isStringTxt then 3 else 2)
+    el = @el(tag, (if clss instanceof Object then @cx(clss) else clss), if isStringTxt then txt else '')
+    for node in children
+      if Array.isArray node
+        el.appendChild subNode for subNode in node
+      else
+        el.appendChild node
+    el
+
+  ###*
+    @param {...*} args
+    @return {Element}
+  ###
+  div: (args) ->
+    arr = @argsToArray arguments
+    arr.unshift('div')
+    @uberEl_.apply @, arr
+
+  ###*
+    @param {...*} args
+    @return {Element}
+  ###
+  span: (args) ->
+    arr = @argsToArray arguments
+    arr.unshift('span')
+    @uberEl_.apply @, arr
+
+  ###*
+    @param {...*} args
+    @return {Element}
+  ###
+  p: (args) ->
+    arr = @argsToArray arguments
+    arr.unshift('p')
+    @uberEl_.apply @, arr
+
+  ###*
+    @param {...*} args
+    @return {Element}
+  ###
+  ul: (args) ->
+    arr = @argsToArray arguments
+    arr.unshift('ul')
+    @uberEl_.apply @, arr
+
+  ###*
+    @param {...*} args
+    @return {Element}
+  ###
+  li: (args) ->
+    arr = @argsToArray arguments
+    arr.unshift('li')
+    @uberEl_.apply @, arr
+
+  ###*
+    @param {Element} el
+    @param {string} type
+    @param {Function} handler
+    @return {Element}
+  ###
+  listen: (el, type, handler) ->
+    goog.events.listen el, type, handler
+    el
+
+  ###*
+    @param {Arguments} args
+    @return {Array}
+  ###
+  argsToArray: (args) ->
+    Array.prototype.slice.call(args)
+
+  ###*
+    @param {Object} clssObj
+    @return {string}
+  ###
+  cx: (clssObj) ->
+    clssArr = (cls for cls, condition of clssObj when condition)
+    clssArr.join ' '

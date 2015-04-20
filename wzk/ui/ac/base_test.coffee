@@ -29,7 +29,7 @@ suite 'wzk.ui.ac', ->
         </select>
       </body>
       </html>
-      """, null, features)
+      """, undefined, features)
 
     dom = new wzk.dom.Dom doc
     select = dom.one 'select'
@@ -37,7 +37,7 @@ suite 'wzk.ui.ac', ->
   test 'An empty option should be ignored', ->
     buildDOM false, false, false
     wzk.ui.ac.buildSelectAutoCompleteNative select, dom
-    assert.isNull dom.one('.ac-buttons .goog-control').value
+    assert.equal '', dom.one('.ac-buttons .goog-control').value
 
   test 'Should decorate a native select', ->
     buildDOM false
