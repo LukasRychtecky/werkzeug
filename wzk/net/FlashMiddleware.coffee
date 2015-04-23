@@ -61,13 +61,13 @@ class wzk.net.FlashMiddleware
     [@createInfoFlash @msgs['offline'], 'info']
 
   ###*
-    @param {string} msg
+    @param {string} msgTxt
     @param {string=} cls
     @param {boolean=} closable
     @return {wzk.ui.FlashMessage}
   ###
-  createInfoFlash: (msg, cls = null, closable = true) ->
-    msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: msg, severity: 'info', fadeOut: true, closable: closable
+  createInfoFlash: (msgTxt, cls, closable = true) ->
+    msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: msgTxt, severity: 'info', fadeOut: true, closable: closable
     msg.addClass cls if cls?
     @flash.addChild msg
     msg
