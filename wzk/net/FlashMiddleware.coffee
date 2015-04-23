@@ -9,6 +9,7 @@ class wzk.net.FlashMiddleware
   @MSGS:
     'error': 'Internal error occured. Service is unavailable, sorry.'
     'loading': 'Loading...'
+    'offline': 'Offline...'
 
   ###*
     @param {wzk.ui.Flash} flash
@@ -54,10 +55,22 @@ class wzk.net.FlashMiddleware
       @flash.addError @msgs['error']
 
   loading: ->
-    msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: @msgs['loading'], severity: 'info', fadeOut: false, closable: false
-    msg.addClass 'loading'
+    [@createInfoFlash @msgs['loading'], 'loading', false]
+
+  offline: ->
+    [@createInfoFlash @msgs['offline'], 'info']
+
+  ###*
+    @param {string} msg
+    @param {string=} cls
+    @param {boolean=} closable
+    @return {wzk.ui.FlashMessage}
+  ###
+  createInfoFlash: (msg, cls = null, closable = true) ->
+    msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: msg, severity: 'info', fadeOut: true, closable: closable
+    msg.addClass cls if cls?
     @flash.addChild msg
-    [msg]
+    msg
 
   clearAll: ->
     @flash.clearAll()

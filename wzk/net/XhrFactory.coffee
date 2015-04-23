@@ -13,6 +13,14 @@ class wzk.net.XhrFactory
     BEFORE_UNLOAD: 'beforeunload'
 
   ###*
+    @enum {boolean|null}
+  ###
+  @NET_STATUS:
+    OFFLINE: false
+    ONLINE: true
+    UNKNOWN: null
+
+  ###*
     @param {wzk.net.FlashMiddleware} flash
     @param {wzk.net.AuthMiddleware} auth
     @param {wzk.net.SnippetMiddleware} snip
@@ -23,6 +31,8 @@ class wzk.net.XhrFactory
     @_running = 0
     @_flashLoading = null
     @xhrs = []
+    @navigator = @dom.getWindow()['navigator']
+    @netStatus = @isOnline()
 
     unless goog.userAgent.IE
       goog.events.listen @dom.getWindow(), wzk.net.XhrFactory.EventType.BEFORE_UNLOAD, @handleBeforeUnload
@@ -49,6 +59,11 @@ class wzk.net.XhrFactory
     xhr
 
   ###*
+    @param {boolean|null} netStatus
+  ###
+  setNetStatus: (@netStatus) ->
+
+  ###*
     @protected
     @param {goog.events.Event} e
   ###
@@ -60,7 +75,37 @@ class wzk.net.XhrFactory
       @flash.clearAll() if config.flash
       @applyJsonResponse response, config, xhr.getStatus()
     else
-      @flash.error(xhr.getStatus()) if e.target.getConfig().flash
+      @handleCriticalError xhr, e.target.getConfig().flash
+
+
+  ###*
+    @protected
+    @param {wzk.net.XhrIo} xhr
+    @param {wzk.net.FlashMiddleware} flash
+  ###
+  handleCriticalError: (xhr, flash) ->
+    return if not flash
+    isOnline = @isOnline()
+    if xhr.getStatus() is 0 and isOnline is false and @wasOnline()
+      @flash.offline()
+    else if xhr.getStatus() >= 500
+      @flash.error xhr.getStatus()
+    @setNetStatus isOnline
+
+  ###*
+    @return {boolean}
+  ###
+  wasOnline: ->
+    @netStatus isnt wzk.net.XhrFactory.NET_STATUS.OFFLINE
+
+  ###*
+    @return {boolean|null}
+  ###
+  isOnline: ->
+    status = wzk.net.XhrFactory.NET_STATUS.UNKNOWN
+    if @navigator? and @navigator['onLine']?
+      status = if @navigator['onLine'] then wzk.net.XhrFactory.NET_STATUS.ONLINE else wzk.net.XhrFactory.NET_STATUS.OFFLINE
+    status
 
   ###*
     @protected
