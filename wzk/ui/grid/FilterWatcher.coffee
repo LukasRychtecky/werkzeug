@@ -1,5 +1,6 @@
 goog.require 'wzk.ui.grid.Filter'
 goog.require 'wzk.ui.grid.FilterExtended'
+goog.require 'wzk.resource.FilterValue'
 goog.require 'wzk.dom.classes'
 goog.require 'goog.object'
 
@@ -59,7 +60,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###
   fillFiltersFromDefaults: ->
     for key, value of @defaultFilters
-      @fields[key].setValue value if @fields[key]?
+      if @fields[key]? then @fields[key].setValue value else @query.filter new wzk.resource.FilterValue(key, '', value)
 
   ###*
     @protected
