@@ -98,7 +98,7 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
     mode.watchOn grid
 
   if goog.dom.dataset.has table, wzk.ui.grid.Updater.DATA.URL
-    url = String(goog.dom.dataset.get table, wzk.ui.grid.Updater.DATA.URL)
+    url = String goog.dom.dataset.get table, wzk.ui.grid.Updater.DATA.URL
     interval = wzk.num.parseDec String(goog.dom.dataset.get(table, wzk.ui.grid.Updater.DATA.INTERVAL)), wzk.ui.grid.Updater.REFRESH_INTERVAL
     xhrConfig = new wzk.net.XhrConfig loading: false
     updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac, '', xhrConfig), url, interval

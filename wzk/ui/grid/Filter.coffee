@@ -36,19 +36,12 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
 
   ###*
     @protected
-    @param {string} uriParam
+    @param {string} operator
     @param {string} value
   ###
-  fillFromUri: (uriParam, value) ->
+  fillFromUri: (operator, value) ->
     @setValue value
-    @setOperator @parseOperator(uriParam)
-
-  ###*
-    @param {string} uriParam
-    @return {string}
-  ###
-  parseOperator: (uriParam) ->
-    if uriParam.search(wzk.ui.grid.Filter.SEPARATOR) > -1 then uriParam.split(wzk.ui.grid.Filter.SEPARATOR)[1] else ''
+    @setOperator operator
 
   ###*
     @return {Element}

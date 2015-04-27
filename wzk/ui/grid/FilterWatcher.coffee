@@ -33,7 +33,6 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     extFiltersEnabled = goog.dom.classes.has table, wzk.ui.grid.FilterExtended.CLS.ENABLED_FILTERS
     for field in @dom.all 'thead *[data-filter]', table
       filter = @buildFilter field, extFiltersEnabled
-
       @fields[filter.getName()] = filter
       @watchField filter
 
@@ -42,7 +41,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
 
   updateInitialState: ->
     @resetFilters()
-    @ssKeys = @stripOperators @ss.getAllKeys()
+    @ssKeys = @adjustURIFilters @ss.getAllKeys()
     @defaultFilters = @query.getDefaultFilters()
     @fillFiltersFromDefaults()
     @fillFiltersFromUri()
@@ -53,7 +52,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###
   fillFiltersFromUri: ->
     for key, uriParam of @ssKeys
-      @fields[key].fillFromUri uriParam['nameWithOperator'], uriParam['value'] if @fields[key]?
+      @fields[key].fillFromUri uriParam['operator'], uriParam['value'] if @fields[key]?
 
   ###*
     @protected
@@ -78,14 +77,42 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     @param {Object} namesWithOperators
     @return {Object}
   ###
-  stripOperators: (namesWithOperators) ->
-    withoutOperators = {}
+  adjustURIFilters: (namesWithOperators) ->
+    adjustedFilters = {}
     for nameWithOperator in namesWithOperators
-      withoutOperators[nameWithOperator.split(wzk.ui.grid.Filter.SEPARATOR)[0]] =
+      nameWithoutOperator = @getBareFilterName nameWithOperator
+      adjustedFilters[nameWithoutOperator] =
+        'operator': @getOperatorFromName nameWithOperator, nameWithoutOperator
         'value': @ss.get nameWithOperator
-        'nameWithOperator': nameWithOperator
 
-    withoutOperators
+    adjustedFilters
+
+  ###*
+    @protected
+    @param {string} nameWithOperator
+    @return {string}
+  ###
+  getBareFilterName: (nameWithOperator) ->
+    splittedName = nameWithOperator.split wzk.ui.grid.Filter.SEPARATOR
+    if splittedName[splittedName.length - 2]? then @joinFilterName splittedName else splittedName[0]
+
+  ###*
+    @protected
+    @param {Array} splittedFilterName
+    @return {string}
+  ###
+  joinFilterName: (splittedFilterName) ->
+    nameParts = (splittedFilterName[i] for i in [0..splittedFilterName.length - 2])
+    nameParts.join wzk.ui.grid.Filter.SEPARATOR
+
+  ###*
+    @protected
+    @param {string} nameWithOperator
+    @param {string} nameWithoutOperator
+    @return {string}
+  ###
+  getOperatorFromName: (nameWithOperator, nameWithoutOperator) ->
+    nameWithOperator.replace(nameWithoutOperator, '').replace wzk.ui.grid.Filter.SEPARATOR, ''
 
   ###*
     @protected
