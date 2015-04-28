@@ -17,7 +17,7 @@ class wzk.ui.inlineform.DynamicForm
     @constructor
     @param {goog.dom.DomHelper} dom
   ###
-  constructor: (@dom) ->
+  constructor: (@dom, @reg) ->
     @formNum = 0
     @MAX_FORMS = 1000
     @config = null
@@ -41,7 +41,7 @@ class wzk.ui.inlineform.DynamicForm
 
     rows = @findRows fieldset
     row = rows[rows.length - 1] # prototype row, intended to be cloned
-    @builder = new wzk.ui.inlineform.RowBuilder(row, expert, @dom)
+    @builder = new wzk.ui.inlineform.RowBuilder(row, expert, @reg, @dom)
 
     if rows.length > 1
       for rowIndex in [0..rows.length - 2]
