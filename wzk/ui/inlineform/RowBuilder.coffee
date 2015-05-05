@@ -35,9 +35,10 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###*
     @param {Element} row
     @param {wzk.ui.inlineform.FieldExpert} expert
+    @param {wzk.app.Register} reg
     @param {goog.dom.DomHelper} dom
   ###
-  constructor: (@row, @expert, @dom) ->
+  constructor: (@row, @expert, @reg, @dom) ->
     super()
     @parent = @dom.getParentElement(@row)
     @clone = @prepareClone()
@@ -68,6 +69,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   decorateRow: (row) ->
     removeIcon = @rowDecorator.addRemoveIcon(row)
     removeIcon.listen goog.ui.Component.EventType.ACTION, @handleIconAction
+    @reg.process row
 
   ###*
     @protected

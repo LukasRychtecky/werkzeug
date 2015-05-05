@@ -127,8 +127,8 @@ class wzk.app.App
       el = (`/** @type {HTMLSelectElement} */`) el
       wzk.ui.ac.buildExtSelectboxFromSelectNative el, dom
 
-    @on 'fieldset.inline-js', (el, dom) ->
-      wzk.ui.inlineform.buildDynamicButton el, dom
+    @on 'fieldset.inline-js', (el, dom, xhrFac, opts) ->
+      wzk.ui.inlineform.buildDynamicButton el, dom, opts.app.getRegister()
 
     @on '*[data-title]', (el, dom) ->
       wzk.ui.tooltip.tooltipy el, dom
