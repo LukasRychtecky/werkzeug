@@ -1,6 +1,6 @@
 {
     "name": "werkzeug",
-    "version": "0.11.3",
+    "version": "0.11.4",
     "dependencies": {
         "closure-compiler": "http://dl.google.com/closure-compiler/compiler-20140303.zip",
         "closure-library": "https://github.com/google/closure-library.git#f26bb3122769eb1b19c6fb5adbd9448e36996627"
