@@ -1,6 +1,8 @@
 goog.provide 'wzk.events.lst'
 
 goog.require 'goog.events'
+goog.require 'goog.async.Delay'
+goog.require 'wzk.dom.classes'
 
 ###*
   Listens on given field and dispatch the listener when the field is changed
@@ -11,12 +13,28 @@ goog.require 'goog.events'
   @param {number=} timeout
 ###
 wzk.events.lst.onChangeOrKeyUp = (field, listener, timeout = 500) ->
-  ignoreChange = false
-
-  goog.events.listen field, goog.events.EventType.CHANGE, (e) ->
-    listener(e) unless ignoreChange
+  if wzk.dom.classes.hasAny(field, ['date', 'datetime']) or field.type in ['date', 'datetime']
     ignoreChange = false
 
-  goog.events.listen field, goog.events.EventType.KEYUP, (e) ->
-    listener e
-    ignoreChange = true
+    goog.events.listen field, goog.events.EventType.CHANGE, (e) ->
+      listener(e) unless ignoreChange
+      ignoreChange = false
+
+    goog.events.listen field, goog.events.EventType.KEYUP, (e) ->
+      listener e
+      ignoreChange = true
+
+  else
+
+    delay = null
+    change = goog.events.listen field, goog.events.EventType.CHANGE, (e) ->
+      delay.stop() if delay
+      listener e
+
+    goog.events.listen field, goog.events.EventType.KEYUP, (e) ->
+      action = ->
+        listener e
+        goog.events.unlistenByKey change
+      delay.stop() if delay
+      delay = new goog.async.Delay action, timeout
+      delay.start()
