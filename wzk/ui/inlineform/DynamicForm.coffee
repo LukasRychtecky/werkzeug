@@ -5,6 +5,7 @@ goog.require 'goog.events'
 goog.require 'goog.events.EventType'
 goog.require 'wzk.ui.inlineform.ConfigHandler'
 
+
 class wzk.ui.inlineform.DynamicForm
 
   ###*
@@ -16,6 +17,7 @@ class wzk.ui.inlineform.DynamicForm
   ###*
     @constructor
     @param {goog.dom.DomHelper} dom
+    @param {wzk.app.Register} reg
   ###
   constructor: (@dom, @reg) ->
     @formNum = 0

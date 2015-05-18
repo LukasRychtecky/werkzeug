@@ -8,6 +8,7 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
   dom = null
   parent = null
   checkbox = null
+  register = null
 
   fireCheckboxClick = ->
     e =
@@ -43,7 +44,7 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
     parent = doc.querySelector 'table tbody'
     checkbox = doc.querySelector 'table input[type=checkbox]'
     expert = new wzk.ui.inlineform.FieldExpert(1)
-    builder = new wzk.ui.inlineform.RowBuilder(row, expert, dom)
+    builder = new wzk.ui.inlineform.RowBuilder(row, expert, {process: ->}, dom)
 
   test 'Should add a row', ->
     builder.addRow()
