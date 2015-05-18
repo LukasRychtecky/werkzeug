@@ -47,7 +47,7 @@ suite 'wzk.ui.inlineform.DynamicForm', ->
     parent = doc.querySelector 'table tbody'
     fieldset = doc.querySelector 'fieldset'
 
-    form = new wzk.ui.inlineform.DynamicForm dom
+    form = new wzk.ui.inlineform.DynamicForm dom, {process: ->}
 
   test 'Should add a row', ->
     form.dynamic fieldset
