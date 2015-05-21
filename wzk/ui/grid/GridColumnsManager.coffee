@@ -49,8 +49,6 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @filteringTextEl = null
     @lStorage = new wzk.stor.LocalStorage @dom.getWindow()['localStorage']
 
-    @createStorage()
-
   ###*
     @param {Element} el
   ###
@@ -59,6 +57,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @headers = @dom.all 'thead > tr > th', @table
     @verboseCols = @getVerboseColNames()
     @cols = @getOrCreateState()
+
     @filterStates = @getInitialFilterStates()
     @filteringTextEl = @dom.cls wzk.ui.grid.GridColumnsManager.CLS.COLUMNS_FILTERING_TEXT
     if @filteringTextEl
@@ -113,13 +112,15 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
 
   ###*
     @protected
+    @return {Object}
   ###
   getOrCreateState: =>
     cols = (`/** @type Object */`) @lStorage.get @sKey
-    if @cols.length is 0
+    if not cols
+      cols = {}
       for col in @allCols
         cols[col] = true
-      @saveState cols
+      @lStorage.set @sKey, cols
 
     cols
 
@@ -131,12 +132,6 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     for filterName, filter of @filterWatcher.getFields()
       states[filter.getName()] = filter.getValue() isnt ''
     states
-
-  ###*
-    @protected
-  ###
-  createStorage: =>
-    @lStorage.set @sKey, {} if @lStorage.get(@sKey) is null
 
   ###*
     @protected
