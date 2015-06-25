@@ -6,6 +6,7 @@ goog.require 'goog.dom.forms'
 goog.require 'goog.style'
 goog.require 'wzk.num'
 
+
 class wzk.ui.grid.Paginator extends wzk.ui.Component
 
   ###*
@@ -13,6 +14,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###
   @DATA:
     BASE: 'base'
+    FORCE_DISPLAY: 'forceDisplay'
 
   ###*
     @enum {string}
@@ -51,6 +53,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @switcher = null
     @bases = null
     @defBases = [10, 25, 50, 100, 500, 1000]
+    @forceDisplay = false
 
   ###*
     @return {number}
@@ -139,6 +142,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
       @dom.replaceNode newClone, oldClone
       newClones.push newClone
     @clones = newClones
+    @show true
 
   ###*
     @protected
@@ -161,12 +165,14 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @override
   ###
   decorateInternal: (el) ->
+    @forceDisplay = goog.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.FORCE_DISPLAY) is 'true'
     unless @bases
       switcherEl = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.BASE_SWITCHER
       @parseBases switcherEl
 
     @renderer.decorate @, el
     @setElementInternal el
+    @showInternal false
 
   ###*
     @protected
@@ -252,8 +258,24 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @listeners = []
 
   ###*
+    @protected
+    @return {boolean}
+  ###
+  canHide: ->
+    @pageCount < 2 and not @forceDisplay
+
+  ###*
+    @param {boolean} visible
+    @param {boolean=} force default is false
+  ###
+  show: (visible, force = false) ->
+    return if not force and @canHide()
+    @showInternal visible
+
+  ###*
+    @protected
     @param {boolean} visible
   ###
-  show: (visible) ->
+  showInternal: (visible) ->
     visibility = if visible then 'visible' else 'hidden'
-    goog.style.setStyle el, 'visibility', visibility for el in [@getElement()].concat @clones
+    goog.style.setStyle(el, 'visibility', visibility) for el in [@getElement()].concat @clones
