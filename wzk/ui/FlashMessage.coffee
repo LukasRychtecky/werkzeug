@@ -9,8 +9,6 @@ goog.require 'goog.dom.classes'
 
 class wzk.ui.FlashMessage extends wzk.ui.Component
 
-  @DISAPPEAR_TIME = 10000
-
   ###*
     @constructor
     @extends {wzk.ui.Component}
@@ -20,13 +18,15 @@ class wzk.ui.FlashMessage extends wzk.ui.Component
       fadeOut: {boolean} default true
       closable: {boolean} default true if true renders a close icon
       renderer: {@link wzk.ui.FlashMessageRenderer}
+      timeout: {number} optional default is 10000
   ###
   constructor: (params) ->
     params.renderer ?= wzk.ui.FlashMessageRenderer.getInstance()
     super params
-    {@msg, @severity, @fadeOut, @closable} = params
+    {@msg, @severity, @fadeOut, @closable, @timeout} = params
     @fadeout ?= true
     @closable ?= true
+    @timeout ?= 10000
 
   ###*
     @override
@@ -93,4 +93,4 @@ class wzk.ui.FlashMessage extends wzk.ui.Component
         @destroy()
       anim.play()
 
-    setTimeout trigger, wzk.ui.FlashMessage.DISAPPEAR_TIME
+    setTimeout trigger, @timeout
