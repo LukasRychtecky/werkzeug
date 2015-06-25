@@ -31,9 +31,10 @@ class wzk.ui.Flash extends wzk.ui.Component
     @param {string=} severity
     @param {boolean=} fadeOut if fadeOut is undefined and severity is error then fadeOut is set to false otherwise to true
     @param {boolean=} closable if closable is undefined and severity is error then closable is set to false otherwise to true
+    @param {number=} timeout default is 10000
     @return {Array.<wzk.ui.FlashMessage>}
   ###
-  addMessage: (text, severity = 'info', fadeOut = undefined, closable = true) ->
+  addMessage: (text, severity = 'info', fadeOut = undefined, closable = true, timeout = 10000) ->
     notError = severity isnt 'error'
     fadeOut = notError if fadeOut is undefined
 
@@ -41,7 +42,7 @@ class wzk.ui.Flash extends wzk.ui.Component
     flashes = []
 
     for msg in msgs
-      flash = @buildFlash msg, severity, fadeOut, closable
+      flash = @buildFlash msg, severity, fadeOut, closable, timeout
       @shownMessages.push flash
       flashes.push flash
       @addChild flash
@@ -53,9 +54,10 @@ class wzk.ui.Flash extends wzk.ui.Component
     @param {string} severity
     @param {boolean} fadeOut
     @param {boolean} closable
+    @param {number} timeout
   ###
-  buildFlash: (msg, severity, fadeOut, closable) ->
-    new wzk.ui.FlashMessage dom: @dom, msg: msg, severity: severity, fadeOut: fadeOut, closable: closable
+  buildFlash: (msg, severity, fadeOut, closable, timeout) ->
+    new wzk.ui.FlashMessage dom: @dom, msg: msg, severity: severity, fadeOut: fadeOut, closable: closable, timeout: timeout
 
   ###*
     @override
