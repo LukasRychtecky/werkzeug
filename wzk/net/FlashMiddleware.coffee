@@ -25,16 +25,33 @@ class wzk.net.FlashMiddleware
   apply: (res, status) ->
     return if @hasDefaultMsgFor status
 
-    if res['errors']?
-      if goog.isArray(res['errors']) or goog.isString(res['errors'])
-        @flash.addError res['errors']
-    else if res['error']?
-      @flash.addError res['error']
-
+    @displayFlatErrors res
     msgs = res['messages'] ? res['message']
     if msgs?
       for type, msg of msgs
-        @flash.addMessage msg, type
+        @flash.addMessage(msg, type) if goog.isString(msg)
+
+      @displayNonFieldErrors msgs
+
+  ###*
+    @protected
+    @param {Object} msgs
+  ###
+  displayNonFieldErrors: (msgs) ->
+    errors = msgs['errors']?['non-field-errors']
+    if errors
+      @flash.addError(err) for err in errors
+
+  ###*
+    @protected
+    @param {Object} response
+  ###
+  displayFlatErrors: (response) ->
+    if response['errors']?
+      if goog.isArray(response['errors']) or goog.isString(response['errors'])
+        @flash.addError response['errors']
+    else if response['error']?
+      @flash.addError response['error']
 
   ###*
     @protected
