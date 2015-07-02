@@ -76,3 +76,16 @@ wzk.ui.form.buildRelatedObjectLookup = (el, dom, xhrFac, register) ->
   client = new wzk.resource.Client xhrFac
   lookup = new wzk.ui.form.RelatedObjectLookup dom, client, register
   lookup.decorate el
+
+###*
+  @param {Element} el an element that triggers a modal form
+  @param {wzk.dom.Dom} dom
+  @param {wzk.nex.XhrFactory} xhrFac
+  @param {wzk.app.Register} register
+###
+wzk.ui.form.buildModalForm = (el, dom, xhrFac, register) ->
+  url = String(goog.dom.dataset.get(el, 'url'))
+  form = String(goog.dom.dataset.get(el, 'form'))
+  form = new wzk.ui.form.ModalForm(dom, new wzk.resource.Client(xhrFac), url, form, register)
+  goog.events.listen el, goog.events.EventType.CLICK, ->
+    form.open()
