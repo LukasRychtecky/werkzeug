@@ -14,7 +14,7 @@ goog.require 'wzk.ui.dialog.SnippetModal'
 ###
 wzk.ui.dialog.buildSnippetModal = (el, dom, xhrFac, register) ->
   url = String(goog.dom.dataset.get(el, 'url'))
-  snippet = String(goog.dom.dataset.get(el, 'snippet'))
+  snippet = String(goog.dom.dataset.get(el, 'snippetName'))
   modal = new wzk.ui.dialog.SnippetModal dom, new wzk.resource.Client(xhrFac), url, snippet, register
   goog.events.listen el, goog.events.EventType.CLICK, (e) ->
     e.preventDefault()
