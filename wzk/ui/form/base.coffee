@@ -85,7 +85,7 @@ wzk.ui.form.buildRelatedObjectLookup = (el, dom, xhrFac, register) ->
 ###
 wzk.ui.form.buildModalForm = (el, dom, xhrFac, register) ->
   url = String(goog.dom.dataset.get(el, 'url'))
-  snippet = String(goog.dom.dataset.get(el, 'snippet'))
+  snippet = String(goog.dom.dataset.get(el, 'snippetName'))
   form = new wzk.ui.form.ModalForm(dom, new wzk.resource.Client(xhrFac), url, snippet, register)
   goog.events.listen el, goog.events.EventType.CLICK, (e) ->
     e.preventDefault()
