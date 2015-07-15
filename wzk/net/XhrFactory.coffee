@@ -33,6 +33,7 @@ class wzk.net.XhrFactory
     @xhrs = []
     @navigator = @dom.getWindow()['navigator']
     @netStatus = @isOnline()
+    @responseMiddlewares = []
 
     unless goog.userAgent.IE
       goog.events.listen @dom.getWindow(), wzk.net.XhrFactory.EventType.BEFORE_UNLOAD, @handleBeforeUnload
@@ -68,6 +69,7 @@ class wzk.net.XhrFactory
     @param {goog.events.Event} e
   ###
   handleError: (e) =>
+    @invokeResponseMiddlewares e
     xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
     if @isJsonResponse xhr
       response = (`/** @type {Object} */`) xhr.getResponseJson()
@@ -112,6 +114,7 @@ class wzk.net.XhrFactory
     @param {goog.events.Event} e
   ###
   handleComplete: (e) =>
+    @invokeResponseMiddlewares e
     xhr = (`/** @type {wzk.net.XhrIo} */`) e.target
     if xhr.getStatus() isnt 204
       config = e.target.getConfig()
@@ -178,3 +181,16 @@ class wzk.net.XhrFactory
   ###
   getLocation: ->
     @dom.getWindow().location
+
+  ###*
+    @param {wzk.net.ResponseMiddleware} midware
+  ###
+  addResponseMiddleware: (midware) ->
+    @responseMiddlewares.push midware
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  invokeResponseMiddlewares: (e) ->
+    (mid.apply e for mid in @responseMiddlewares)

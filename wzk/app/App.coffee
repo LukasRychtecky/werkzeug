@@ -13,6 +13,7 @@ goog.require 'goog.History'
 goog.require 'wzk.stor.StateStorage'
 goog.require 'wzk.net.AuthMiddleware'
 goog.require 'wzk.net.SnippetMiddleware'
+goog.require 'wzk.net.ReloadMiddleware'
 goog.require 'wzk.dom.Dom'
 goog.require 'wzk.net.FlashMiddleware'
 goog.require 'wzk.debug.ErrorReporter'
@@ -42,8 +43,9 @@ class wzk.app.App
     @param {Window} win
     @param {wzk.ui.Flash} flash
     @param {Object=} msgs
+    @param {Object=} settings
   ###
-  run: (@win, flash, msgs = {}) ->
+  run: (@win, flash, msgs = {}, settings = {}) ->
     log = if @win['console']? then goog.bind(@win['console']['error'], @win['console']) else ->
     @reporter.setLog log
 
@@ -60,6 +62,8 @@ class wzk.app.App
     auth = new wzk.net.AuthMiddleware @win.document
     flashmid = new wzk.net.FlashMiddleware flash, msgs
     @xhrFac = new wzk.net.XhrFactory flashmid, auth, snip, dom
+    if settings.reloadOn403? and settings.reloadOn403
+      @xhrFac.addResponseMiddleware new wzk.net.ReloadMiddleware(@win)
 
     history = new goog.History()
     history.setEnabled true
