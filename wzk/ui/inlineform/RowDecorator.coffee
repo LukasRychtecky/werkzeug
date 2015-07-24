@@ -18,12 +18,14 @@ class wzk.ui.inlineform.RowDecorator extends wzk.ui.Component
     undefined
 
   ###*
-      Is also called from RowBuilder on adding a new row
+      Creates {@link wzk.ui.CloseIcon} from row. Returns a created row,
+      if row has no remove checkbox returns null.
       @param {Element} row
-      @return {wzk.ui.CloseIcon}
+      @return {wzk.ui.CloseIcon|null}
   ###
   addRemoveIcon: (row) ->
     checkbox = @getRemovingCheckbox row
+    return null unless checkbox?
     goog.style.setElementShown checkbox, false
 
     removeIcon = new wzk.ui.CloseIcon dom: @dom, removed: row
