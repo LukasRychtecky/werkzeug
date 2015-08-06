@@ -20,6 +20,15 @@ class wzk.ui.form.PreventerMultiSubmission
   @SPINNER_CLS = 'btn-spinner'
 
   ###*
+    @param {Element} form
+  ###
+  @enableButtonsInForm: (form) ->
+    btn.removeAttribute 'disabled' for btn in form.querySelectorAll(wzk.ui.form.PreventerMultiSubmission.BUTTONS)
+    spinner = form.querySelector(wzk.ui.form.PreventerMultiSubmission.BUTTONS + ' .' +
+        wzk.ui.form.PreventerMultiSubmission.SPINNER_CLS)
+    goog.dom.removeNode(spinner) if spinner?
+
+  ###*
     @param {wzk.dom.Dom} dom
   ###
   constructor: (@dom) ->
