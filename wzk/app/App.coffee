@@ -2,6 +2,7 @@ goog.provide 'wzk.app.App'
 
 goog.require 'wzk.app.Register'
 goog.require 'wzk.net.XhrFactory'
+goog.require 'wzk.ui'
 goog.require 'wzk.ui.Flash'
 goog.require 'wzk.ui.grid'
 goog.require 'wzk.ui.form'
@@ -45,8 +46,12 @@ class wzk.app.App
     @param {wzk.ui.Flash} flash
     @param {Object=} msgs
     @param {Object=} settings
+    @param {Object=} dateFormat
+      symbols: e.g. goog.i18n.DateTimeSymbols_cs
+      patterns: e.g. goog.i18n.DateTimePatterns_cs
+      format: e.g. "dd'.'MM'.'yyyy"
   ###
-  run: (@win, flash, msgs = {}, settings = {}) ->
+  run: (@win, flash, msgs = {}, settings = {}, @dateFormat = null) ->
     log = if @win['console']? then goog.bind(@win['console']['error'], @win['console']) else ->
     @reporter.setLog log
 
@@ -56,6 +61,15 @@ class wzk.app.App
       app: @
       frag: @frag
       flash: flash
+
+    unless @dateFormat?
+      @dateFormat =
+        symbols: goog.i18n.DateTimeSymbols_cs
+        patterns: goog.i18n.DateTimePatterns_cs
+        format: "dd'.'MM'.'yyyy"
+
+    goog.i18n.DateTimeSymbols = @dateFormat.symbols
+    goog.i18n.DateTimePatterns = @dateFormat.patterns
 
     dom = new wzk.dom.Dom @doc
     snip = new wzk.net.SnippetMiddleware @reg, dom, @opts
@@ -149,6 +163,9 @@ class wzk.app.App
 
     @on '.dropdown', (el, dom) ->
       wzk.ui.popup.dropdown(el, dom)
+
+    @on 'input[type=datetime], input.datetime, input.date', (el, dom, _, opts) ->
+      wzk.ui.datepicker(el, dom, opts.app.dateFormat.format)
 
   ###*
     @param {string} k
