@@ -8,6 +8,7 @@ goog.require 'wzk.ui.form'
 goog.require 'wzk.ui.inlineform'
 goog.require 'wzk.ui.ac'
 goog.require 'wzk.ui.tooltip'
+goog.require 'wzk.ui.popup'
 goog.require 'wzk.uri.Frag'
 goog.require 'goog.History'
 goog.require 'wzk.stor.StateStorage'
@@ -145,6 +146,9 @@ class wzk.app.App
 
     @on '.related-button', (el, dom, xhrFac, opts) ->
       wzk.ui.form.buildRelatedObjectLookup el, dom, xhrFac, opts.app.getRegister()
+
+    @on '.dropdown', (el, dom) ->
+      wzk.ui.popup.dropdown(el, dom)
 
   ###*
     @param {string} k
