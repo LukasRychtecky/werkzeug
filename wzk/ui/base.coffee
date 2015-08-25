@@ -5,6 +5,7 @@ goog.require 'wzk.ui.Flash'
 goog.require 'goog.dom.classes'
 goog.require 'goog.dom.dataset'
 goog.require 'wzk.net.XhrConfig'
+goog.require 'wzk.ui.I18NInputDatePicker'
 
 ###*
   @param {Document} doc
@@ -34,3 +35,11 @@ wzk.ui.navbarToggle = (el, dom) ->
     target = goog.dom.dataset.get el, 'target'
     menu = dom.cls String target
     goog.dom.classes.toggle menu, 'in'
+
+###*
+  @param {Element} el
+  @param {wzk.dom.Dom} dom
+  @param {string} format
+###
+wzk.ui.datepicker = (el, dom, format) ->
+  new wzk.ui.I18NInputDatePicker(dom, format).decorate(el)
