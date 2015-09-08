@@ -35,7 +35,7 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###*
     Returns true if a given element is Node, otherwise return false
 
-    @param {(Element|Node)=} el
+    @param {(Element|Node|Object)=} el
     @return {boolean}
   ###
   isNode: (el) ->
@@ -242,10 +242,19 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     el = @el(tag, (if clss instanceof Object then @cx(clss) else clss), if isStringTxt then txt else '')
     for node in children
       if Array.isArray node
-        el.appendChild subNode for subNode in node
+        el.appendChild @toElement(subNode) for subNode in node
       else
-        el.appendChild node
+        el.appendChild @toElement(node)
     el
+
+  ###*
+    @protected
+    @param {(Element|Node|Object)=} nodeLike
+    @return {Element|null}
+  ###
+  toElement: (nodeLike) ->
+    node = if @isNode nodeLike then nodeLike else nodeLike.toElement()
+    return (`/** @type {Element} */`) node
 
   ###*
     @param {...*} args
