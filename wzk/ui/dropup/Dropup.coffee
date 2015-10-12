@@ -7,18 +7,30 @@ class wzk.ui.dropup.Dropup
   ###
   @CSS:
     BUTTON_TAG: 'li'
+
+  ###
+    @enum {string}
+  ###
+  @CLS:
     BUTTON_CLASS: 'dropup-button'
-    TARGET_ATTRIBUTE: 'target'
     CARET: 'caret-marker' # do not set to 'caret', as it is would add another arrow
     ARROW_UP: 'fa-angle-up'
     ARROW_LEFT: 'fa-angle-left'
     COLLAPSE: 'collapse'
+    OPENED: 'opened'
+    CLOSED: 'closed'
 
   ###
     @enum {number}
   ###
   @ANIMATION:
     DEFAULT_DURATION: 500
+
+  ###
+    @enum {string}
+  ###
+  @DATA:
+    TARGET: 'target'
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -31,30 +43,30 @@ class wzk.ui.dropup.Dropup
   ###
   decorate: (@dropupButton) ->
     # arrow span, allowing change of icon according to state
-    @caretElement = @dropupButton.querySelector ".#{wzk.ui.dropup.Dropup.CSS.CARET}"
+    @caretElement = @dom.cls(wzk.ui.dropup.Dropup.CLS.CARET, @dropupButton)
 
     # id of tag to dropup
-    dropupSelector = goog.dom.dataset.get @dropupButton, wzk.ui.dropup.Dropup.CSS.TARGET_ATTRIBUTE
+    dropupSelector = goog.dom.dataset.get(@dropupButton, wzk.ui.dropup.Dropup.DATA.TARGET)
     unless dropupSelector?
-      throw new Error "Dropup button element has no '#{wzk.ui.dropup.Dropup.CSS.TARGET_ATTRIBUTE}' attribute!"
+      throw new Error "Dropup button element has no '#{wzk.ui.dropup.Dropup.DATA.TARGET}' attribute!"
 
     # find element with id or class
     @dropupElement = @dom.one "##{dropupSelector}, .#{dropupSelector}", @dom.getDocument()
     unless @dropupElement?
-      console.warn "Dropup element with specified id or class  '#{dropupSelector}', does not exist!"
+      console.warn("Dropup element with specified id or class  '#{dropupSelector}', does not exist!")
       return
 
     # hide dropupElement right after registering
-    goog.style.setElementShown @dropupElement, false
+    goog.style.setElementShown(@dropupElement, false)
 
     # set overflow property
-    @dropupElement.style.overflow = 'hidden'
+    goog.style.setStyle(@dropupElement, 'overflow', 'hidden')
 
     # when animation is running, lock is set to true
     @animationLock = false
 
     # register handler for button
-    goog.events.listen @dropupButton, goog.events.EventType.CLICK, @toggle
+    goog.events.listen(@dropupButton, goog.events.EventType.CLICK, @toggle)
 
   ###*
     @protected
@@ -62,7 +74,7 @@ class wzk.ui.dropup.Dropup
   ###
   toggle: (event) =>
     event.preventDefault()
-    if (goog.style.isElementShown @dropupElement) and (not @animationLock)
+    if goog.style.isElementShown(@dropupElement) and not @animationLock
       @close()
     else
       @open()
@@ -72,11 +84,16 @@ class wzk.ui.dropup.Dropup
   ###
   open: ->
     @height ?= @getHeight()
-    goog.style.setElementShown @dropupElement, true
+    goog.style.setElementShown(@dropupElement, true)
     animation = @getAnimation(0, @height)
+    CLS = wzk.ui.dropup.Dropup.CLS
+
+    animation.listen goog.fx.Animation.EventType.BEGIN, (event) =>
+      for el in @getAllElements()
+        goog.dom.classes.addRemove(el, CLS.CLOSED, CLS.OPENED)
 
     animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
-      goog.dom.classes.remove el, wzk.ui.dropup.Dropup.CSS.COLLAPSE for el in [@dropupElement, @dropupButton]
+      goog.dom.classes.remove(@dropupElement, CLS.COLLAPSE)
       @swapClasses()
 
     animation.play()
@@ -86,25 +103,36 @@ class wzk.ui.dropup.Dropup
   ###
   close: ->
     animation = @getAnimation(@height, 0)
+    CLS = wzk.ui.dropup.Dropup.CLS
 
     animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
-      goog.style.setElementShown @dropupElement, false
-      goog.dom.classes.add el, wzk.ui.dropup.Dropup.CSS.COLLAPSE for el in [@dropupElement, @dropupButton]
+      for el in @getAllElements()
+        goog.dom.classes.addRemove(el, CLS.OPENED, CLS.CLOSED)
+
+    animation.listen goog.fx.Animation.EventType.FINISH, (event) =>
+      goog.style.setElementShown(@dropupElement, false)
+      goog.dom.classes.add(@dropupElement, CLS.COLLAPSE)
       @swapClasses()
 
     animation.play()
 
   ###*
+    @return {Array.<Element>}
+  ###
+  getAllElements: =>
+    [@dropupElement, @dropupButton]
+
+  ###*
     @protected
   ###
   swapClasses: ->
-    C = wzk.ui.dropup.Dropup.CSS
+    C = wzk.ui.dropup.Dropup.CLS
 
     if @caretElement?
       if goog.dom.classes.has @caretElement, C.ARROW_LEFT
-        goog.dom.classes.addRemove @caretElement, C.ARROW_LEFT, C.ARROW_UP
+        goog.dom.classes.addRemove(@caretElement, C.ARROW_LEFT, C.ARROW_UP)
       else
-        goog.dom.classes.addRemove @caretElement, C.ARROW_UP, C.ARROW_LEFT
+        goog.dom.classes.addRemove(@caretElement, C.ARROW_UP, C.ARROW_LEFT)
 
   ###*
     Gets animation object and set's starting height and ending height
@@ -132,6 +160,7 @@ class wzk.ui.dropup.Dropup
     animation
 
   ###*
+    @protected
     @return {number} actual computed height of element
   ###
   getHeight: ->
