@@ -1,6 +1,8 @@
 goog.provide 'wzk.events.lst'
 
 goog.require 'goog.events'
+goog.require 'goog.events.EventType'
+goog.require 'goog.events.KeyCodes'
 goog.require 'goog.async.Delay'
 goog.require 'wzk.dom.classes'
 
@@ -38,3 +40,16 @@ wzk.events.lst.onChangeOrKeyUp = (field, listener, timeout = 500) ->
       delay.stop() if delay
       delay = new goog.async.Delay action, timeout
       delay.start()
+
+
+###*
+  Fires a given listener `onclick` event or when Enter is pressed.
+  @param {Element} field
+  @param {function(goog.events.Event)} listener
+###
+wzk.events.lst.onClickOrEnter = (field, listener) ->
+  goog.events.listen(field, goog.events.EventType.CLICK, listener)
+  goog.events.listen(field, goog.events.EventType.KEYPRESS, (e) ->
+    if e.keyCode is goog.events.KeyCodes.ENTER
+      listener(e)
+  )
