@@ -1,6 +1,9 @@
 goog.require 'goog.dom.classes'
 goog.require 'goog.events'
 
+goog.require 'wzk.events.lst'
+
+
 class wzk.ui.form.PreventerMultiSubmission
 
   ###*
@@ -37,14 +40,14 @@ class wzk.ui.form.PreventerMultiSubmission
     @param {Element} form
   ###
   prevent: (form) ->
-    return if goog.dom.classes.has form, wzk.ui.form.PreventerMultiSubmission.CLS_AJAX
+    return if goog.dom.classes.has(form, wzk.ui.form.PreventerMultiSubmission.CLS_AJAX)
 
-    @btns = @dom.all wzk.ui.form.PreventerMultiSubmission.BUTTONS, form
+    @btns = @dom.all(wzk.ui.form.PreventerMultiSubmission.BUTTONS, form)
 
     for btn in @btns
-      goog.events.listen btn, [goog.events.EventType.CLICK, goog.events.EventType.KEYUP], @handleButton
+      wzk.events.lst.onClickOrEnter(btn, @handleButton)
 
-    goog.events.listen form, goog.events.EventType.SUBMIT, @handleSubmit
+    goog.events.listen(form, goog.events.EventType.SUBMIT, @handleSubmit)
 
   ###*
     @protected
