@@ -11,6 +11,10 @@ goog.require 'goog.ui.Dialog.DefaultButtonKeys'
 goog.require 'goog.events'
 goog.require 'goog.events.Event'
 goog.require 'goog.string.format'
+goog.require 'goog.object'
+goog.require 'goog.array'
+
+goog.require 'wzk.events.lst'
 goog.require 'wzk.ui.grid.Paginator'
 goog.require 'wzk.ui.grid.Sorter'
 goog.require 'wzk.ui.ButtonRenderer'
@@ -18,8 +22,6 @@ goog.require 'wzk.ui.Link'
 goog.require 'wzk.ui.grid.CellFormatter'
 goog.require 'wzk.ui.grid.Body'
 goog.require 'wzk.ui.grid.Row'
-goog.require 'goog.object'
-goog.require 'goog.array'
 goog.require 'wzk.ui.form.RemoteButton'
 goog.require 'wzk.ui.form.ActionButton'
 goog.require 'wzk.ui.grid.RowBuilder'
@@ -67,29 +69,56 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @showActions = true
 
   ###*
-    @param {Element} table
+    @protected
+    @return {Element|null}
   ###
-  decorate: (@table) ->
-    @stateHolder.listen wzk.ui.grid.StateHolder.EventType.CHANGED, @refresh
-    unless @dom.cls wzk.ui.grid.Grid.CLS.ACTIONS, @table
-      @showActions = false
-    @removeBody()
-    paginatorEl = @dom.getParentElement(@table)?.querySelector '.paginator'
+  findPaginator: ->
+    @dom.getParentElement(@table)?.querySelector('.paginator')
+
+  ###*
+    @protected
+    @param {Element} paginatorEl
+    @return {Object|null}
+  ###
+  setupPaginator: (paginatorEl) ->
+    paging = null
     if paginatorEl?
-      @paginator.loadData paginatorEl
+      @paginator.loadData(paginatorEl)
       paging = {offset: (@paginator.page - 1) * @paginator.base}
     else
       @paginator = null
 
-    @buildBody @buildQuery(paging), (result) =>
+    paging
+
+  ###*
+    @param {Element} table
+  ###
+  decorate: (@table) ->
+    @stateHolder.listen wzk.ui.grid.StateHolder.EventType.CHANGED, @refresh
+    unless @dom.cls(wzk.ui.grid.Grid.CLS.ACTIONS, @table)
+      @showActions = false
+    @removeBody()
+
+    paginatorEl = @findPaginator()
+    paging = @setupPaginator(paginatorEl)
+    @buildBody(@buildQuery(paging), (result) =>
       @decorateWithSorting()
 
       if @paginator?
         @paginator.init(result.total, result.count)
-        @buildPaginator paginatorEl
+        @buildPaginator(paginatorEl)
 
-      @dispatchLoaded result
-      @listen wzk.ui.grid.Grid.EventType.DELETE_ITEM, @handleDeleteItem
+      @dispatchLoaded(result)
+      @listen(wzk.ui.grid.Grid.EventType.DELETE_ITEM, @handleDeleteItem)
+    )
+
+    for el in [@table, paginatorEl]
+      wzk.events.lst.onClickOrEnter(
+        el,
+        (e) => @dispatchEvent(new goog.events.Event(goog.ui.Component.EventType.ACTION, e))
+      )
+
+    undefined
 
   ###*
     @return {wzk.resource.Query}
@@ -102,10 +131,12 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {goog.events.Event} e
   ###
   handleDeleteItem: (e) =>
-    @repo.delete e.target, =>
-      @buildBody @buildQuery(), (result) =>
+    @repo.delete(e.target, =>
+      @buildBody(@buildQuery(), (result) =>
         if @paginator?
           @paginator.refresh result
+      )
+    )
 
   ###*
     @protected
@@ -123,28 +154,31 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   buildPaginator: (el) ->
     if el?
-      @paginator.decorate el
+      @paginator.decorate(el)
     else
-      @paginator.renderBefore @table
+      @paginator.renderBefore(@table)
 
-    @paginator.listen wzk.ui.grid.Paginator.EventType.GO_TO, (e) =>
-      @buildBody @buildQuery(e.target), (result) =>
-        @paginator.refresh result
+    @paginator.listen(wzk.ui.grid.Paginator.EventType.GO_TO, (e) =>
+      @buildBody(@buildQuery(e.target), (result) =>
+        @paginator.refresh(result)
+      )
+    )
 
     @renderBottomPaginator()
 
   refresh: =>
     @query = @getQuery()
-    @buildBody @buildQuery({offset: @query.offset}), (result) =>
+    @buildBody(@buildQuery({offset: @query.offset}), (result) =>
       result.offset = @query.offset
-      @paginator?.refresh result
+      @paginator?.refresh(result)
+    )
 
   ###*
     @protected
   ###
   renderBottomPaginator: ->
     clone = @paginator.createClone()
-    @dom.insertSiblingAfter clone, @table
+    @dom.insertSiblingAfter(clone, @table)
 
   ###*
     @protected
@@ -153,7 +187,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   buildBody: (query, doAfter = null) ->
     @doAfter = doAfter if doAfter?
-    @repo.load query, @handleData
+    @repo.load(query, @handleData)
 
   ###*
     Allows to re-render grid without reloading from repository
@@ -171,8 +205,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
       row.listen wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton
 
     unless @rows.isInDocument()
-      @rows.render @table
-    @rows.listen goog.ui.Component.EventType.ACTION, @handleSelectedItem
+      @rows.render(@table)
+    @rows.listen(goog.ui.Component.EventType.ACTION, @handleSelectedItem)
 
     result.count = data.length
     @doAfter result if @doAfter?
@@ -252,8 +286,8 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   ###
   handleDeleteBtn: (e) =>
     btn = (`/** @type {goog.ui.Button} */`) e.target
-    @dispatchDeleteItem btn
-    @silentlyRemoveRow btn
+    @dispatchDeleteItem(btn)
+    @silentlyRemoveRow(btn)
 
   ###*
     A little bit dirty, but enough for now.

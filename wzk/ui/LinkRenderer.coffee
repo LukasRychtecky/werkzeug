@@ -1,5 +1,3 @@
-goog.provide 'wzk.ui.LinkRenderer'
-
 class wzk.ui.LinkRenderer extends wzk.ui.ComponentRenderer
 
   constructor: ->
