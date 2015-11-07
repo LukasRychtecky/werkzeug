@@ -1,6 +1,5 @@
-goog.provide 'wzk.ui.Link'
-
 goog.require 'wzk.ui.LinkRenderer'
+
 
 class wzk.ui.Link extends wzk.ui.Component
 
@@ -45,3 +44,9 @@ class wzk.ui.Link extends wzk.ui.Component
   ###
   getHTMLCaption: ->
     @htmlCaption
+
+  ###*
+    @return {string}
+  ###
+  getContent: ->
+    if @getElement() then @dom.getTextContent(@getElement()) else ''
