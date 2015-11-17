@@ -87,6 +87,9 @@ wzk.ui.form.buildModalForm = (el, dom, xhrFac, register) ->
   url = String(goog.dom.dataset.get(el, 'url'))
   snippet = String(goog.dom.dataset.get(el, 'snippetName'))
   form = new wzk.ui.form.ModalForm(dom, new wzk.resource.Client(xhrFac), url, snippet, register)
+  modalTitle = goog.dom.dataset.get(el, 'modalTitle')
+  if modalTitle
+    form.setTitle(String(modalTitle))
   goog.events.listen el, goog.events.EventType.CLICK, (e) ->
     e.preventDefault()
     form.open()
