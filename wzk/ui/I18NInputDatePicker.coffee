@@ -1,9 +1,13 @@
 goog.require 'goog.dom.dataset'
-goog.require 'goog.ui.InputDatePicker'
 goog.require 'goog.i18n.DateTimeFormat'
 goog.require 'goog.i18n.DateTimeParse'
+goog.require 'goog.json'
 goog.require 'goog.testing.events'
+goog.require 'goog.ui.InputDatePicker'
+
 goog.require 'wzk.ui.CloseIcon'
+goog.require 'wzk.ui.DatePicker'
+
 
 class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
 
@@ -26,6 +30,19 @@ class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
     @params.useSimpleNavigationMenu ?= false
 
   ###*
+    @protected
+    @param {Element} el
+    @return {Array.<Number>|null}
+  ###
+  parseYearRange: (el) ->
+    yearRangeStr = goog.dom.dataset.get(el, 'yearRange')
+    return null unless yearRangeStr
+    obj = goog.json.parse(yearRangeStr)
+    unless goog.isArray(obj)
+      throw Error('data-year-range must be an Array')
+    return (`/** @type {Array.<Number>} */`) obj
+
+  ###*
     @param {Element} el
     @return {goog.ui.InputDatePicker}
     @suppress {checkTypes}
@@ -37,21 +54,24 @@ class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
     formatter = new goog.i18n.DateTimeFormat PATTERN
     parser = new goog.i18n.DateTimeParse PATTERN
 
-    datePicker = new goog.ui.DatePicker()
-    datePicker.setShowToday @params.showToday
-    datePicker.setAllowNone @params.allowNone
-    datePicker.setShowWeekNum @params.showWeekNum
-    datePicker.setUseSimpleNavigationMenu @params.useSimpleNavigationMenu
 
-    picker = new goog.ui.InputDatePicker formatter, parser, datePicker
 
-    picker.listen goog.ui.DatePicker.Events.CHANGE, @handleChanged
+    datePicker = new wzk.ui.DatePicker()
+    datePicker.setYearMenuRange(@parseYearRange(el))
+    datePicker.setShowToday(@params.showToday)
+    datePicker.setAllowNone(@params.allowNone)
+    datePicker.setShowWeekNum(@params.showWeekNum)
+    datePicker.setUseSimpleNavigationMenu(@params.useSimpleNavigationMenu)
 
-    @clrBtn = new wzk.ui.CloseIcon dom: @dom
-    @clrBtn.listen goog.ui.Component.EventType.ACTION, @handleClean
-    @clrBtn.render @dom.getParentElement(@el)
+    picker = new goog.ui.InputDatePicker(formatter, parser, datePicker)
 
-    picker.decorate @el
+    picker.listen(goog.ui.DatePicker.Events.CHANGE, @handleChanged)
+
+    @clrBtn = new wzk.ui.CloseIcon(dom: @dom)
+    @clrBtn.listen(goog.ui.Component.EventType.ACTION, @handleClean)
+    @clrBtn.render(@dom.getParentElement(@el))
+
+    picker.decorate(@el)
     picker
 
   ###*
