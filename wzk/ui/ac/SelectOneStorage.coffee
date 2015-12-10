@@ -10,6 +10,7 @@ class wzk.ui.ac.SelectOneStorage
   constructor: (@dom, @select) ->
 
   ###*
+    Returns a default choosen value from given `data`.
     @param {Array.<wzk.resource.Model>} data
     @return {wzk.resource.Model|null}
   ###
