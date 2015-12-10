@@ -1,6 +1,8 @@
 goog.provide 'wzk.ui.grid'
 goog.provide 'wzk.ui.grid.Params'
 
+goog.require 'goog.Timer'
+
 goog.require 'wzk.resource.Client'
 goog.require 'wzk.ui.grid.Grid'
 goog.require 'wzk.ui.grid.ArgsExtractor'
@@ -103,6 +105,9 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
     xhrConfig = new wzk.net.XhrConfig loading: false
     updater = new wzk.ui.grid.Updater grid, new wzk.resource.Client(xhrFac, '', xhrConfig), url, interval
     updater.start()
+  else if goog.dom.dataset.has(table, 'interval')
+    wzk.ui.grid.autoRefresh(grid)
+
 
   {exportButtonsEl} = params
   exportButtonsEl ?= dom.one wzk.ui.grid.Grid.SELECTORS.EXPORT_BUTTONS
@@ -113,3 +118,14 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
     exportBtn.decorate el
 
   grid
+
+
+###*
+  @param {wzk.ui.grid.Grid} grid
+###
+wzk.ui.grid.autoRefresh = (grid) ->
+  interval = wzk.num.parseDec(String(goog.dom.dataset.get(grid.table, 'interval')), 0)
+  if interval > 1
+    timer = new goog.Timer(interval)
+    timer.listen(goog.Timer.TICK, -> grid.refresh())
+    timer.start()
