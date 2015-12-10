@@ -63,7 +63,7 @@ class wzk.ui.ac.SelectAutoComplete
 
     if chooseLabel
       chooseEl = @dom.el('span', 'ac-choose-value', chooseLabel)
-      @dom.appendChild(@dom.getParentElement(@select), chooseEl)
+      @dom.insertSiblingAfter(chooseEl, @input.getElement())
       goog.events.listen(chooseEl, goog.events.EventType.CLICK, @handleChooseValue)
 
   ###*
