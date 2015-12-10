@@ -7,6 +7,10 @@ goog.require 'wzk.dom.Dom'
 
 class wzk.ui.ac.SelectAutoComplete
 
+  @DATA =
+    CHOOSE_VALUE: 'chooseValue'
+    CHOOSE_LABEL: 'chooseLabel'
+
   ###*
     Select is assumed to be prepopulated with options in templated
 
@@ -52,6 +56,24 @@ class wzk.ui.ac.SelectAutoComplete
     @renderer.listen wzk.ui.ac.Renderer.EventType.OPEN, @handleOpen
     @input = @renderer.getInput()
     @input.setPlaceholder(@select.getAttribute('placeholder')) if @select.hasAttribute('placeholder')
+
+    # allows to create a button to select it's value by defining via data attributes on `select`
+    chooseLabel = goog.dom.dataset.get(@select, wzk.ui.ac.SelectAutoComplete.DATA.CHOOSE_LABEL)
+    @chooseValue = goog.dom.dataset.get(@select, wzk.ui.ac.SelectAutoComplete.DATA.CHOOSE_VALUE)
+
+    if chooseLabel
+      chooseEl = @dom.el('span', 'ac-choose-value', chooseLabel)
+      @dom.insertSiblingAfter(chooseEl, @input.getElement())
+      goog.events.listen(chooseEl, goog.events.EventType.CLICK, @handleChooseValue)
+
+  ###*
+    Selects the `chooseValue` in autocomplete.
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleChooseValue: (e) =>
+    @dom.select(@select, @chooseValue)
+    @findDefaultValue(@data)
 
   ###*
     @protected
