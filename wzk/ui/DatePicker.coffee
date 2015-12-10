@@ -40,4 +40,25 @@ class wzk.ui.DatePicker extends goog.ui.DatePicker
       @i18nDateFormatterYear_.format(@activeMonth_)
     )
 
+  ###*
+    @suppress {visibility}
+    @protected
+    @param {number} currentYear
+    @param {number} itemIndex
+    @return {number}
+  ###
+  computePickedYear: (currentYear, itemIndex) ->
+    return (
+      if @yearMenuRange? then @yearMenuRange[0] + itemIndex
+      else currentYear + itemIndex - goog.ui.DatePicker.YEAR_MENU_RANGE_
+    )
 
+  ###*
+    @suppress {visibility}
+  ###
+  handleYearMenuClick_: (target) ->
+    if target.firstChild.nodeType is goog.dom.NodeType.TEXT
+      @activeMonth_.setFullYear(
+        @computePickedYear(@activeMonth_.getFullYear(), Number(target.getAttribute('itemIndex'))))
+      @updateCalendarGrid_()
+    @elYear_.focus()
