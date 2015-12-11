@@ -1,7 +1,10 @@
-goog.require 'wzk.ui.form.RemoteButton'
-goog.require 'wzk.resource.Client'
 goog.require 'goog.fx.dom.FadeOutAndHide'
 goog.require 'goog.fx.Transition.EventType'
+goog.require 'goog.object'
+
+goog.require 'wzk.ui.form.RemoteButton'
+goog.require 'wzk.resource.Client'
+
 
 class wzk.ui.form.RemoteButtonDecorator
 
@@ -21,6 +24,13 @@ class wzk.ui.form.RemoteButtonDecorator
   ###
   @ACTION:
     REMOVE: 'remove'
+
+  ###*
+    @enum {function(wzk.dom.Dom)}
+  ###
+  @POST_ACTIONS =
+    'reload': (self) -> self.dom.getWindow().location.reload(true)
+    'remove': (self) -> self.removeElement()
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -79,10 +89,9 @@ class wzk.ui.form.RemoteButtonDecorator
     @protected
   ###
   onSuccess: =>
-    if @postAction is wzk.ui.form.RemoteButtonDecorator.ACTION.REMOVE
-      @toRemove = @dom.getElement @postElement
-      if @toRemove?
-        setTimeout @fadeOutTrigger(), 1000
+    PA = wzk.ui.form.RemoteButtonDecorator.POST_ACTIONS
+    if goog.object.containsKey(PA, @postAction)
+      PA[@postAction](@)
 
   ###*
     @protected
@@ -93,3 +102,11 @@ class wzk.ui.form.RemoteButtonDecorator
       @dom.removeNode @toRemove
       undefined
     anim.play()
+
+  ###*
+    @protected
+  ###
+  removeElement: ->
+    @toRemove = @dom.getElement(@postElement)
+    if @toRemove?
+      @dom.getWindow().setTimeout(@fadeOutTrigger(), 1000)
