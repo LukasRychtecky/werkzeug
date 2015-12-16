@@ -142,7 +142,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
       @dom.replaceNode newClone, oldClone
       newClones.push newClone
     @clones = newClones
-    @show true
+    @show(true)
 
   ###*
     @protected
@@ -172,7 +172,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
 
     @renderer.decorate @, el
     @setElementInternal el
-    @showInternal false
+    @showInternal(false)
 
   ###*
     @protected
@@ -269,13 +269,15 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {boolean=} force default is false
   ###
   show: (visible, force = false) ->
-    return if not force and @canHide()
-    @showInternal visible
+    if not force and @canHide()
+      @showInternal(false)
+    else
+      @showInternal(visible)
 
   ###*
     @protected
     @param {boolean} visible
   ###
   showInternal: (visible) ->
-    visibility = if visible then 'visible' else 'hidden'
-    goog.style.setStyle(el, 'visibility', visibility) for el in [@getElement()].concat @clones
+    func = if visible then goog.dom.classes.remove else goog.dom.classes.add
+    func(el, 'empty') for el in [@getElement()].concat(@clones)
