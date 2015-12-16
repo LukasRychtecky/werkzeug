@@ -18,10 +18,10 @@ class wzk.ui.ac.NativeDataProvider
     for el in select.children
       if el.nodeName is 'OPTGROUP'
         optgroupModels = @loadOptionsOfOptgroup el
-        models = models.concat optgroupModels if optgroupModels?
+        models = models.concat(optgroupModels) if optgroupModels?
       else
         model = @buildModel(el)
-        models.push model if model?
+        models.push(model) if model?
     callback(models)
 
   ###*
@@ -47,12 +47,13 @@ class wzk.ui.ac.NativeDataProvider
     @return {wzk.resource.Model}
   ###
   buildModel: (option, group = undefined) ->
-    id = option.getAttribute 'value'
-    return null if not id? or id is ''
+    id = option.getAttribute('value')
+    return null if not id? or id in ['', '__all__']
 
-    data =
-      _obj_name: @dom.getTextContent option
+    data = {
+      _obj_name: @dom.getTextContent(option)
       id: id
+    }
 
     if group?
       data['group'] = group
