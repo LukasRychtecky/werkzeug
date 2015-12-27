@@ -1,7 +1,11 @@
 goog.require 'goog.events'
 goog.require 'goog.json'
+goog.require 'goog.object'
 goog.require 'goog.style'
+
+goog.require 'wzk.obj'
 goog.require 'wzk.stor.LocalStorage'
+
 
 class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
 
@@ -33,94 +37,151 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
   ###*
     @param {wzk.dom.Dom} dom
     @param {wzk.ui.grid.FilterWatcher} filterWatcher
+    @param {wzk.ui.grid.Grid} grid
   ###
-  constructor:(@dom, @filterWatcher) ->
+  constructor:(@dom, @filterWatcher, @grid) ->
     super()
     @headers = []
-    @grid = @filterWatcher.getGrid()
     @cols = {}
     @filterStates = {}
-    @checkbs = []
+    @checkboxes = []
     @verboseCols = []
     @allCols = @grid.cols
-    @sKey = @getStorageKey()
-    @table = @grid.getElement()
+    @storageKey = @composeStorageKey()
     @filteringText = ''
     @filteringTextEl = null
-    @lStorage = new wzk.stor.LocalStorage @dom.getWindow()['localStorage']
+    @storage = new wzk.stor.LocalStorage @dom.getWindow()['localStorage']
 
   ###*
     @param {Element} el
   ###
   decorate: (@el) =>
-    super @el
-    @headers = @dom.all 'thead > tr > th', @table
+    unless @grid.table.id or @grid.table.id is ''
+      @dom.getWindow().console.warn('Missing table id attribute for ' + @grid.table.className)
+      return
+
+    super(@el)
+    @headers = @dom.all('thead > tr > th', @grid.table)
     @verboseCols = @getVerboseColNames()
     @cols = @getOrCreateState()
 
     @filterStates = @getInitialFilterStates()
-    @filteringTextEl = @dom.cls wzk.ui.grid.GridColumnsManager.CLS.COLUMNS_FILTERING_TEXT
-    if @filteringTextEl
-      @filteringText = @filteringTextEl.innerHTML
-      @dom.hide @filteringTextEl
-      goog.events.listen @filteringTextEl, goog.events.EventType.CLICK, @deleteFilters
+    @filteringTextEl = @dom.getElement([wzk.ui.grid.GridColumnsManager.CLS.COLUMNS_FILTERING_TEXT, @grid.table.id].join('-'))
+    unless @filteringTextEl
+      @dom.getWindow().console.warn('Missing filtering text element for #' + @el.id)
+      return
 
-    goog.events.listen @grid, wzk.ui.grid.Grid.EventType.LOADED, =>
-      @show @getVisibleCols()
-
-    goog.events.listen @filterWatcher, wzk.ui.grid.FilterWatcher.EventType.CHANGED, @filterChanged
+    @filteringText = @filteringTextEl.innerHTML
+    @dom.hide(@filteringTextEl)
+    goog.events.listen(@filteringTextEl, goog.events.EventType.CLICK, @deleteFilters)
+    goog.events.listen(@grid, wzk.ui.grid.Grid.EventType.LOADED, @handleGridLoaded)
+    goog.events.listen(@filterWatcher, wzk.ui.grid.FilterWatcher.EventType.CHANGED, @filterChanged)
 
     @render()
 
   ###*
     @protected
   ###
+  handleGridLoaded: =>
+    @show(@getVisibleCols())
+
+  ###*
+    @protected
+    @param {string} prefix
+    @param {string} column
+    @return {string}
+  ###
+  composeCheckboxId: (prefix, column) ->
+    [@grid.table.id, prefix, column].join('')
+
+  ###*
+    @protected
+    @param {string} checkboxId
+    @param {string} column
+    @param {Element} parent
+    @return {Element}
+  ###
+  buildLabel: (checkboxId, column, parent) ->
+    label = @dom.el(
+      'label',
+      {
+        'class': if @filterStates[column] then wzk.ui.grid.GridColumnsManager.CLS.IS_FILTERED else ''
+        'for': checkboxId
+      },
+      @verboseCols[column],
+    )
+    @dom.append(parent, label)
+    return label
+
+  ###*
+    @protected
+    @param {string} id
+    @param {string} column
+    @param {Element} parent
+    @return {Element}
+  ###
+  buildCheckbox: (id, column, parent) ->
+    return @dom.el(
+      'input',
+      {
+        type: 'checkbox',
+        name: column,
+        checked: (if @cols[column]? then @cols[column] else true),
+        id: id
+      },
+      parent
+    )
+
+  ###*
+    @protected
+    @param {string} col
+    @param {Element} columnList
+    @return {Element}
+  ###
+  buildColumnItem: (col, columnList) ->
+    colItem = @dom.el('li', wzk.ui.grid.GridColumnsManager.CLS.LEAF)
+    checkboxId = @composeCheckboxId(wzk.ui.grid.GridColumnsManager.LEAF_ID_PREFIX, col)
+    @buildLabel(checkboxId, col, colItem)
+    checkbox = @buildCheckbox(checkboxId, col, colItem)
+    goog.events.listen(checkbox, goog.events.EventType.CLICK, @handleChange)
+    @dom.append(columnList, colItem)
+    return checkbox
+
+  ###*
+    @protected
+  ###
   render: =>
-    list = @dom.el 'ul', wzk.ui.grid.GridColumnsManager.CLS.LIST
-    idPrefix = wzk.ui.grid.GridColumnsManager.LEAF_ID_PREFIX
+    columnList = @dom.el('ul', wzk.ui.grid.GridColumnsManager.CLS.LIST)
 
-    for col, i in @allCols
-      leaf = @dom.el 'li', wzk.ui.grid.GridColumnsManager.CLS.LEAF
-      label = @dom.el 'label', (if @filterStates[col] then wzk.ui.grid.GridColumnsManager.CLS.IS_FILTERED else ''), @verboseCols[col]
-      label.htmlFor = idPrefix + col
-      checkb = @dom.el 'input', type: 'checkbox', name: col, checked: (if @cols[col]? then @cols[col] else true), id: idPrefix + col
-
-      @checkbs.push checkb
-      goog.events.listen checkb, goog.events.EventType.CLICK, @handleChange
-
-      leaf.appendChild checkb
-      leaf.appendChild label
-
-      list.appendChild leaf
-
-    @saveState @getVisibleCols()
+    @checkboxes = (@buildColumnItem(col, columnList) for col, _ in @allCols)
+    @saveState(@getVisibleCols())
 
     @removeOld()
-    @el.appendChild list
+    @dom.append(@el, columnList)
 
   ###
     @protected
   ###
   removeOld: =>
-    @dom.removeNode @dom.cls wzk.ui.grid.GridColumnsManager.CLS.LIST, @el
+    @dom.removeNode(@dom.cls wzk.ui.grid.GridColumnsManager.CLS.LIST, @el)
 
   ###*
     @protected
   ###
-  getStorageKey: ->
-    wzk.ui.grid.GridColumnsManager.STORAGE_KEY
+  composeStorageKey: ->
+    [wzk.ui.grid.GridColumnsManager.STORAGE_KEY, @grid.table.id].join('-')
 
   ###*
     @protected
     @return {Object}
   ###
   getOrCreateState: =>
-    cols = (`/** @type Object */`) @lStorage.get @sKey
+    cols = (`/** @type Object */`) @storage.get(@storageKey)
     if not cols
       cols = {}
       for col in @allCols
         cols[col] = true
-      @lStorage.set @sKey, cols
+      @storage.set(@storageKey, cols)
 
     cols
 
@@ -128,34 +189,28 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @protected
   ###
   getInitialFilterStates: =>
-    states = {}
-    for filterName, filter of @filterWatcher.getFields()
-      states[filter.getName()] = filter.getValue() isnt ''
-    states
+    return wzk.obj.dict(@filterWatcher.getFields(), (filter, _) -> [filter.getName(), filter.getValue() isnt ''])
 
   ###*
     @protected
     @return {Object}
   ###
   getVerboseColNames: =>
-    verboseNames = {}
-    for span, i in @dom.all 'th > span', @table
-      verboseNames[@allCols[i]] = @dom.getTextContent span
-    verboseNames
+    return wzk.obj.dict(@dom.all('th > span', @grid.table), (span, i) => [@allCols[i], @dom.getTextContent(span)])
 
   ###*
     @protected
   ###
   handleChange: =>
     @cols = @getVisibleCols()
-    @show @cols
-    @saveState @cols
+    @show(@cols)
+    @saveState(@cols)
 
   ###*
     @protected
   ###
   filterChanged: =>
-    @setFilterStates @filterWatcher.getQuery()
+    @setFilterStates(@filterWatcher.getQuery())
     @render()
 
   ###*
@@ -172,16 +227,13 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
   ###
   saveState: (state) =>
     @updateFilteringText state
-    @lStorage.set @sKey, state
+    @storage.set(@storageKey, state)
 
   ###*
     @return {Object}
   ###
   getVisibleCols: =>
-    cols = {}
-    for checkb, i in @checkbs
-      cols[checkb.name] = checkb['checked']? and checkb['checked']
-    cols
+    wzk.obj.dict(@checkboxes, (checkbox, _) -> [checkbox.name, checkbox['checked']? and checkbox['checked']])
 
   ###*
     @protected
@@ -192,15 +244,15 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
 
     if hiddenFiltered.length > 0
       @filteringTextEl.innerHTML = @filteringText.replace('%(columns)s', hiddenFiltered.join(', '))
-      @dom.show @filteringTextEl
+      @dom.show(@filteringTextEl)
     else
-      @dom.hide @filteringTextEl
+      @dom.hide(@filteringTextEl)
 
   ###*
     @protected
   ###
   showOrHideHeader: =>
-    goog.style.setElementShown @headers[i], @cols[checkb['name']] for checkb, i in @checkbs when @headers[i]?
+    (goog.style.setElementShown(@headers[i], @cols[checkbox['name']]) for checkbox, i in @checkboxes when @headers[i]?)
 
   ###*
     @protected
@@ -213,9 +265,9 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @param {Object} cols
   ###
   show: (cols) =>
-    arrCols = @toArray cols
-    @grid.setColumns arrCols
-    @grid.rowBuilder.setColumns arrCols
+    arrCols = @toArray(cols)
+    @grid.setColumns(arrCols)
+    @grid.rowBuilder.setColumns(arrCols)
     @showOrHideHeader()
     @grid.refresh()
 
