@@ -17,3 +17,11 @@ suite 'wzk.obj', ->
 
       wzk.obj.merge obj1, obj2
       assert.deepEqual expected, obj1
+
+  suite '#dict', ->
+
+    test 'Should creates an empty dictionary', ->
+      assert.deepEqual({}, wzk.obj.dict([], ->))
+
+    test 'Should creates a dictionary', ->
+      assert.deepEqual({'0': 0, '1': 1, '2': 2}, wzk.obj.dict([0, 1, 2], (item, i) -> [String(i), i]))

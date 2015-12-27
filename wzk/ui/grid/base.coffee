@@ -81,12 +81,12 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
 
   grid.decorate table
 
-  columnsManagerCls = parser.getAttr table, wzk.ui.grid.GridColumnsManager.DATA.GRID_DATA
+  columnsManagerCls = parser.getAttr(table, wzk.ui.grid.GridColumnsManager.DATA.GRID_DATA)
   if columnsManagerCls
-    columnsManagerEl = dom.cls columnsManagerCls
+    columnsManagerEl = dom.getElement(columnsManagerCls)
     if columnsManagerEl
-      manager = new wzk.ui.grid.GridColumnsManager dom, watcher
-      manager.decorate columnsManagerEl
+      manager = new wzk.ui.grid.GridColumnsManager(dom, watcher, grid)
+      manager.decorate(columnsManagerEl)
 
   stateHolder.handle paginator, watcher
   stateHolder.setBase paginator.getBase()
