@@ -141,8 +141,8 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
   buildColumnItem: (col, columnList) ->
     colItem = @dom.el('li', wzk.ui.grid.GridColumnsManager.CLS.LEAF)
     checkboxId = @composeCheckboxId(wzk.ui.grid.GridColumnsManager.LEAF_ID_PREFIX, col)
-    @buildLabel(checkboxId, col, colItem)
     checkbox = @buildCheckbox(checkboxId, col, colItem)
+    @buildLabel(checkboxId, col, colItem)
     goog.events.listen(checkbox, goog.events.EventType.CLICK, @handleChange)
     @dom.append(columnList, colItem)
     return checkbox
