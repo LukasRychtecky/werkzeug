@@ -7,6 +7,7 @@ goog.require 'goog.ui.InputDatePicker'
 
 goog.require 'wzk.ui.CloseIcon'
 goog.require 'wzk.ui.DatePicker'
+goog.require 'wzk.ui.InputDatePicker'
 
 
 class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
@@ -63,7 +64,7 @@ class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
     datePicker.setShowWeekNum(@params.showWeekNum)
     datePicker.setUseSimpleNavigationMenu(@params.useSimpleNavigationMenu)
 
-    picker = new goog.ui.InputDatePicker(formatter, parser, datePicker)
+    picker = new wzk.ui.InputDatePicker(formatter, parser, datePicker)
 
     picker.listen(goog.ui.DatePicker.Events.CHANGE, @handleChanged)
 
