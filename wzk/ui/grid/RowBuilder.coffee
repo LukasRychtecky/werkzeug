@@ -1,4 +1,6 @@
 goog.require 'wzk.ui.grid.Row'
+goog.require 'wzk.ui.form.Checkbox'
+
 
 class wzk.ui.grid.RowBuilder extends wzk.ui.Component
 
@@ -8,8 +10,9 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     @param {Array.<string>} cols
     @param {wzk.ui.grid.CellFormatter} formatter
     @param {wzk.ui.dialog.ConfirmDialog} confirm
+    @param {boolean} selectable
   ###
-  constructor: (@dom, @rows, @cols, @formatter, @confirm) ->
+  constructor: (@dom, @rows, @cols, @formatter, @confirm, @selectable = false) ->
     super()
     @ACTION_MAP =
       'rest': @buildRestAction
@@ -28,6 +31,10 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
     row = new wzk.ui.grid.Row(dom: @dom, confirm: @confirm)
     row.setModel(model)
     @rows.addChild(row, false)
+
+    if @selectable
+      @buildSelectCell(row)
+
     for col in @cols
       @buildCell(model, col, row)
 
@@ -87,6 +94,20 @@ class wzk.ui.grid.RowBuilder extends wzk.ui.Component
       cell.setCaption(@formatter.format(model, col))
     cell.addClass(col)
     row.addChild(cell)
+    cell
+
+  ###*
+    @protected
+    @param {wzk.ui.grid.Row} row
+    @return {wzk.ui.grid.Cell}
+  ###
+  buildSelectCell: (row) ->
+    cell = new wzk.ui.grid.Cell(dom: @dom)
+    checkbox = new wzk.ui.form.Checkbox(dom: @dom)
+    cell.addChild(checkbox)
+    cell.addClass('select-row')
+    row.addChild(cell)
+    row.setSelectable(checkbox)
     cell
 
   ###*

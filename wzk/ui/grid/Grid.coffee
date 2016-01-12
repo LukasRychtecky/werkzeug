@@ -24,7 +24,9 @@ goog.require 'wzk.ui.grid.Body'
 goog.require 'wzk.ui.grid.Row'
 goog.require 'wzk.ui.form.RemoteButton'
 goog.require 'wzk.ui.form.ActionButton'
+goog.require 'wzk.ui.form.Checkbox'
 goog.require 'wzk.ui.grid.RowBuilder'
+
 
 class wzk.ui.grid.Grid extends wzk.ui.Component
 
@@ -57,15 +59,16 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.resource.Query} query
     @param {wzk.ui.grid.Paginator} paginator
     @param {wzk.ui.Flash} flash
+    @param {boolean=} rowSelectable default is `false`
   ###
-  constructor: (@dom, @repo, @cols, @stateHolder, @confirm, @query, @paginator, @flash) ->
+  constructor: (@dom, @repo, @cols, @stateHolder, @confirm, @query, @paginator, @flash, @rowSelectable = false) ->
     super()
     @table = null
     @tbody = null
     @sorter = null
     @lastQuery = {}
     @rows = new wzk.ui.grid.Body dom: @dom
-    @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter(), @confirm)
+    @rowBuilder = null
     @showActions = true
 
   ###*
@@ -94,6 +97,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Element} table
   ###
   decorate: (@table) ->
+    @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter(), @confirm, @rowSelectable)
     @stateHolder.listen wzk.ui.grid.StateHolder.EventType.CHANGED, @refresh
     unless @dom.cls(wzk.ui.grid.Grid.CLS.ACTIONS, @table)
       @showActions = false
@@ -117,6 +121,12 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
         el,
         (e) => @dispatchEvent(new goog.events.Event(goog.ui.Component.EventType.ACTION, e))
       )
+
+    selectAllEl = @dom.one('input.select-all', @table)
+    if selectAllEl?
+      selectAll = new wzk.ui.form.Checkbox(dom: @dom)
+      selectAll.decorate(selectAllEl)
+      selectAll.listen(wzk.ui.form.Field.EVENTS.CHANGE, @handleSelectAll)
 
     undefined
 
@@ -200,9 +210,10 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
       @rows.destroyChildren()
 
     for model in data
-      row = @rowBuilder.build model, @showActions
-      row.listen wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn
-      row.listen wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton
+      row = @rowBuilder.build(model, @showActions)
+      row.listen(wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn)
+      row.listen(wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton)
+      row.listen(wzk.ui.grid.Row.EventType.SELECTION_CHANGE, @handleSelectionChange)
 
     unless @rows.isInDocument()
       @rows.render(@table)
@@ -239,6 +250,13 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     btn.call @repo.getClient(), model['_rest_links'][action['name']]['url'], action['method'], action['data'], (response) =>
       @flash.success action['success_text']
       @rowBuilder.replaceRowByModel(response)
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleSelectionChange: (e) =>
+    @dispatchEvent(e)
 
   ###*
     @protected
@@ -284,6 +302,10 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @protected
     @param {goog.events.Event} e
   ###
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
   handleDeleteBtn: (e) =>
     btn = (`/** @type {goog.ui.Button} */`) e.target
     @dispatchDeleteItem(btn)
@@ -319,3 +341,18 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Array.<string>} cols
   ###
   setColumns: (@cols) ->
+
+  ###*
+    @return {Array|NodeList}
+  ###
+  getSelectedRows: ->
+    return if @rowSelectable then (row for row in @rows.getChildren() when row.isSelected()) else []
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleSelectAll: (e) =>
+    for row in @rows.getChildren()
+      if row.selectable?
+        row.selectable.setValue(e.currentTarget.getValue())

@@ -33,6 +33,14 @@ class wzk.ui.grid.Body extends goog.ui.Container
     undefined # 'cause Coffee & Closure
 
   ###*
+    @return {Array.<goog.ui.Component>}
+  ###
+  getChildren: ->
+    children = []
+    @forEachChild((child) -> children.push(child))
+    return children
+
+  ###*
     @override
   ###
   createDom: ->

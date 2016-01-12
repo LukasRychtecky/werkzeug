@@ -1,10 +1,17 @@
 goog.require 'goog.dom.classes'
+goog.require 'goog.events'
 
 goog.require 'wzk.events.lst'
 goog.require 'wzk.ui.dialog.Dialog'
 
 
 class wzk.ui.dialog.SnippetModal extends goog.events.EventTarget
+
+  ###*
+    @enum {string}
+  ###
+  @EVENTS =
+    OPEN: 'open'
 
   ###*
     @param {wzk.dom.Dom} dom
@@ -45,6 +52,7 @@ class wzk.ui.dialog.SnippetModal extends goog.events.EventTarget
     @register.process el
     @dialog.setVisible true
     goog.dom.classes.add @dialog.getElement(), @snippet
+    @dispatchEvent(new goog.events.Event(wzk.ui.dialog.SnippetModal.EVENTS.OPEN, @dialog))
 
   ###*
     @param {string} title

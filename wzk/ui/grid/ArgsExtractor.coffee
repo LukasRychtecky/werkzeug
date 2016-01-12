@@ -51,6 +51,12 @@ class wzk.ui.grid.ArgsExtractor
     @getAttr 'confirmTitle'
 
   ###*
+    @return {boolean}
+  ###
+  parseRowSelectable: ->
+    @getAttr('rowSelectable') is 'true'
+
+  ###*
     @protected
     @return {string}
   ###

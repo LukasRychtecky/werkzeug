@@ -20,6 +20,7 @@ goog.require 'wzk.ui.grid.Updater'
 goog.require 'wzk.net.XhrConfig'
 goog.require 'wzk.ui.grid.ExportLink'
 goog.require 'wzk.ui.grid.GridColumnsManager'
+goog.require 'wzk.ui.grid.BulkChange'
 
 ###*
   @constructor
@@ -74,7 +75,8 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 
-  grid = new ctor dom, repo, extractor.parseColumns(), stateHolder, dialog, query, paginator, flash
+  grid = new ctor(
+    dom, repo, extractor.parseColumns(), stateHolder, dialog, query, paginator, flash, extractor.parseRowSelectable())
 
   watcher = new wzk.ui.grid.FilterWatcher grid, query, ss, dom
   grid.setQuery watcher.watchOn(table)
@@ -116,6 +118,12 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
   for el in exportElements
     exportBtn = new wzk.ui.grid.ExportLink dom: dom, watcher: watcher, client: new wzk.resource.Client(xhrFac)
     exportBtn.decorate el
+
+  if goog.dom.dataset.has(table, 'bulkChange')
+    bulkChangeEl = dom.getElement(String(goog.dom.dataset.get(table, 'bulkChange')))
+    if bulkChangeEl?
+      bulkChange = new wzk.ui.grid.BulkChange(dom, new wzk.resource.Client(xhrFac), grid, reg, flash)
+      bulkChange.decorate(bulkChangeEl)
 
   grid
 
