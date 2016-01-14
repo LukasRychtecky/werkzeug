@@ -106,7 +106,8 @@ class wzk.ui.grid.BulkChange
     @param {Object} response
   ###
   handleError: (response) =>
-    @flash.addError(response['messages']['errors'])
+    for err in response['messages']['errors']
+      @flash.addError(err['_obj_name'])
 
   ###*
     @protected
