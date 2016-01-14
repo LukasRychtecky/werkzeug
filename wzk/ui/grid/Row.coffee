@@ -9,12 +9,14 @@ class wzk.ui.grid.Row extends wzk.ui.Control
   @EventType:
     REMOTE_BUTTON: 'RemoteButton'
     DELETE_BUTTON: 'DeleteButton'
+    SELECTION_CHANGE: 'selection-change'
 
   constructor: (params = {}) ->
     params.renderer ?= wzk.ui.grid.RowRenderer.getInstance()
     super params
     @confirm = params.confirm
     @cells = []
+    @selectable = null
 
   ###*
     @param {string} text
@@ -30,6 +32,25 @@ class wzk.ui.grid.Row extends wzk.ui.Control
   ###
   isAllowTextSelection: ->
     return true
+
+  ###*
+    @param {wzk.ui.form.Field} selectable
+  ###
+  setSelectable: (@selectable) ->
+    @selectable.listen(wzk.ui.form.Field.EVENTS.CHANGE, @handleSelected)
+
+  ###*
+    @protected
+    @param {goog.events.Event} e
+  ###
+  handleSelected: (e) ->
+    @dispatchEvent(new goog.events.Event(wzk.ui.grid.Row.EventType.SELECTION_CHANGE, e))
+
+  ###*
+    @return {boolean}
+  ###
+  isSelected: ->
+    return @selectable? and Boolean(@selectable.getValue())
 
   ###*
     @param {goog.events.Event} e

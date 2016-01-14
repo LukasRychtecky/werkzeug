@@ -1,4 +1,4 @@
-goog.provide 'wzk.ui.form.Checkbox'
+goog.require 'goog.events.Event'
 
 goog.require 'wzk.ui.form.Input'
 goog.require 'wzk.ui.form.CheckboxRenderer'
@@ -27,3 +27,4 @@ class wzk.ui.form.Checkbox extends wzk.ui.form.Input
   ###
   setValue: (val) ->
     super Boolean(val)
+    @dispatchEvent(new goog.events.Event(wzk.ui.form.Field.EVENTS.CHANGE, @))
