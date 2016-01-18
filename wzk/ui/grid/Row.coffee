@@ -1,5 +1,8 @@
+goog.require 'wzk.dom.classes'
+
 goog.require 'wzk.ui.grid.RowRenderer'
 goog.require 'wzk.ui.grid.Cell'
+
 
 class wzk.ui.grid.Row extends wzk.ui.Control
 
@@ -11,12 +14,20 @@ class wzk.ui.grid.Row extends wzk.ui.Control
     DELETE_BUTTON: 'DeleteButton'
     SELECTION_CHANGE: 'selection-change'
 
+  ###*
+    @enum {string}
+  ###
+  @CLS:
+    SELECTED: 'row-selected'
+    UNSELECTED: 'row-unselected'
+
   constructor: (params = {}) ->
     params.renderer ?= wzk.ui.grid.RowRenderer.getInstance()
     super params
     @confirm = params.confirm
     @cells = []
     @selectable = null
+    @addClassName(wzk.ui.grid.Row.CLS.UNSELECTED)
 
   ###*
     @param {string} text
@@ -43,7 +54,11 @@ class wzk.ui.grid.Row extends wzk.ui.Control
     @protected
     @param {goog.events.Event} e
   ###
-  handleSelected: (e) ->
+  handleSelected: (e) =>
+    CLS = wzk.ui.grid.Row.CLS
+    classes = if @isSelected() then [CLS.SELECTED, CLS.UNSELECTED] else [CLS.UNSELECTED, CLS.SELECTED]
+    for func, i in [goog.dom.classes.add, goog.dom.classes.remove]
+      func(@getElement(), classes[i])
     @dispatchEvent(new goog.events.Event(wzk.ui.grid.Row.EventType.SELECTION_CHANGE, e))
 
   ###*
