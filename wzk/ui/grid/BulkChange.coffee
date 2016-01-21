@@ -114,6 +114,7 @@ class wzk.ui.grid.BulkChange
     @param {goog.events.Event} e
   ###
   handleOpen: (e) =>
+    @selectedInputs = {}
     @selectedRows = @grid.getSelectedRows()
 
     content = e.target.getContentElement()
