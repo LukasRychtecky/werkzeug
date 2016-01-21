@@ -20,8 +20,16 @@ class wzk.ui.ac.RestDataProvider
     if @query?
       client.setDefaultFields @query
 
-    client.find url, (data) ->
-      callback(data)
+    client.find url, ((data) => callback((@format(model) for model in data)))
+
+  ###*
+    @param {wzk.resource.Model} model
+    @return {wzk.resource.Model}
+  ###
+  format: (model) ->
+    if model['_autocomplete_value']?
+      model['_obj_name'] = model['_autocomplete_value']
+    return model
 
   ###*
     @param {string} field

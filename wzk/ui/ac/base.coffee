@@ -30,7 +30,7 @@ wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
   ac = wzk.ui.ac.buildSelectAutocompleteInternal select, dom
   dataProvider = new wzk.ui.ac.NativeDataProvider()
   dataProvider.load select, dom, (data) ->
-    ac.load data
+    ac.load(data)
   ac
 
 ###*
@@ -41,9 +41,11 @@ wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
 wzk.ui.ac.buildSelectAutoCompleteRest = (select, dom, xhrFac) ->
   ac = wzk.ui.ac.buildSelectAutocompleteInternal select, dom
   dataProvider = new wzk.ui.ac.RestDataProvider()
-  wzk.ui.ac.addFields dataProvider
-  dataProvider.load select, xhrFac, (data) ->
-    ac.load data
+  wzk.ui.ac.addFields(dataProvider, select)
+  dataProvider.load(select, xhrFac, (data) ->
+    ac.load(data)
+  )
+  ac
 
 ###*
   @param {HTMLSelectElement} select
@@ -73,7 +75,7 @@ wzk.ui.ac.buildExtSelectboxFromSelectRest = (select, dom, xhrFac) ->
 ###
 wzk.ui.ac.buildRestDataProvider = (select, xhrFac, onLoad) ->
   dataProvider = new wzk.ui.ac.RestDataProvider()
-  wzk.ui.ac.addFields dataProvider
+  wzk.ui.ac.addFields(dataProvider, select)
   dataProvider.load select, xhrFac, (data) ->
     onLoad(data)
 
@@ -118,7 +120,21 @@ wzk.ui.ac.buildCustomRenderer = (select, dom) ->
 ###*
   @protected
   @param {wzk.ui.ac.RestDataProvider} dataProvider
+  @param {Element} el
 ###
-wzk.ui.ac.addFields = (dataProvider) ->
-  dataProvider.addField '_obj_name'
-  dataProvider.addField 'photo'
+wzk.ui.ac.addFields = (dataProvider, el) ->
+  dataProvider.addField('_autocomplete_value')
+  dataProvider.addField('_obj_name')
+  dataProvider.addField('photo')
+  fields = wzk.ui.ac.extractFieldNames(el)
+  if fields.length > 0
+    for field in fields
+      dataProvider.addField(field)
+
+###*
+  @param {Element} el
+  @return {Array.<string>}
+###
+wzk.ui.ac.extractFieldNames = (el) ->
+  fieldsValue = goog.dom.dataset.get(el, 'fields')
+  return if fieldsValue? then (v.split('__')[0] for k, v of goog.json.parse(fieldsValue)) else []
