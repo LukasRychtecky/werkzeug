@@ -1,3 +1,5 @@
+goog.require 'goog.events.EventTarget'
+
 goog.require 'wzk.ui.ac.InputHandler'
 goog.require 'wzk.ui.ac.PictureCustomRenderer'
 goog.require 'wzk.ui.ac.ArrayMatcher'
@@ -5,11 +7,18 @@ goog.require 'wzk.ui.ac.AutoComplete'
 goog.require 'wzk.ui.ac.SelectOneStorage'
 goog.require 'wzk.dom.Dom'
 
-class wzk.ui.ac.SelectAutoComplete
+
+class wzk.ui.ac.SelectAutoComplete extends goog.events.EventTarget
 
   @DATA =
     CHOOSE_VALUE: 'chooseValue'
     CHOOSE_LABEL: 'chooseLabel'
+
+  ###*
+    @enum {string}
+  ###
+  @EVENTS =
+    LOADED: 'loaded'
 
   ###*
     Select is assumed to be prepopulated with options in templated
@@ -18,6 +27,7 @@ class wzk.ui.ac.SelectAutoComplete
     @param {wzk.ui.ac.Renderer} renderer
   ###
   constructor: (@dom, @renderer) ->
+    super()
     @select = null
     @handler = null
     @stor = null
@@ -72,8 +82,15 @@ class wzk.ui.ac.SelectAutoComplete
     @param {goog.events.Event} e
   ###
   handleChooseValue: (e) =>
-    @dom.select(@select, @chooseValue)
+    @tryToSelectValue(@chooseValue)
+
+  ###*
+    @param {string} value
+  ###
+  tryToSelectValue: (value) ->
+    @dom.select(@select, value)
     @findDefaultValue(@data)
+
 
   ###*
     @protected
@@ -104,6 +121,8 @@ class wzk.ui.ac.SelectAutoComplete
     @ac.listen goog.ui.ac.AutoComplete.EventType.UPDATE, @handleUpdate
 
     @findDefaultValue @data
+
+    @dispatchEvent(new goog.events.Event(wzk.ui.ac.SelectAutoComplete.EVENTS.LOADED))
 
   ###*
     @protected
