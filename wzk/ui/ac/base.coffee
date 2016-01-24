@@ -10,16 +10,8 @@ goog.require 'wzk.ui.ac.ExtSelectboxStorage'
 goog.require 'wzk.ui.ac.ExtSelectboxStorageHandler'
 goog.require 'wzk.ui.ac.NativeDataProvider'
 goog.require 'wzk.ui.ac.RestDataProvider'
+goog.require 'wzk.ui.ac.InputAutoComplete'
 
-###*
-  Default selectAutoComplete builder; ensures backwards compatibility
-  @param {Element} select
-  @param {wzk.dom.Dom} dom
-  @param {wzk.net.XhrFactory} xhrFac
-###
-wzk.ui.ac.buildSelectAutoComplete = (select, dom, xhrFac) ->
-  select = (`/** @type {HTMLSelectElement} */`) select
-  wzk.ui.ac.buildSelectAutoCompleteRest select, dom, xhrFac
 
 ###*
   @param {HTMLSelectElement} select
@@ -34,17 +26,20 @@ wzk.ui.ac.buildSelectAutoCompleteNative = (select, dom) ->
   ac
 
 ###*
-  @param {HTMLSelectElement} select
+  @param {Element} el
   @param {wzk.dom.Dom} dom
-  @param {wzk.net.XhrFactory} xhrFac
 ###
-wzk.ui.ac.buildSelectAutoCompleteRest = (select, dom, xhrFac) ->
-  ac = wzk.ui.ac.buildSelectAutocompleteInternal select, dom
-  dataProvider = new wzk.ui.ac.RestDataProvider()
-  wzk.ui.ac.addFields(dataProvider, select)
-  dataProvider.load(select, xhrFac, (data) ->
-    ac.load(data)
+wzk.ui.ac.buildSelectAutoCompleteRest = (el, dom, api, tokenName, limit, tokenMinLength) ->
+  el = (`/** @type {HTMLSelectElement} */`) el
+  ac = new wzk.ui.ac.InputAutoComplete(
+    dom,
+    new wzk.ui.ac.Renderer(dom, null, wzk.ui.ac.buildCustomRenderer(el, dom)),
+    api,
+    tokenName,
+    limit,
+    tokenMinLength,
   )
+  ac.decorate(el)
   ac
 
 ###*
@@ -118,7 +113,6 @@ wzk.ui.ac.buildCustomRenderer = (select, dom) ->
   customRenderer
 
 ###*
-  @protected
   @param {wzk.ui.ac.RestDataProvider} dataProvider
   @param {Element} el
 ###

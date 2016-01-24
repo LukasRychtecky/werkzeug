@@ -53,9 +53,10 @@ class wzk.ui.ac.Renderer extends goog.ui.ac.Renderer
         highlighting should be applied to each row of data. Standard highlighting
         bolds every matching substring for a given token in each row. True by
         default.
+    @param {boolean=} renderOpenButton default `false`
     @suppress {accessControls}
   ###
-  constructor: (@dom, @imagePlaceholder, @customRenderer, rightAlign, useStandardHighlighting) ->
+  constructor: (@dom, @imagePlaceholder, @customRenderer, rightAlign, useStandardHighlighting, @renderOpenButton = false) ->
     super(null, customRenderer, rightAlign, useStandardHighlighting)
 
     @className = wzk.ui.ac.Renderer.CLS.CONTAINER
