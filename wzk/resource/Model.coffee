@@ -17,5 +17,6 @@ class wzk.resource.Model
     @return {string}
   ###
   toString: ->
+    return @['_autocomplete_value'] if @['_autocomplete_value']?
     return @[wzk.resource.Model.TO_S] if @[wzk.resource.Model.TO_S]
-    goog.object.getAnyValue @_data
+    return goog.object.getAnyValue(@_data)
