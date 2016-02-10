@@ -1,12 +1,14 @@
 goog.require 'goog.dom.classes'
 goog.require 'goog.array'
-goog.require 'wzk.ui.inlineform.FieldExpert'
 goog.require 'goog.events'
 goog.require 'goog.style'
 goog.require 'goog.events.KeyCodes'
 goog.require 'goog.dom.classes'
-goog.require 'wzk.ui.CloseIcon'
 goog.require 'goog.dom.dataset'
+goog.require 'goog.string'
+
+goog.require 'wzk.ui.CloseIcon'
+goog.require 'wzk.ui.inlineform.FieldExpert'
 goog.require 'wzk.ui.inlineform.RowDecorator'
 
 ###*
@@ -36,7 +38,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     @param {Element} row
     @param {wzk.ui.inlineform.FieldExpert} expert
     @param {wzk.app.Register} reg
-    @param {goog.dom.DomHelper} dom
+    @param {wzk.dom.Dom} dom
   ###
   constructor: (@row, @expert, @reg, @dom) ->
     super()
@@ -79,9 +81,10 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   handleIconAction: (e) =>
     removeIcon = e.target
     removed = removeIcon.getRemoved()
-    checkbox = @dom.one wzk.ui.inlineform.RowBuilder.CHECKBOX_SELECTOR, removed
-    checkbox.checked = true
-    @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, removeIcon.getRemoved())
+    checkbox = wzk.ui.inlineform.getRemoveCheckboxOrNull(@dom, removed)
+    if checkbox?
+      checkbox.checked = true
+      @dispatchEvent new goog.events.Event(wzk.ui.inlineform.RowBuilder.EventType.DELETE, removeIcon.getRemoved())
 
   ###*
     Cycles CSS classes on a row

@@ -24,20 +24,10 @@ class wzk.ui.inlineform.RowDecorator extends wzk.ui.Component
       @return {wzk.ui.CloseIcon|null}
   ###
   addRemoveIcon: (row) ->
-    checkbox = @getRemovingCheckbox row
+    checkbox = wzk.ui.inlineform.getRemoveCheckboxOrNull(@dom, row)
     return null unless checkbox?
-    goog.style.setElementShown checkbox, false
+    goog.style.setElementShown(checkbox, false)
 
-    removeIcon = new wzk.ui.CloseIcon dom: @dom, removed: row
-    removeIcon.renderAfter checkbox
-    removeIcon
-
-  ###*
-    @protected
-    @param {Element} row to look for checkbox in
-    @return {Element} returns last checkbox in
-  ###
-  getRemovingCheckbox: (row) ->
-    el = @dom.getLastElementChild row
-    el = @dom.one wzk.ui.inlineform.RowBuilder.CHECKBOX_SELECTOR, el
-    return el
+    removeIcon = new wzk.ui.CloseIcon(dom: @dom, removed: row)
+    removeIcon.renderAfter(checkbox)
+    return removeIcon
