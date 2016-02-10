@@ -16,7 +16,7 @@ class wzk.ui.inlineform.DynamicForm
 
   ###*
     @constructor
-    @param {goog.dom.DomHelper} dom
+    @param {wzk.dom.Dom} dom
     @param {wzk.app.Register} reg
   ###
   constructor: (@dom, @reg) ->
@@ -111,7 +111,7 @@ class wzk.ui.inlineform.DynamicForm
     @return {NodeList.<Element>}
   ###
   findRows: (fieldset) ->
-    @dom.clss 'inline-line', fieldset
+    return (`/** @type {NodeList.<Element>} */`) @dom.clss('inline-line', fieldset)
 
   ###*
     @protected
