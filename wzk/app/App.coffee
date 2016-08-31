@@ -138,6 +138,9 @@ class wzk.app.App
     @on 'form.ajax', (form, dom, xhrFac) ->
       wzk.ui.form.ajaxifyForm form, dom, xhrFac
 
+    @on 'fieldset.inline-js', (el, dom, xhrFac, opts) ->
+      wzk.ui.inlineform.buildDynamicButton el, dom, opts.app.getRegister()
+
     @on 'select.fulltext-search', (el, dom) ->
       el = (`/** @type {HTMLSelectElement} */`) el
       wzk.ui.ac.buildSelectAutoCompleteNative el, dom
@@ -145,9 +148,6 @@ class wzk.app.App
     @on 'select.fulltext-search-multiple', (el, dom) ->
       el = (`/** @type {HTMLSelectElement} */`) el
       wzk.ui.ac.buildExtSelectboxFromSelectNative el, dom
-
-    @on 'fieldset.inline-js', (el, dom, xhrFac, opts) ->
-      wzk.ui.inlineform.buildDynamicButton el, dom, opts.app.getRegister()
 
     @on '*[data-title]', (el, dom) ->
       wzk.ui.tooltip.tooltipy el, dom
