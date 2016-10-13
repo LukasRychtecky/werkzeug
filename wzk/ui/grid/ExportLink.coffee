@@ -31,6 +31,7 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
     'yaml': 'application/x-yaml'
     'picle': 'application/python-pickle'
     'pdf': 'application/pdf'
+    'zip': 'application/zip'
 
   ###*
     @param {Object} params
@@ -47,9 +48,10 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
     @override
   ###
   decorateInternal: (el) ->
-    super el
-    goog.events.listen el, goog.events.EventType.CLICK, @handleAction
-    @implicitUriParams = new goog.Uri(@getElement().href).getQueryData()
+    super(el)
+    goog.events.listen(el, goog.events.EventType.CLICK, @handleAction)
+    @origUri = new goog.Uri(@getElement().href)
+    @implicitUriParams = @origUri.getQueryData()
     @implicitUriParams.remove(col) for col in @watcher.getGrid().getColumns()
     undefined
 
@@ -78,6 +80,7 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
   ###
   buildUri: ->
     uri = @watcher.getQuery().cloneUri()
+    uri.setPath(@origUri.getPath())
     uri.setParameterValue '_accept', @getType()
     for k in @implicitUriParams.getKeys() when not uri.getParameterValue(k)?
       uri.setParameterValue k, @implicitUriParams.getValues(k)
