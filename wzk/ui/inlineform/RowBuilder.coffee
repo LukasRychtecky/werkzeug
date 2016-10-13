@@ -70,8 +70,8 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   decorateRow: (row) ->
     removeIcon = @rowDecorator.addRemoveIcon(row)
-    return unless removeIcon?
-    removeIcon.listen goog.ui.Component.EventType.ACTION, @handleIconAction
+    if removeIcon?
+      removeIcon.listen(goog.ui.Component.EventType.ACTION, @handleIconAction)
     @reg.process row
 
   ###*
