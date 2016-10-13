@@ -34,6 +34,40 @@ suite 'wzk.dom.Dom', ->
     test 'Should not be a Node', ->
       assert.isFalse dom.isNode(null)
 
+  suite '#elements', ->
+
+    test 'Should create divs', ->
+      div = dom.div('div-cls',
+        dom.div('child-1'),
+        dom.div('child-2'),
+        dom.div('child-3')
+      )
+
+      doc.body.appendChild div
+
+      assert.isTrue dom.isNode(div)
+      assert.equal div.children.length, 3
+
+      for child, i in div.children
+        assert.equal child.tagName, 'DIV'
+        assert.isTrue dom.isNode(child)
+        assert.equal child.className, "child-#{i + 1}"
+
+  suite '#cx', ->
+
+    test 'Should create classes list', ->
+      result = 'a b c'
+
+      cx = dom.cx({
+        'a': true
+        'ne': false
+        'ne': false
+        'b': true
+        'c': true
+        'ne': false
+      })
+
+      assert.equal cx, result
 
   suite '#getFirstSibling, #getLastSibling', ->
 
