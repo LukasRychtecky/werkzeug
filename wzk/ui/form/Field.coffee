@@ -4,7 +4,7 @@ goog.require 'wzk.ui.Component'
 goog.require 'goog.dom.forms'
 goog.require 'wzk.ui.form.Html5Validator'
 goog.require 'wzk.ui.form.ErrorMessage'
-goog.require 'goog.testing.events'
+goog.require 'wzk.testing.events'
 goog.require 'goog.json'
 
 ###*

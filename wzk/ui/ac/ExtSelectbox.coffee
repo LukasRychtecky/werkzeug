@@ -13,7 +13,7 @@ goog.require 'goog.ui.ac.AutoComplete.EventType'
 goog.require 'goog.style'
 goog.require 'goog.events'
 goog.require 'goog.events.Event'
-goog.require 'goog.testing.events'
+goog.require 'wzk.testing.events'
 
 class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
 
@@ -125,8 +125,8 @@ class wzk.ui.ac.ExtSelectbox extends goog.events.EventTarget
   ###
   openSuggestion: ->
     # better simulate a browser event, than call method manually
-    goog.testing.events.fireFocusEvent(@input.getElement())
-    goog.testing.events.fireKeySequence(@input.getElement(), goog.events.KeyCodes.DOWN)
+    wzk.testing.events.fireFocusEvent(@input.getElement())
+    wzk.testing.events.fireKeySequence(@input.getElement(), goog.events.KeyCodes.DOWN)
 
   ###*
     @protected
