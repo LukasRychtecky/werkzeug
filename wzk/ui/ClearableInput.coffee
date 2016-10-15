@@ -1,6 +1,6 @@
 goog.require 'wzk.ui.Input'
 goog.require 'wzk.ui.CloseIcon'
-goog.require 'goog.testing.events'
+goog.require 'wzk.testing.events'
 
 class wzk.ui.ClearableInput extends wzk.ui.Input
 
@@ -36,7 +36,7 @@ class wzk.ui.ClearableInput extends wzk.ui.Input
   handleClean: (e) =>
     @setValue ''
     @hideClearButton()
-    goog.testing.events.fireBrowserEvent new goog.testing.events.Event(goog.events.EventType.CHANGE, @getElement())
+    wzk.testing.events.fireBrowserEvent new wzk.testing.events.Event(goog.events.EventType.CHANGE, @getElement())
     @dispatchEvent new goog.events.Event(wzk.ui.ClearableInput.EventType.CLEAR, @)
 
   hideClearButton: ->

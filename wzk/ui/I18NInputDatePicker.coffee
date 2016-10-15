@@ -2,7 +2,7 @@ goog.require 'goog.dom.dataset'
 goog.require 'goog.i18n.DateTimeFormat'
 goog.require 'goog.i18n.DateTimeParse'
 goog.require 'goog.json'
-goog.require 'goog.testing.events'
+goog.require 'wzk.testing.events'
 goog.require 'goog.ui.InputDatePicker'
 
 goog.require 'wzk.ui.CloseIcon'
@@ -80,7 +80,7 @@ class wzk.ui.I18NInputDatePicker extends wzk.ui.ClearableInput
     @param {goog.events.Event} e
   ###
   handleChanged: (e) =>
-    goog.testing.events.fireBrowserEvent new goog.testing.events.Event(goog.events.EventType.CHANGE, @el)
+    wzk.testing.events.fireBrowserEvent new wzk.testing.events.Event(goog.events.EventType.CHANGE, @el)
     @handleInputChange e
 
   ###*

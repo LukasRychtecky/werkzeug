@@ -1,5 +1,3 @@
-goog.require 'goog.testing.stacktrace'
-
 class wzk.debug.ErrorReporter
 
   ###*
@@ -16,4 +14,4 @@ class wzk.debug.ErrorReporter
     @param {Object} e an exception
   ###
   report: (e) ->
-    @log e.message, goog.testing.stacktrace.canonicalize e.stack
+    @log(e.message, String(e.stack))
