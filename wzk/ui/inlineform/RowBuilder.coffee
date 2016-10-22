@@ -57,7 +57,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   ###
   addRow: ->
     cloned = @clone.cloneNode(true)
-    @decorateRow cloned
+    @decorateRow(cloned, true)
 
     @cycle(cloned)
     @fixIdsAndNames(cloned)
@@ -67,12 +67,14 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
 
   ###*
     @param {Element} row
+    @param {boolean} processElements
   ###
-  decorateRow: (row) ->
+  decorateRow: (row, processElements) ->
     removeIcon = @rowDecorator.addRemoveIcon(row)
     if removeIcon?
       removeIcon.listen(goog.ui.Component.EventType.ACTION, @handleIconAction)
-    @reg.process row
+    if processElements
+      @reg.process(row)
 
   ###*
     @protected

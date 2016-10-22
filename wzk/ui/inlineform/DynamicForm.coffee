@@ -47,7 +47,7 @@ class wzk.ui.inlineform.DynamicForm
 
     if rows.length > 1
       for rowIndex in [0..rows.length - 2]
-        @builder.decorateRow rows[rowIndex]
+        @builder.decorateRow(rows[rowIndex], false)
 
     if enabled
       @listener = goog.events.listen @btn, goog.events.EventType.CLICK, @handleClick
