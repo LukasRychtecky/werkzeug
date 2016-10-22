@@ -60,6 +60,6 @@ suite 'wzk.ui.inlineform.RowBuilder', ->
       done() if e.target is row
 
     builder.addRow()
-    builder.decorateRow row
+    builder.decorateRow(row, true)
 
     fireCheckboxClick()
