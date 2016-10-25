@@ -53,6 +53,7 @@ wzk.testing.events.Event.prototype.returnValue_ = true
 ###
 wzk.testing.events.Event.prototype.stopPropagation = ->
   @propagationStopped_ = true
+  undefined
 
 
 ###*
@@ -61,6 +62,7 @@ wzk.testing.events.Event.prototype.stopPropagation = ->
 wzk.testing.events.Event.prototype.preventDefault = ->
   @defaultPrevented = true
   @returnValue_ = false
+  undefined
 
 
 ###*
@@ -77,6 +79,30 @@ wzk.testing.events.Event.prototype.preventDefault = ->
 wzk.testing.events.fireKeySequence = (target, keyCode, opt_eventProperties) ->
   return wzk.testing.events.fireNonAsciiKeySequence(target, keyCode, keyCode, opt_eventProperties)
 
+
+###*
+ *
+ * Simulate a focus event on the given target.
+ * @param {EventTarget} target The target for the event.
+ * @return {boolean} The value returned by firing the focus browser event,
+ *     which returns false iff 'preventDefault' was invoked.
+###
+wzk.testing.events.fireFocusEvent = (target) ->
+  e = new wzk.testing.events.Event(goog.events.EventType.FOCUS, target)
+  return wzk.testing.events.fireBrowserEvent(e)
+
+
+###*
+ * @param {wzk.testing.events.Event} e The event.
+ * @return {boolean} Whether this is the Gecko/Mac's Meta-C/V/X, which
+ *     is broken and requires special handling.
+ * @private
+###
+wzk.testing.events.isBrokenGeckoMacActionKey_ = (e) ->
+  return (goog.userAgent.MAC and goog.userAgent.GECKO and
+    (e.keyCode == goog.events.KeyCodes.C or
+     e.keyCode == goog.events.KeyCodes.X or
+     e.keyCode == goog.events.KeyCodes.V) and e.metaKey)
 
 ###*
  * Simulates a complete keystroke (keydown, keypress, and keyup) when typing
