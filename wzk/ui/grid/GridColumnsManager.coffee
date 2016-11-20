@@ -269,7 +269,6 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @grid.setColumns(arrCols)
     @grid.rowBuilder.setColumns(arrCols)
     @showOrHideHeader()
-    @grid.refresh()
 
   ###*
     @protected
