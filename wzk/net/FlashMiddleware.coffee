@@ -65,28 +65,35 @@ class wzk.net.FlashMiddleware
     @param {number} status
   ###
   error: (status) ->
-    if @hasDefaultMsgFor status
-      strStatus = String status
+    if @hasDefaultMsgFor(status)
+      strStatus = String(status)
       @flash.addError(@msgs[strStatus]) if @msgs[strStatus]?
     else
-      @flash.addError @msgs['error']
+      @flash.addError(@msgs['error'])
 
   loading: ->
-    [@createInfoFlash @msgs['loading'], 'loading', false]
+    [@createInfoFlash(@msgs['loading'], 'loading', false, false)]
 
   offline: ->
-    [@createInfoFlash @msgs['offline'], 'info']
+    [@createInfoFlash(@msgs['offline'], 'info', true, true)]
 
   ###*
     @param {string} msgTxt
     @param {string=} cls
-    @param {boolean=} closable
+    @param {boolean} closable
+    @param {boolean} fadeout
     @return {wzk.ui.FlashMessage}
   ###
-  createInfoFlash: (msgTxt, cls, closable = true) ->
-    msg = new wzk.ui.FlashMessage dom: @flash.getDomHelper(), msg: msgTxt, severity: 'info', fadeOut: true, closable: closable
-    msg.addClass cls if cls?
-    @flash.addChild msg
+  createInfoFlash: (msgTxt, cls, fadeOut, closable) ->
+    msg = new wzk.ui.FlashMessage({
+      dom: @flash.getDomHelper(),
+      msg: msgTxt,
+      severity: 'info',
+      fadeOut: fadeOut,
+      closable: closable
+    })
+    msg.addClass(cls) if cls?
+    @flash.addChild(msg)
     msg
 
   clearAll: ->
