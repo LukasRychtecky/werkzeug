@@ -81,7 +81,9 @@ class wzk.ui.inlineform.DynamicForm
     if @formNum is @MAX_FORMS
       goog.dom.classes.add(@btn, 'disabled')
       goog.events.unlistenByKey(@listener)
-    @openFileDialog row
+
+    if @dom.all('input[type=file]', row).length == 1
+      @openFileDialog(row)
 
   ###*
     @protected
