@@ -1,11 +1,13 @@
 goog.provide 'wzk.ui.dialog.Dialog'
 
-goog.require 'wzk.ui.dialog.ButtonSet'
-goog.require 'goog.string'
-goog.require 'goog.ui.Dialog.DefaultButtonKeys'
-goog.require 'wzk.ui.CloseIcon'
 goog.require 'goog.dom.classes'
 goog.require 'goog.dom.safe'
+goog.require 'goog.html.SafeHtml'
+goog.require 'goog.string'
+goog.require 'goog.ui.Dialog.DefaultButtonKeys'
+
+goog.require 'wzk.ui.dialog.ButtonSet'
+goog.require 'wzk.ui.CloseIcon'
 
 class wzk.ui.dialog.Dialog extends goog.ui.Dialog
 
@@ -30,6 +32,16 @@ class wzk.ui.dialog.Dialog extends goog.ui.Dialog
       btnSet.set goog.ui.Dialog.DefaultButtonKeys.YES, captYes
     if captNo?
       btnSet.set goog.ui.Dialog.DefaultButtonKeys.NO, captNo
+
+  ###*
+    Allows to set a HTML fron unsave string.
+    @suppress {accessControls}
+    @param {string} html
+  ###
+  setContent: (html) ->
+    @content_ = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(html, null)
+    if @contentEl_?
+      goog.dom.safe.setInnerHtml(@contentEl_, @content_)
 
   open: ->
     @setVisible true
@@ -122,7 +134,7 @@ class wzk.ui.dialog.Dialog extends goog.ui.Dialog
     @element_ = @dom_.el 'div', 'modal fade in'
     main = @dom_.el 'div', 'modal-dialog', @element_
     @buildContentWrapper main
-  
+
     @manageBgMask()
 
     @buildHeader()
