@@ -31,7 +31,7 @@ class wzk.net.AuthMiddleware extends wzk.net.HeadersMiddleware
     @param {Object} headers
   ###
   apply: (headers) ->
-    csrfs = (token for token in [@cookies.get(wzk.net.AuthMiddleware.COOKIES.CSRF), @csrf] when token?)
+    csrfs = (token for token in [@csrf, @cookies.get(wzk.net.AuthMiddleware.COOKIES.CSRF)] when token?)
     if not goog.array.isEmpty(csrfs)
       headers[wzk.net.AuthMiddleware.HEADER.CSRF] = csrfs[0]
     else
