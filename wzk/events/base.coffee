@@ -6,7 +6,7 @@ goog.require 'goog.dom'
 ###*
   Dispatches a native event on a given element.
 
-  @param {EventTarget} src The node to listen to events on.
+  @param {EventTarget} el The node to listen to events on.
   @param {string} type an event type that is goging to be dispatched
 ###
 wzk.events.dispatchNativeEvent = (el, type) ->

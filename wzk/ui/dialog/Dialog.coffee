@@ -2,10 +2,10 @@ goog.provide 'wzk.ui.dialog.Dialog'
 
 goog.require 'goog.dom.classes'
 goog.require 'goog.dom.safe'
-goog.require 'goog.html.SafeHtml'
 goog.require 'goog.string'
 goog.require 'goog.ui.Dialog.DefaultButtonKeys'
 
+goog.require 'wzk.html.SafeHtml'
 goog.require 'wzk.ui.dialog.ButtonSet'
 goog.require 'wzk.ui.CloseIcon'
 
@@ -39,7 +39,7 @@ class wzk.ui.dialog.Dialog extends goog.ui.Dialog
     @param {string} html
   ###
   setContent: (html) ->
-    @content_ = goog.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(html, null)
+    @content_ = wzk.html.SafeHtml.createSafeHtmlSecurityPrivateDoNotAccessOrElse(html, null)
     if @contentEl_?
       goog.dom.safe.setInnerHtml(@contentEl_, @content_)
 
