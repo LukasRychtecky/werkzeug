@@ -79,9 +79,9 @@ class wzk.net.FlashMiddleware
 
   ###*
     @param {string} msgTxt
-    @param {string=} cls
+    @param {string} cls
+    @param {boolean} fadeOut
     @param {boolean} closable
-    @param {boolean} fadeout
     @return {wzk.ui.FlashMessage}
   ###
   createInfoFlash: (msgTxt, cls, fadeOut, closable) ->
