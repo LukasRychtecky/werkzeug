@@ -1,10 +1,10 @@
 bower_components/
 node_modules/
 var/
+wzk-demo/build/
+wzk-demo/js/app.js
 
 .idea
+*.swp
 
 .DS_Store
-
-*/.DS_Store
-

@@ -4,6 +4,9 @@ Werkzeug
 Client side components base on Google Closure. Lot of UI component are base on Closure components, or use Closure
 components internally.
 
+[![Build Status](https://travis-ci.org/LukasRychtecky/werkzeug.svg?branch=master)](https://travis-ci.org/LukasRychtecky/werkzeug)
+
+
 UI components
 -------------
 
@@ -156,3 +159,10 @@ app.start(window, {error: 'Internal error occurred, sorry.', loading: 'Loading..
 * snippet loaders
 * related object lookup buttons
 * more details [wzk.app.App](wzk/app/App.coffee)
+
+Demos
+-----
+
+See demos in `wzk-demo/index.html.
+
+Run demos via `grunt --gruntfile wzk-demo/Gruntfile.coffee` and `wzk-demo/index.html` in a browser.

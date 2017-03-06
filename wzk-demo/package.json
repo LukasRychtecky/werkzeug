@@ -1,0 +1,14 @@
+{
+    "name": "werkzeug-demo",
+    "version": "0.0.1",
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-contrib-clean": "~0.5.0",
+        "grunt-contrib-coffee": "~0.7.0",
+        "grunt-este": "~2.3.1",
+        "grunt-este-watch": "~0.1.1",
+        "grunt-coffeelint": "0.0.7",
+        "grunt-zuckrig-closure": "0.1.2",
+        "grunt-suppe": "git://github.com/LukasRychtecky/grunt-suppe.git#0.1.5"
+    }
+}

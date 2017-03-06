@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset='utf-8'>
+    <style>
+    </style>
+  </head>
+  <body>
+    <h1>Demos</h1>
+    <div data-title="A tooltip content shown on hover">Hover me</div>
+    <script src="build/bower_components/closure-library/closure/goog/base.js" type="text/javascript"></script>
+    <script src="build/cs/deps.js" type="text/javascript"></script>
+    <script src="build/cs/start.js" type="text/javascript"></script>
+    <script src="http://localhost:35729/livereload.js"></script>
+    <script>
+      app.start(
+        window, {
+          error: 'Internal error occurred. Service is unavailable, sorry.',
+          loading: 'Loading...',
+          '400': 'Bad request'
+        },
+          true
+      );
+    </script>
+  </body>
+</html>
