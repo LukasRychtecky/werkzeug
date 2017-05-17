@@ -30,10 +30,11 @@ goog.require 'wzk.debug.ErrorReporter'
 ###
 class wzk.app.App
 
-  constructor: ->
+  constructor: (@xhrFactoryClass = null) ->
     @reporter = new wzk.debug.ErrorReporter()
     @reg = new wzk.app.Register @buildFunc, @reporter
     @regOnce = new wzk.app.Register @buildFunc, @reporter
+    @xhrFactoryClass ?= wzk.net.XhrFactory
     @xhrFac = null
     @doc = null
     @frag = null
@@ -76,7 +77,7 @@ class wzk.app.App
 
     auth = new wzk.net.AuthMiddleware @win.document
     flashmid = new wzk.net.FlashMiddleware flash, msgs
-    @xhrFac = new wzk.net.XhrFactory flashmid, auth, snip, dom
+    @xhrFac = new @xhrFactoryClass(flashmid, auth, snip, dom)
     if settings.reloadOn403? and settings.reloadOn403
       @xhrFac.addResponseMiddleware new wzk.net.ReloadMiddleware(@win)
 
