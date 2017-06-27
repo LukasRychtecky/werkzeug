@@ -33,8 +33,11 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     extFiltersEnabled = goog.dom.classes.has table, wzk.ui.grid.FilterExtended.CLS.ENABLED_FILTERS
     for field in @dom.all 'thead *[data-filter]', table
       filter = @buildFilter field, extFiltersEnabled
-      @fields[filter.getName()] = filter
-      @watchField filter
+      if goog.object.containsKey(@fields, filter.getName())
+        @dom.getWindow().console.warn("Table ##{table.id} contains duplicated columns with name '#{filter.getName()}'.")
+      else
+        @fields[filter.getName()] = filter
+        @watchField filter
 
     @updateInitialState()
     @query
