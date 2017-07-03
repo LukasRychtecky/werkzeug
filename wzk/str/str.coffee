@@ -48,3 +48,10 @@ wzk.str.asciify = (str) ->
 ###
 wzk.str.alfanumeric = (str) ->
   str.replace /[^\w\s]|_/g, ''
+
+
+###*
+  Returns `true` iff a given string is `null`, `undefined` or `''`.
+###
+wzk.str.isBlank = (strOrNull) ->
+  not strOrNull? or strOrNull.length is 0

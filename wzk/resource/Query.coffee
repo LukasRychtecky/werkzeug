@@ -1,7 +1,14 @@
-goog.require 'goog.Uri'
+goog.provide 'wzk.resource.Query'
+
+goog.require 'goog.array'
+goog.require 'goog.string'
 goog.require 'goog.object'
+goog.require 'goog.Uri'
+goog.require 'goog.Uri.QueryData'
+
 goog.require 'wzk.resource.Sorting'
 goog.require 'wzk.resource.FilterValue'
+
 
 class wzk.resource.Query
 
@@ -29,11 +36,11 @@ class wzk.resource.Query
     @sorting = new wzk.resource.Sorting()
     @base ?= 10
     @offset ?= 0
-    @uri = new goog.Uri uri
+    @uri = new goog.Uri(uri)
     @extraFields = ['id']
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
     @accept = 'application/json'
-    @filters = {}
+    @filters = new goog.Uri.QueryData()
     @defaultFilters = @parseDefaultFilters()
 
   putDefaultFields: ->
@@ -112,19 +119,27 @@ class wzk.resource.Query
 
     defaultFilters
 
+  removeFilter: (filter) ->
+    @filters.remove(filter.getName())
+    for param in @uri.getQueryData().getKeys()
+      if goog.string.startsWith(param, filter.getName())
+        @uri.removeParameter(param)
+
   ###*
     @param {wzk.resource.FilterValue} filter
     @return {wzk.resource.Query} this
   ###
   filter: (filter) ->
     if filter.getValue()
-      prev = @filters[filter.getName()]
-      @uri.removeParameter(prev.getParamName()) if prev?
-      @uri.setParameterValue filter.getParamName(), filter.getValue()
-      @filters[filter.getName()] = filter
+      if filter.isMultipleOperatorAllowed
+        @filters.add(filter.getName(), filter)
+        @uri.setParameterValue(filter.getParamName(), filter.getValue())
+      else
+        @removeFilter(filter)
+        @filters.add(filter.getName(), filter)
+        @uri.setParameterValue(filter.getParamName(), filter.getValue())
     else
-      @uri.removeParameter filter.getParamName()
-      goog.object.remove @filters, filter.getName()
+      @removeFilter(filter)
     @
 
   ###*
@@ -132,17 +147,17 @@ class wzk.resource.Query
     @return {boolean}
   ###
   hasFilter: (name) ->
-    !!@filters[name]
+    @filters.containsKey(name)
 
   ###*
     @param {string} name
-    @return {wzk.resource.FilterValue}
+    @return {Array<wzk.resource.FilterValue>}
   ###
   getFilter: (name) ->
-    @filters[name]
+    @filters.getValues(name)
 
   ###*
-    @return {Object}
+    @return {goog.Uri.QueryData}
   ###
   getFilters: ->
     @filters
@@ -158,7 +173,12 @@ class wzk.resource.Query
     @return {boolean}
   ###
   isChanged: (filter) ->
-    actual = @getFilter filter.getName()
+    values = @getFilter(filter.getName())
+    if filter.isMultipleOperatorAllowed
+      actual = goog.array.find(values, (element, i, array) ->
+        element.getOperator() is filter.getOperator())
+    else
+      actual = if goog.array.isEmpty(values) then null else values[0]
     return false if not actual and (not filter.getValue()? or filter.getValue() is '')
     return true unless actual
     val = filter.getValue()

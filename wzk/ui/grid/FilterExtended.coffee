@@ -57,7 +57,7 @@ class wzk.ui.grid.FilterExtended extends wzk.ui.grid.Filter
     @override
   ###
   apply: (query) ->
-    filter = new wzk.resource.FilterValue(@getName(), String(@select.getValue()), @getValue())
+    filter = new wzk.resource.FilterValue(@getName(), String(@select.getValue()), @getValue(), false)
     changed = query.isChanged(filter)
     if changed
       query.filter filter
