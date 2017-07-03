@@ -119,7 +119,7 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @return {wzk.resource.FilterValue}
   ###
   getValueObj: =>
-    new wzk.resource.FilterValue(@getName(), @getOperator(), @getValue())
+    new wzk.resource.FilterValue(@getName(), @getOperator(), @getValue(), true)
 
   ###*
     Applies a filter on a query object. Returns true if the filter has been changed,
@@ -129,8 +129,8 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @return {boolean}
   ###
   apply: (query) ->
-    filter = new wzk.resource.FilterValue(@getName(), @getOperator(), @getValue())
-    changed = query.isChanged filter
+    filter = new wzk.resource.FilterValue(@getName(), @getOperator(), @getValue(), true)
+    changed = query.isChanged(filter)
     if changed
-      query.filter filter
+      query.filter(filter)
     changed

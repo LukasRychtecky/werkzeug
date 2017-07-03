@@ -33,10 +33,11 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     extFiltersEnabled = goog.dom.classes.has table, wzk.ui.grid.FilterExtended.CLS.ENABLED_FILTERS
     for field in @dom.all 'thead *[data-filter]', table
       filter = @buildFilter field, extFiltersEnabled
-      if goog.object.containsKey(@fields, filter.getName())
-        @dom.getWindow().console.warn("Table ##{table.id} contains duplicated columns with name '#{filter.getName()}'.")
+      if goog.object.containsKey(@fields, filter.getFilter())
+        @dom.getWindow().console.warn(
+          "Table ##{table.id} contains duplicated columns with name '#{filter.getFilter()}'.")
       else
-        @fields[filter.getName()] = filter
+        @fields[filter.getFilter()] = filter
         @watchField filter
 
     @updateInitialState()
@@ -44,7 +45,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
 
   updateInitialState: ->
     @resetFilters()
-    @ssKeys = @adjustURIFilters @ss.getAllKeys()
+    @ssKeys = @adjustURIFilters(@ss.getAllKeys())
     @defaultFilters = @query.getDefaultFilters()
     @fillFiltersFromDefaults()
     @fillFiltersFromUri()
@@ -55,7 +56,8 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   ###
   fillFiltersFromUri: ->
     for key, uriParam of @ssKeys
-      @fields[key].fillFromUri uriParam['operator'], uriParam['value'] if @fields[key]?
+      if @fields[uriParam['name']]?
+        @fields[uriParam['name']].fillFromUri(uriParam['operator'], uriParam['value'])
 
   ###*
     @protected
@@ -84,9 +86,10 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     adjustedFilters = {}
     for nameWithOperator in namesWithOperators
       nameWithoutOperator = @getBareFilterName nameWithOperator
-      adjustedFilters[nameWithoutOperator] =
-        'operator': @getOperatorFromName nameWithOperator, nameWithoutOperator
-        'value': @ss.get nameWithOperator
+      adjustedFilters[nameWithOperator] =
+        'operator': @getOperatorFromName(nameWithOperator, nameWithoutOperator)
+        'value': @ss.get(nameWithOperator)
+        'name': nameWithOperator
 
     adjustedFilters
 
@@ -144,8 +147,11 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     @protected
     @param {wzk.ui.grid.Filter} filter
   ###
-  filter: (filter) ->
-    if filter.apply @query
+  filter: (triggeredFilter) ->
+    if triggeredFilter.apply(@query)
+      for filterName, filter of @fields
+        if goog.string.startsWith(filterName, triggeredFilter.getName())
+          filter.apply(@query)
       @query.offset = 0
       @dispatchChanged()
 
@@ -177,6 +183,14 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   getQuery: ->
     @query
 
+
+  ###*
+    @protected
+    @return {boolean}
+  ###
+  hasValueChanged: (filter, value) ->
+    (@defaultFilters[filter.getName()]? and value is '') or value isnt ''
+
   ###*
     @return {Object}
   ###
@@ -184,8 +198,8 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     params = {}
     for filterName, filter of @fields
       value = filter.getValue()
-      params[filter.getParamName()] = value if (@defaultFilters[filter.getName()]? and value is '') or value isnt ''
-
+      if @hasValueChanged(filter, value)
+        params[filter.getParamName()] = value
     params
 
   ###*
