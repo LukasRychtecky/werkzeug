@@ -59,7 +59,7 @@ class wzk.ui.form.Field extends wzk.ui.Component
   ###
   setValue: (val) ->
     @value = val
-    goog.dom.forms.setValue @getElement(), val if @isInDocument()
+    goog.dom.forms.setValue @getElement(), val if @getElement()?
 
   ###*
     @returns {*}
