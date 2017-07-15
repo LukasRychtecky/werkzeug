@@ -1,17 +1,17 @@
-goog.provide 'app.start'
+goog.provide 'wzkdemo.start'
 
-goog.require 'app'
+goog.require 'wzkdemo'
 
 ###*
   @param {Window} win
   @param {Object.<string, string>} msgs
 ###
-app.start = (win, msgs) ->
+wzkdemo.start = (win, msgs) ->
 
   flash = wzk.ui.buildFlash win.document
-  app._app.registerStandardComponents flash
+  wzkdemo._app.registerStandardComponents flash
 
-  app._app.run win, flash, msgs, {reloadOn403: true}
+  wzkdemo._app.run win, flash, msgs, {reloadOn403: true}
 
 # ensure the symbol will be visible after compiler renaming
-goog.exportSymbol 'app.start', app.start
+goog.exportSymbol 'wzkdemo.start', wzkdemo.start
