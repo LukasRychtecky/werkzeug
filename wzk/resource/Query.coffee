@@ -8,6 +8,7 @@ goog.require 'goog.Uri.QueryData'
 
 goog.require 'wzk.resource.Sorting'
 goog.require 'wzk.resource.FilterValue'
+goog.require 'wzk.str'
 
 
 class wzk.resource.Query
@@ -132,6 +133,7 @@ class wzk.resource.Query
   filter: (filter) ->
     if filter.getValue()
       if filter.isMultipleOperatorAllowed
+        @removeFilter(filter)
         @filters.add(filter.getName(), filter)
         @uri.setParameterValue(filter.getParamName(), filter.getValue())
       else
@@ -179,6 +181,7 @@ class wzk.resource.Query
         element.getOperator() is filter.getOperator())
     else
       actual = if goog.array.isEmpty(values) then null else values[0]
+
     return false if not actual and (not filter.getValue()? or filter.getValue() is '')
     return true unless actual
     val = filter.getValue()

@@ -1,3 +1,5 @@
+goog.require 'goog.string'
+
 class wzk.resource.FilterValue
 
   ###*
@@ -38,8 +40,10 @@ class wzk.resource.FilterValue
     @return {string}
   ###
   getParamName: ->
-    return @name unless @operator
-    [@name, @operator].join wzk.resource.FilterValue.SEPARATOR
+    if goog.string.endsWith(@name, @operator)
+      return @name
+    else
+      return [@name, @operator].join(wzk.resource.FilterValue.SEPARATOR)
 
   ###*
     @param {string} paramName
