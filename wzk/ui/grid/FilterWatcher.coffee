@@ -32,19 +32,18 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
   watchOn: (table) ->
     extFiltersEnabled = goog.dom.classes.has table, wzk.ui.grid.FilterExtended.CLS.ENABLED_FILTERS
     for field in @dom.all 'thead *[data-filter]', table
-      filter = @buildFilter field, extFiltersEnabled
+      filter = @buildFilter(field, extFiltersEnabled)
       if goog.object.containsKey(@fields, filter.getFilter())
         @dom.getWindow().console.warn(
           "Table ##{table.id} contains duplicated columns with name '#{filter.getFilter()}'.")
       else
         @fields[filter.getFilter()] = filter
-        @watchField filter
+        @watchField(filter)
 
     @updateInitialState()
     @query
 
   updateInitialState: ->
-    @resetFilters()
     @ssKeys = @adjustURIFilters(@ss.getAllKeys())
     @defaultFilters = @query.getDefaultFilters()
     @fillFiltersFromDefaults()
@@ -55,9 +54,10 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
     @protected
   ###
   fillFiltersFromUri: ->
-    for key, uriParam of @ssKeys
-      if @fields[uriParam['name']]?
-        @fields[uriParam['name']].fillFromUri(uriParam['operator'], uriParam['value'])
+    for fieldName, field of @fields
+      for paramKey, uriParam of @ssKeys
+        if field.isValidFilterFormat(paramKey)
+          field.fillFromUri(uriParam['operator'], uriParam['value'])
 
   ###*
     @protected

@@ -1,8 +1,11 @@
-goog.require 'goog.dom.forms'
-goog.require 'wzk.events.lst'
+goog.require 'goog.array'
 goog.require 'goog.dom.dataset'
-goog.require 'wzk.resource.FilterValue'
+goog.require 'goog.dom.forms'
+
+goog.require 'wzk.array'
 goog.require 'wzk.dom.Dom'
+goog.require 'wzk.events.lst'
+goog.require 'wzk.resource.FilterValue'
 
 class wzk.ui.grid.Filter extends goog.events.EventTarget
 
@@ -25,7 +28,8 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
 
   constructor: (@dom, @el) ->
     super()
-    wzk.events.lst.onChangeOrKeyUp @el, @handleChange
+    wzk.events.lst.onChangeOrKeyUp(@el, @handleChange)
+    @setOperatorAndName()
 
   ###*
     @protected
@@ -73,32 +77,53 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     @return {string}
   ###
   getName: ->
-    unless @name
-      @setOperatorAndName()
-    @name
+    return @name
+
+  ###*
+    Returns a parameter name without an operator
+
+    @protected
+    @return {String}
+  ###
+  getBareName: ->
+    return wzk.array.head(@filterNameToTokens(@getFilterName())).join(wzk.ui.grid.Filter.SEPARATOR)
 
   ###*
     @return {string}
   ###
   getOperator: ->
-    unless @operator
-      @setOperatorAndName()
-    String @operator
+    return String(@operator)
+
+  ###
+    @protected
+    @param {String} filterName
+    @return {Array.<String>}
+  ###
+  filterNameToTokens: (filterName) ->
+    return filterName.split(wzk.ui.grid.Filter.SEPARATOR)
 
   ###*
     @protected
   ###
   setOperatorAndName: ->
-    toks = @getFilter().split(wzk.ui.grid.Filter.SEPARATOR)
-    @setOperator if toks.length > 1 then toks.pop() else ''
-    @name = toks.join wzk.ui.grid.Filter.SEPARATOR
+    toks = @filterNameToTokens(@getFilterName())
+    @setOperator(wzk.array.last(toks, ''))
+    @name = @getFilter()
+
+
+  ###*
+    @protected
+    @return {String}
+  ###
+  getFilterName: ->
+    return String(goog.dom.dataset.get(@el, wzk.ui.grid.Filter.DATA.FILTER))
 
   ###*
     @return {string}
   ###
   getFilter: ->
     unless @filter
-      @filter = String goog.dom.dataset.get(@el, wzk.ui.grid.Filter.DATA.FILTER)
+      @filter = @getFilterName()
     @filter
 
   ###*
@@ -134,3 +159,10 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     if changed
       query.filter(filter)
     changed
+
+  ###*
+    @param {String} filter
+    @return {boolean}
+  ###
+  isValidFilterFormat: (filter) ->
+    return filter is @getFilter()
