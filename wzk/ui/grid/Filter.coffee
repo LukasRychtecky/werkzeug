@@ -113,7 +113,7 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
 
   ###*
     @protected
-    @return {String}
+    @return {string}
   ###
   getFilterName: ->
     return String(goog.dom.dataset.get(@el, wzk.ui.grid.Filter.DATA.FILTER))
@@ -161,7 +161,7 @@ class wzk.ui.grid.Filter extends goog.events.EventTarget
     changed
 
   ###*
-    @param {String} filter
+    @param {string} filter
     @return {boolean}
   ###
   isValidFilterFormat: (filter) ->

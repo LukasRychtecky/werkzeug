@@ -145,7 +145,7 @@ class wzk.ui.grid.FilterWatcher extends goog.events.EventTarget
 
   ###*
     @protected
-    @param {wzk.ui.grid.Filter} filter
+    @param {wzk.ui.grid.Filter} triggeredFilter
   ###
   filter: (triggeredFilter) ->
     if triggeredFilter.apply(@query)

@@ -11,7 +11,7 @@ class wzk.resource.FilterValue
     @param {string} name
     @param {string} operator
     @param {*} value
-    @param {=boolean} isMultipleOperatorAllowed default is `false`. Set to `true` when multiple operator are allowed.
+    @param {boolean=} isMultipleOperatorAllowed default is `false`. Set to `true` when multiple operator are allowed.
      It means that a query parameter will be in an URL with multiple operators e.g.: ?age__lte=20&age__gte=15
      When `false`, previous operator will be overridden by following e.g.: ?age__gte=15
   ###
