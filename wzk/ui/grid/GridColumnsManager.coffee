@@ -265,9 +265,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @param {Object} cols
   ###
   show: (cols) =>
-    arrCols = @toArray(cols)
-    @grid.setColumns(arrCols)
-    @grid.rowBuilder.setColumns(arrCols)
+    @grid.changeColumns(@toArray(cols))
     @showOrHideHeader()
 
   ###*

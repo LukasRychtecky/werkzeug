@@ -18,7 +18,7 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     @param {string} tag
     @param {Object|string=} attrs If a second argument is an object, then a map of name-value pairs for attributes.
       If a string, then this is the className of the new element.
-    @param {(Element|string|Array<Element>)=} parentOrTxt If a third argument is a Node,
+    @param {(Node|string|Array.<Node>)=} parentOrTxt If a third argument is a Node,
       then new element will be append as a child.
       If is a string, then this is the text content of the new element.
       If is an array it's items will be appended as children into the new created element.
@@ -29,7 +29,8 @@ class wzk.dom.Dom extends goog.dom.DomHelper
     if goog.isString(parentOrTxt)
       @setTextContent(el, parentOrTxt)
     else if @isNode(parentOrTxt)
-      parentOrTxt.appendChild(el)
+      parent = (`/** @type {Node} */`) parentOrTxt
+      parent.appendChild(el)
     else if goog.isArray(parentOrTxt)
       for child in parentOrTxt
         el.appendChild(child)
@@ -39,7 +40,7 @@ class wzk.dom.Dom extends goog.dom.DomHelper
   ###*
     Returns true if a given element is Node, otherwise return false
 
-    @param {(Element|Node)=} el
+    @param {*} el
     @return {boolean}
   ###
   isNode: (el) ->

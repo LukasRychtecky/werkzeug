@@ -153,7 +153,7 @@ class wzk.resource.Query
 
   ###*
     @param {string} name
-    @return {Array<wzk.resource.FilterValue>}
+    @return {Array.<wzk.resource.FilterValue>}
   ###
   getFilter: (name) ->
     @filters.getValues(name)
