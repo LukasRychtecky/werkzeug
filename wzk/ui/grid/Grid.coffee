@@ -70,6 +70,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @rows = new wzk.ui.grid.Body dom: @dom
     @rowBuilder = null
     @showActions = true
+    @data = []
 
   ###*
     @protected
@@ -200,16 +201,14 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @repo.load(query, @handleData)
 
   ###*
-    Allows to re-render grid without reloading from repository
+    Rerenders the grid by its `data`
     @protected
-    @param {Array.<Object>} data
-    @param {Object} result
   ###
-  handleData: (data, result) =>
+  rerender: ->
     if @rows.isInDocument()
       @rows.destroyChildren()
 
-    for model in data
+    for model in @data
       row = @rowBuilder.build(model, @showActions)
       row.listen(wzk.ui.grid.Row.EventType.DELETE_BUTTON, @handleDeleteBtn)
       row.listen(wzk.ui.grid.Row.EventType.REMOTE_BUTTON, @handleRemoteButton)
@@ -219,9 +218,26 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
       @rows.render(@table)
     @rows.listen(goog.ui.Component.EventType.ACTION, @handleSelectedItem)
 
-    result.count = data.length
+  ###*
+    Changes shown grid's columns by given `cols`. The grid will be rerendered.
+    @param {Array.<string>} cols
+  ###
+  changeColumns: (cols) ->
+    @setColumns(cols)
+    @rowBuilder.setColumns(cols)
+    @rerender()
+
+  ###*
+    Allows to re-render grid without reloading from repository
+    @protected
+    @param {Array.<Object>} data
+    @param {Object} result
+  ###
+  handleData: (@data, result) =>
+    @rerender()
+    result.count = @data.length
     @doAfter result if @doAfter?
-    data
+    @data
 
   ###*
     @protected
