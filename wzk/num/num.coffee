@@ -10,3 +10,32 @@ wzk.num.parseDec = (str, implicit = null) ->
   if not isFinite(num) and implicit?
     num = implicit
   num
+
+
+###*
+  Returns `true` if a given `num` is positive.
+  @param {number} num
+  @param {boolean}
+###
+wzk.num.isPos = (num) ->
+  0 < num
+
+
+###*
+  Returns `true` if a given `num` is negative.
+  @param {number} num
+  @param {boolean}
+###
+wzk.num.isNeg = (num) ->
+  num < 0
+
+
+###*
+  Returns `true` if a given `num` is in a given `range` (within the range).
+  @param {Array.<number>} range
+  @param {number} num
+  @param {boolean}
+###
+wzk.num.inRange = (range, num) ->
+  [min, max] = range
+  min <= num <= max

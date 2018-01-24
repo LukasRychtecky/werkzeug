@@ -1,10 +1,13 @@
 goog.require 'goog.array'
-goog.require 'goog.string'
-goog.require 'goog.dom.dataset'
 goog.require 'goog.dom.classes'
-goog.require 'goog.json'
 goog.require 'goog.dom.forms'
+goog.require 'goog.functions'
+goog.require 'goog.string'
 goog.require 'goog.style'
+
+goog.require 'wzk.dom.dataset'
+goog.require 'wzk.json'
+goog.require 'wzk.num'
 goog.require 'wzk.ui.menu.Menu'
 goog.require 'wzk.ui.menu.MenuItemRenderer'
 goog.require 'wzk.ui.menu.MenuRenderer'
@@ -36,6 +39,10 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   @DATA:
     PAGE: 'p'
     PAGING: 'paging'
+    BASE_TYPE: 'baseType'
+    BASE_RANGE: 'baseRange'
+    CUSTOM_BASE_LABEL: 'customBaseLabel'
+    CUSTOM_BASE_ERROR_MESSAGE: 'customBaseErrorMessage'
 
   ###*
     @enum {string}
@@ -43,6 +50,28 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   @PAGING_STYLE:
     SIMPLE: 'simple'
     FULL: 'full' # default
+
+  ###*
+    @enum {string}
+  ###
+  @BASE_TYPES:
+    NONE: 'none' # default
+    CUSTOM: 'custom'
+
+  ###*
+    @enum {Array.<number>}
+  ###
+  @BASE_RANGE_DEFAULT: [1, 1000]
+
+  ###*
+    @type {string}
+  ###
+  @CUSTOM_BASE_LABEL: 'Display number of rows'
+
+  ###*
+    @type {string}
+  ###
+  @CUSTOM_BASE_ERROR_MESSAGE: 'Row number has to be between %s and %s'
 
   ###*
     @type {Array}
@@ -58,8 +87,11 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @switcherPattern = '%d per page'
     @itemTag = 'LI'
     @itemInnerTag = 'SPAN'
-    @pagingStyle = wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.FULL
+    @pagingStyle = wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.SIMPLE
     @resultComposers = [@composeTotalResult, @composeDisplayedResult]
+    @baseRange = wzk.ui.grid.PaginatorRenderer.BASE_RANGE_DEFAULT
+    @customBaseLabel = wzk.ui.grid.PaginatorRenderer.CUSTOM_BASE_LABEL
+    @customBaseErrorMessage = wzk.ui.grid.PaginatorRenderer.CUSTOM_BASE_ERROR_MESSAGE
 
   ###*
     @override
@@ -120,8 +152,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {string} content
   ###
   attachResult: (paginator, parent, content) ->
-    result = @createResult paginator, content
-    parent.appendChild result
+    result = @createResult(paginator, content)
+    parent.appendChild(result)
 
   ###*
     @protected
@@ -143,6 +175,99 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @isPatternSet[i][part] = true
 
   ###*
+    @protected
+    @param {goog.dom.DomHelper} dom
+    @param {Element} el
+  ###
+  deleteErrorMessageIfExists: (dom, el) ->
+    errorMessageEl = dom.cls('paginator__error-message', el)
+    dom.removeNode(errorMessageEl) if errorMessageEl?
+
+  ###*
+    @protected
+    @param {goog.dom.DomHelper} dom
+    @param {Element} el
+  ###
+  createErrorMessage: (dom, el) ->
+    [min, max] = @baseRange
+    errorMessageEl = dom.el(
+      'div',
+      'paginator__error-message',
+      [dom.el('div', 'alert alert-danger', goog.string.format(@customBaseErrorMessage, min, max))])
+    dom.appendChild(el, errorMessageEl)
+
+  ###*
+    @param {wzk.ui.Component} paginator
+    @param {Element} el
+  ###
+  hangCustomerBaseInputListeners: (paginator, el) ->
+    wzk.events.lst.onEnter(
+      el,
+      (_) =>
+        dom = paginator.getDomHelper()
+        inputEl = dom.cls('paginator__custom-base-input', el)
+        return unless inputEl?
+
+        parent = dom.getParentElement(el)
+        newBase = wzk.num.parseDec(goog.dom.forms.getValue(inputEl))
+        if wzk.num.inRange(@baseRange, newBase)
+          @deleteErrorMessageIfExists(dom, parent)
+          paginator.setBase(newBase)
+        else
+          @createErrorMessage(dom, parent))
+
+  ###*
+    @protected
+    @param {wzk.ui.Component} paginator
+    @param {Element} paginatorEl
+    @return {?Element}
+  ###
+  createCustomBaseEl: (paginator, paginatorEl) ->
+    dom = paginator.getDomHelper()
+    resultDisplayedEl = dom.cls(wzk.ui.grid.PaginatorRenderer.CLASSES.RESULT_DISPLAYED, paginatorEl)
+    return unless resultDisplayedEl?
+
+    parent = dom.getParentElement(resultDisplayedEl)
+    customBaseEl = dom.el('span', 'paginator__custom-base-wrapper')
+    dom.prependChild(parent, customBaseEl)
+    dom.appendChild(customBaseEl, dom.el('span', 'paginator__custom-base-label', @customBaseLabel))
+    [min, max] = @baseRange
+    customBaseInputEl =
+      dom.el(
+        'input',
+        {
+          'type': 'number',
+          'value': paginator.getBase(),
+          'class': 'paginator__custom-base-input',
+          'min': min,
+          'max': max})
+    dom.appendChild(customBaseEl, customBaseInputEl)
+    @hangCustomerBaseInputListeners(paginator, customBaseInputEl)
+
+  ###*
+    @protected
+    @param {wzk.ui.Component} paginator
+    @param {Element} paginatorEl
+  ###
+  deleteCustomerBaseElementIfExists: (paginator, paginatorEl) ->
+    dom = paginator.getDomHelper()
+    customerBaseWrapperEl = dom.cls('paginator__custom-base-wrapper', paginatorEl)
+    dom.removeNode(customerBaseWrapperEl) if customerBaseWrapperEl?
+
+  ###*
+    @protected
+    @param {Object} value
+    @return {Array.<number>}
+  ###
+  baseRangeOrDefault: (value) ->
+    if goog.isArray(value) and value.length is 2 and goog.array.every(value, wzk.num.isPos)
+      value
+    else
+      goog.global['console']['warn'](
+        'Paginator "data-base-rage" contains invalid value. A tuple with two positive number was expected.')
+      wzk.ui.grid.PaginatorRenderer.BASE_RANGE_DEFAULT
+
+  ###*
     @param {wzk.ui.Component} paginator
     @param {Element} el
   ###
@@ -153,16 +278,32 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     for resultEl, i in [dom.cls(C.RESULT_TOTAL, el), dom.cls(C.RESULT_DISPLAYED, el)]
       if resultEl?
 
-        @fetchResultText dom, C.RESULT_CAPTION, resultEl, i, 0
-        @fetchResultText dom, C.RESULT_NUMBER, resultEl, i, 1
+        @fetchResultText(dom, C.RESULT_CAPTION, resultEl, i, 0)
+        @fetchResultText(dom, C.RESULT_NUMBER, resultEl, i, 1)
 
-        numberEl = dom.cls C.RESULT_NUMBER, resultEl
+        numberEl = dom.cls(C.RESULT_NUMBER, resultEl)
         if numberEl?
-          @decorateResult paginator, numberEl, @composeResult(paginator, @resultComposers[i])
+          @decorateResult(paginator, numberEl, @composeResult(paginator, @resultComposers[i]))
 
-    @pagingStyle = goog.dom.dataset.get el, wzk.ui.grid.PaginatorRenderer.DATA.PAGING
+    D = wzk.ui.grid.PaginatorRenderer.DATA
+
+    @pagingStyle = wzk.dom.dataset.get(
+      el,
+      D.PAGING,
+      String,
+      wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.SIMPLE)
     pagination = dom.cls(C.PAGINATION, el) ? el
-    @decoratePagination paginator, pagination, dom
+    @decoratePagination(paginator, pagination, dom)
+
+    @customBaseLabel = wzk.dom.dataset.get(
+      el, D.CUSTOM_BASE_LABEL, String, wzk.ui.grid.PaginatorRenderer.CUSTOM_BASE_LABEL)
+    @customBaseErrorMessage = wzk.dom.dataset.get(
+      el, D.CUSTOM_BASE_ERROR_MESSAGE, String, wzk.ui.grid.PaginatorRenderer.CUSTOM_BASE_ERROR_MESSAGE)
+
+    @baseRange = wzk.dom.dataset.get(el, D.BASE_RANGE, goog.functions.compose(@baseRangeOrDefault, wzk.json.parse))
+    if wzk.dom.dataset.get(el, D.BASE_TYPE) is wzk.ui.grid.PaginatorRenderer.BASE_TYPES.CUSTOM
+      @deleteCustomerBaseElementIfExists(paginator, el)
+      @createCustomBaseEl(paginator, el)
 
     paging = dom.cls(C.PAGING, el) ? el
     if @switcher
@@ -171,14 +312,14 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
       switcher = dom.cls C.BASE_SWITCHER, el
       @decorateSwitcher paginator, switcher, dom
 
-    goog.style.setStyle el, 'visibility', 'inherit'
+    goog.style.setStyle(el, 'visibility', 'inherit')
 
   ###*
     @protected
     @param {Element} el
   ###
   parseSwitchPattern: (el) ->
-    pattern = goog.dom.dataset.get el, 'pattern'
+    pattern = wzk.dom.dataset.get(el, 'pattern')
     @switcherPattern = pattern if pattern?
 
   ###*
@@ -257,8 +398,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
 
     frag = dom.getDocument().createDocumentFragment()
 
-    unless @pagingStyle is wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.SIMPLE
-      @createPaging paginator, frag, dom
+    if @pagingStyle is wzk.ui.grid.PaginatorRenderer.PAGING_STYLE.FULL
+      @createPaging(paginator, frag, dom)
 
     dom.insertSiblingAfter frag, prev
 
@@ -298,8 +439,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @param {number} page
   ###
   setPage: (el, page) ->
-    goog.dom.classes.remove el, wzk.ui.grid.PaginatorRenderer.CLASSES.INACTIVE
-    goog.dom.dataset.set el, wzk.ui.grid.PaginatorRenderer.DATA.PAGE, String(page)
+    goog.dom.classes.remove(el, wzk.ui.grid.PaginatorRenderer.CLASSES.INACTIVE)
+    wzk.dom.dataset.set(el, wzk.ui.grid.PaginatorRenderer.DATA.PAGE, String(page))
 
   ###*
     @protected
@@ -326,7 +467,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   switchClass: (el, add, remove) ->
     goog.dom.classes.add el, add
     goog.dom.classes.remove el, remove
-    goog.dom.dataset.remove el, wzk.ui.grid.PaginatorRenderer.DATA.PAGE
+    wzk.dom.dataset.remove el, wzk.ui.grid.PaginatorRenderer.DATA.PAGE
 
   ###*
     @param {wzk.ui.Component} paginator
@@ -376,47 +517,51 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     @return {Element}
   ###
   createSwitcher: (paginator, dom) ->
-    container = dom.createDom 'div', 'dropdown' # menu-container
-    @baseSelect = dom.createDom 'button', 'btn btn-default dropdown-toggle' # dropdown-menu button
+    container = dom.createDom('div', 'dropdown') # menu-container
+    @baseSelect = dom.createDom('button', 'btn btn-default dropdown-toggle') # dropdown-menu button
 
     # set default base
-    @setSelectBase @baseSelect, paginator.base
+    @setSelectBase(@baseSelect, paginator.base)
 
     # add menu into menu-container
-    dom.appendChild container, @baseSelect
+    dom.appendChild(container, @baseSelect)
 
-    menu = new wzk.ui.menu.Menu @dom
-    menu.setVisible false
+    menu = new wzk.ui.menu.Menu(@dom)
+    menu.setVisible(false)
 
     # create and add MenuItems
     for base in paginator.getBases()
-      menuItem = new goog.ui.MenuItem goog.string.format(@switcherPattern, base), base, @dom, wzk.ui.menu.MenuItemRenderer.getInstance()
-      menu.addChild menuItem, true
+      menuItem = new goog.ui.MenuItem(
+        goog.string.format(@switcherPattern, base),
+        base,
+        @dom,
+        wzk.ui.menu.MenuItemRenderer.getInstance())
+      menu.addChild(menuItem, true)
 
     # do menu action on click of menu item
-    goog.events.listen menu, goog.ui.Component.EventType.ACTION, (event) =>
+    goog.events.listen(menu, goog.ui.Component.EventType.ACTION, (event) =>
       base = event.target.getModel()
-      menu.setVisible false
-      dom.appendChild container, @baseSelect  # destroy menu and append select again
-      @setSelectBase @baseSelect, base
+      menu.setVisible(false)
+      dom.appendChild(container, @baseSelect)  # destroy menu and append select again
+      @setSelectBase(@baseSelect, base)
 
       # save selected base to paginator
-      paginator.setBase base
+      paginator.setBase(base))
 
-    menu.render container
+    menu.render(container)
 
     # show menu on click
-    goog.events.listen @baseSelect, goog.events.EventType.CLICK, (event) ->
-      menu.setVisible not menu.isVisible()
+    goog.events.listen(@baseSelect, goog.events.EventType.CLICK, (event) ->
+      menu.setVisible not menu.isVisible())
 
 
-    # menu disapperas when clicked outside menu
+    # menu disappers when clicked outside of the menu
     body = dom.getDocument().body
     handler = (event) ->
       if menu.isVisible()
         menu.setVisible false
 
-    goog.events.listen body, goog.events.EventType.CLICK, handler, true
+    goog.events.listen(body, goog.events.EventType.CLICK, handler, true)
 
     container
 
@@ -450,8 +595,8 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     PAGE = wzk.ui.grid.PaginatorRenderer.DATA.PAGE
     PAGINATION = wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATION
     while true
-      if not el or goog.dom.classes.has el, PAGINATION
+      if not el or goog.dom.classes.has(el, PAGINATION)
         return null
-      if el.tagName is @itemTag and goog.dom.dataset.has el, PAGE
-        return goog.dom.dataset.get el, PAGE
+      if el.tagName is @itemTag and wzk.dom.dataset.has(el, PAGE)
+        return wzk.dom.dataset.get(el, PAGE)
       el =  dom.getParentElement el
