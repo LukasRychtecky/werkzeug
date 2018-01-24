@@ -1,7 +1,7 @@
 goog.require 'wzk.ui.grid.PaginatorRenderer'
 goog.require 'goog.events.Event'
 goog.require 'goog.dom.classes'
-goog.require 'goog.dom.dataset'
+goog.require 'wzk.dom.dataset'
 goog.require 'goog.dom.forms'
 goog.require 'goog.style'
 goog.require 'wzk.num'
@@ -65,7 +65,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {Element} el
   ###
   loadData: (el) ->
-    @base = wzk.num.parseDec String(goog.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.BASE)), wzk.ui.grid.Paginator.BASE
+    @base = wzk.num.parseDec String(wzk.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.BASE)), wzk.ui.grid.Paginator.BASE
     @offsetFromPage()
 
   ###*
@@ -165,7 +165,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @override
   ###
   decorateInternal: (el) ->
-    @forceDisplay = goog.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.FORCE_DISPLAY) is 'true'
+    @forceDisplay = wzk.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.FORCE_DISPLAY) is 'true'
     unless @bases
       switcherEl = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.BASE_SWITCHER
       @parseBases switcherEl
@@ -179,16 +179,8 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {Element} el
   ###
   parseBases: (el) ->
-    return if not el? or @bases
-
-    basesPlain = goog.dom.dataset.get el, 'bases'
-    if basesPlain?
-      bases = goog.json.parse basesPlain
-      if goog.isArray(bases) and bases.length > 0
-        @bases = bases
-
-    unless @bases
-      @bases = @defBases
+    if el? or @bases
+      wzk.dom.dataset.get(el, 'bases', goog.json.parse, @defBases)
 
   ###*
     @return {Array.<number>}
@@ -237,11 +229,12 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @return {Element}
   ###
   clone: ->
-    clone = @getElement().cloneNode true
-    @hangPageListener clone
-    goog.dom.classes.add @getElement(), wzk.ui.grid.Paginator.CLASSES.TOP
-    goog.dom.classes.add clone, wzk.ui.grid.Paginator.CLASSES.BOTTOM
-    goog.dom.classes.remove clone, wzk.ui.grid.Paginator.CLASSES.TOP
+    clone = @getElement().cloneNode(true)
+    @hangPageListener(clone)
+    goog.dom.classes.add(@getElement(), wzk.ui.grid.Paginator.CLASSES.TOP)
+    goog.dom.classes.add(clone, wzk.ui.grid.Paginator.CLASSES.BOTTOM)
+    goog.dom.classes.remove(clone, wzk.ui.grid.Paginator.CLASSES.TOP)
+    @renderer.hangCustomerBaseInputListeners(@, clone)
     clone
 
   ###*
