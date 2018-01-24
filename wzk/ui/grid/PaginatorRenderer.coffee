@@ -59,7 +59,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
     CUSTOM: 'custom'
 
   ###*
-    @enum {Array.<number>}
+    @type {Array.<number>}
   ###
   @BASE_RANGE_DEFAULT: [1, 1000]
 
@@ -209,7 +209,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
         return unless inputEl?
 
         parent = dom.getParentElement(el)
-        newBase = wzk.num.parseDec(goog.dom.forms.getValue(inputEl))
+        newBase = wzk.num.parseDec((`/** @type {string} */`) goog.dom.forms.getValue(inputEl))
         if wzk.num.inRange(@baseRange, newBase)
           @deleteErrorMessageIfExists(dom, parent)
           paginator.setBase(newBase)
@@ -225,7 +225,7 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
   createCustomBaseEl: (paginator, paginatorEl) ->
     dom = paginator.getDomHelper()
     resultDisplayedEl = dom.cls(wzk.ui.grid.PaginatorRenderer.CLASSES.RESULT_DISPLAYED, paginatorEl)
-    return unless resultDisplayedEl?
+    return null unless resultDisplayedEl?
 
     parent = dom.getParentElement(resultDisplayedEl)
     customBaseEl = dom.el('span', 'paginator__custom-base-wrapper')

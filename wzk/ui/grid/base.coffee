@@ -69,9 +69,9 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
   client.setDefaultHeader wzk.resource.Client.X_HEADERS.SERIALIZATION_FORMAT, query.verbose()
   client.setDefaultHeader wzk.resource.Client.X_HEADERS.FIELDS, query.composeFields()
 
-  stateHolder = new wzk.ui.grid.StateHolder ss
+  stateHolder = new wzk.ui.grid.StateHolder(ss, table.id)
 
-  paginator = new wzk.ui.grid.Paginator base: stateHolder.getBase(), page: stateHolder.getPage()
+  paginator = new wzk.ui.grid.Paginator(base: stateHolder.getBase(), page: stateHolder.getPage())
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 

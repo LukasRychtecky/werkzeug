@@ -17,7 +17,7 @@ wzk.array.head = (arr) ->
 
 
 ###*
-  Returns last element of a given `arra`. If the array is empty, returns `implicit`.
+  Returns last element of a given `arr`. If the array is empty, returns `implicit`.
   @param {Array.<T>|goog.array.ArrayLike} arr
   @param {T} implicit
   @return {T}
@@ -25,3 +25,30 @@ wzk.array.head = (arr) ->
 ###
 wzk.array.last = (arr, implicit = null) ->
   return if goog.array.isEmpty(arr) then implicit else goog.array.peek(arr)
+
+
+###*
+  Returns a givenn `arr` without first element. Original array is not modified.
+  @param {Array.<T>|goog.array.ArrayLike} arr
+  @return {Array.<T>}
+  @template T
+###
+wzk.array.rest = (arr) ->
+  goog.array.slice(arr, 1)
+
+
+###*
+  Returns first item of a given `arr` where a given `pred` returns `true`. When no item found, returns `implicit`.
+  @param {Array.<T>|goog.array.ArrayLike} arr
+  @param {function(T):boolean} pred
+  @param {T=} implicit
+  @return {?T}
+  @template T
+###
+wzk.array.filterFirst = (arr, pred, implicit=null) ->
+  if goog.array.isEmpty(arr)
+    implicit
+  else if pred(arr[0])
+    arr[0]
+  else
+    wzk.array.filterFirst(wzk.array.rest(arr), pred, implicit)

@@ -1,6 +1,9 @@
 goog.require 'goog.History'
 goog.require 'goog.object'
 goog.require 'goog.events'
+
+goog.require 'wzk.obj'
+goog.require 'wzk.json'
 goog.require 'wzk.ui.grid.FilterWatcher'
 
 class wzk.ui.grid.StateHolder extends goog.events.EventTarget
@@ -16,7 +19,7 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
     @enum {number}
   ###
   @DEF:
-    BASE: 10
+    BASE: 0
     PAGE: 1
 
   ###*
@@ -27,12 +30,14 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
 
   ###*
     @param {wzk.stor.StateStorage} ss
+    @param {string=} keySuffix
   ###
-  constructor: (@ss) ->
+  constructor: (@ss, @keySuffix='') ->
     super()
     @history = new goog.History()
     @history.setEnabled true
     @base = wzk.ui.grid.StateHolder.DEF.BASE
+    @LS_KEY = 'grid'
 
   ###*
     @param {number} base
@@ -49,7 +54,13 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
     @return {number}
   ###
   getBase: ->
-    wzk.num.parseDec @ss.get(wzk.ui.grid.StateHolder.PARAM.BASE), @base
+    gridStorage = wzk.json.parse(goog.global['localStorage'].getItem(@LS_KEY)) or {}
+    base = (`/** @type {number} */`) wzk.num.parseDec(
+      wzk.obj.getIn(gridStorage, [@keySuffix, wzk.ui.grid.StateHolder.PARAM.BASE]))
+    if wzk.num.isPos(base)
+      base
+    else
+      @base
 
   ###*
     @param {wzk.ui.grid.Paginator} paginator
@@ -88,14 +99,27 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
 
   ###*
     @protected
+    @param {Object.<string, *>} params
+  ###
+  updateLS: (params) ->
+    gridStorage = wzk.json.parse(goog.global['localStorage'].getItem(@LS_KEY)) or {}
+    for k, v of params
+      wzk.obj.assocIn(gridStorage, [@keySuffix, k], v)
+    goog.global['localStorage'].setItem(@LS_KEY, wzk.json.serialize(gridStorage))
+
+  ###*
+    @protected
     @param {Object|null|undefined} args
   ###
   updateStorage: (args) =>
     return unless args?
     DEF = wzk.ui.grid.StateHolder.DEF
     PARAM = wzk.ui.grid.StateHolder.PARAM
+    paramsLS = {}
+    paramsLS[PARAM.BASE] = args.base
+    @updateLS(paramsLS)
+
     params = {}
-    params[PARAM.BASE] = if args.base isnt @base then args.base else null
     params[PARAM.PAGE] = if args.page isnt DEF.PAGE then args.page else null
 
     filterParams = @watcher.getParams()
