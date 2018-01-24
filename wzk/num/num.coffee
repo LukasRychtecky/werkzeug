@@ -15,7 +15,7 @@ wzk.num.parseDec = (str, implicit = null) ->
 ###*
   Returns `true` if a given `num` is positive.
   @param {number} num
-  @param {boolean}
+  @return {boolean}
 ###
 wzk.num.isPos = (num) ->
   0 < num
@@ -24,7 +24,7 @@ wzk.num.isPos = (num) ->
 ###*
   Returns `true` if a given `num` is negative.
   @param {number} num
-  @param {boolean}
+  @return {boolean}
 ###
 wzk.num.isNeg = (num) ->
   num < 0
@@ -34,7 +34,7 @@ wzk.num.isNeg = (num) ->
   Returns `true` if a given `num` is in a given `range` (within the range).
   @param {Array.<number>} range
   @param {number} num
-  @param {boolean}
+  @return {boolean}
 ###
 wzk.num.inRange = (range, num) ->
   [min, max] = range

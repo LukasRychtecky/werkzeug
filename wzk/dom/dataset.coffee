@@ -1,6 +1,7 @@
 goog.provide 'wzk.dom.dataset'
 
 goog.require 'goog.dom.dataset'
+goog.require 'goog.functions'
 
 
 ###*
@@ -9,11 +10,12 @@ goog.require 'goog.dom.dataset'
    @param {Element} element DOM node to get the custom data attribute from.
    @param {string} key Key for the custom data attribute.
    @param {function(string):T=} coerce When a given `element` has `key` data attribute,
-   `coerce` function is call on its value. When no `coerce` is provided, `goog.identityFunction` is used.
+   `coerce` function is call on its value. When no `coerce` is provided, `goog.functions.identity` is used.
    @param {T=} implicit When a given `element` doesn't have a `key`, it returns `implicit`.
    @return {?T} The attribute value, if it exists.
+   @template T
 ###
-wzk.dom.dataset.get = (element, key, coerce=goog.identityFunction, implicit=null) ->
+wzk.dom.dataset.get = (element, key, coerce=goog.functions.identity, implicit=null) ->
   if wzk.dom.dataset.has(element, key) then coerce(goog.dom.dataset.get(element, key)) else implicit
 
 ###*

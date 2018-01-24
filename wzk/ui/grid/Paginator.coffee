@@ -1,10 +1,15 @@
-goog.require 'wzk.ui.grid.PaginatorRenderer'
-goog.require 'goog.events.Event'
+goog.provide 'wzk.ui.grid.Paginator'
+
 goog.require 'goog.dom.classes'
-goog.require 'wzk.dom.dataset'
 goog.require 'goog.dom.forms'
+goog.require 'goog.events.Event'
+goog.require 'goog.functions'
 goog.require 'goog.style'
+
+goog.require 'wzk.array'
+goog.require 'wzk.dom.dataset'
 goog.require 'wzk.num'
+goog.require 'wzk.ui.grid.PaginatorRenderer'
 
 
 class wzk.ui.grid.Paginator extends wzk.ui.Component
@@ -51,8 +56,8 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @clones = []
     @listeners = []
     @switcher = null
-    @bases = null
     @defBases = [10, 25, 50, 100, 500, 1000]
+    @bases = @defBases
     @forceDisplay = false
 
   ###*
@@ -61,11 +66,15 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   getBase: ->
     @base
 
+  baseOrDefault: (value) =>
+    wzk.array.filterFirst([@base, value], wzk.num.isPos, wzk.ui.grid.Paginator.BASE)
+
   ###*
     @param {Element} el
   ###
   loadData: (el) ->
-    @base = wzk.num.parseDec String(wzk.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.BASE)), wzk.ui.grid.Paginator.BASE
+    @base = wzk.dom.dataset.get(
+      el, wzk.ui.grid.Paginator.DATA.BASE, goog.functions.compose(@baseOrDefault, wzk.num.parseDec))
     @offsetFromPage()
 
   ###*
@@ -186,7 +195,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @return {Array.<number>}
   ###
   getBases: ->
-    @bases ? @defBases
+    @bases
 
   setPage: (@page) ->
     @offset = @offsetFromPage()

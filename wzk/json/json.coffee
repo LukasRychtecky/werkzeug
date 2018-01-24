@@ -21,14 +21,14 @@ wzk.json.serialize = goog.json.serialize
   Parses a JSON string and returns the result. This throws an exception if the string is an invalid JSON string.
   Note that this is very slow on large strings. Use JSON.parse if possible.
 
-  It doesn't throw an error, it rather returns `null` and calls `errorCallback` and returns its value.
+  It doesn't throw an error, it rather returns `null` and calls `errorHandler` and returns its value.
 
  @param {*} s The JSON string to parse.
- @param {function(string):Object=} errorHandler
+ @param {function(*):Object=} errorHandler
  @return {?Object} The object generated from the JSON string, or null.
 ###
 wzk.json.parse = (s, errorHandler) ->
   try
     goog.json.parse(s)
   catch _
-    if goog.isFunction(errorCallback) then errorCallback() else null
+    if goog.isFunction(errorHandler) then errorHandler(s) else null
