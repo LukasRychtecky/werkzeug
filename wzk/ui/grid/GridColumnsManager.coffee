@@ -50,7 +50,7 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @storageKey = @composeStorageKey()
     @filteringText = ''
     @filteringTextEl = null
-    @storage = new wzk.stor.LocalStorage @dom.getWindow()['localStorage']
+    @storage = new wzk.stor.LocalStorage(@dom.getWindow()['localStorage'])
 
   ###*
     @param {Element} el
@@ -66,7 +66,8 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @cols = @getOrCreateState()
 
     @filterStates = @getInitialFilterStates()
-    @filteringTextEl = @dom.getElement([wzk.ui.grid.GridColumnsManager.CLS.COLUMNS_FILTERING_TEXT, @grid.table.id].join('-'))
+    @filteringTextEl = @dom.getElement(
+      [wzk.ui.grid.GridColumnsManager.CLS.COLUMNS_FILTERING_TEXT, @grid.table.id].join('-'))
     unless @filteringTextEl
       @dom.getWindow().console.warn('Missing filtering text element for #' + @el.id)
       return
@@ -252,7 +253,9 @@ class wzk.ui.grid.GridColumnsManager extends wzk.ui.Component
     @protected
   ###
   showOrHideHeader: =>
-    (goog.style.setElementShown(@headers[i], @cols[checkbox['name']]) for checkbox, i in @checkboxes when @headers[i]?)
+    for header in @headers
+      if @cols[header.className]?
+        goog.style.setElementShown(header, @cols[header.className])
 
   ###*
     @protected
