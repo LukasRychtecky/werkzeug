@@ -6,6 +6,7 @@ goog.require 'goog.string'
 
 goog.require 'wzk.ui.Button'
 goog.require 'wzk.ui.dialog.SnippetModal'
+goog.require 'wzk.ui.form.buttons'
 goog.require 'wzk.ui.form.Checkbox'
 goog.require 'wzk.ui.grid.Row'
 
@@ -38,6 +39,7 @@ class wzk.ui.grid.BulkChange
     @fieldsEl = {}
     @selectedInputs = {}
     @selectedRows = []
+    @form = null
 
   ###*
     @protected
@@ -108,6 +110,8 @@ class wzk.ui.grid.BulkChange
   handleError: (response) =>
     for err in response['messages']['errors']
       @flash.addError(err['_obj_name'])
+    if @form?
+      wzk.ui.form.buttons.enableInForm(@form, @dom)
 
   ###*
     @protected
@@ -125,9 +129,9 @@ class wzk.ui.grid.BulkChange
       @submitBtn.setEnabled(false)
       @submitBtn.listen(goog.ui.Component.EventType.ACTION, @handleSubmit)
 
-    form = @dom.one('form', content)
-    if form?
-      goog.events.listen(form, goog.events.EventType.SUBMIT, (e) -> e.preventDefault())
+    @form = @dom.one('form', content)
+    if @form?
+      goog.events.listen(@form, goog.events.EventType.SUBMIT, (e) -> e.preventDefault())
 
     summary = @dom.cls('bulk-change-object-summary', content)
     if summary?
