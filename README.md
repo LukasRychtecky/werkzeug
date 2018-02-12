@@ -48,6 +48,8 @@ UI components
 * [wzk.ui.form.AjaxForm](wzk/ui/form/AjaxForm.coffee)
   decorates a HTML form and send it via a XHR request.
 
+* [wzk.ui.form.buttons](wzk/ui/form/buttons.coffee) contains functions for preventing multiform submission.
+
 * [wzk.ui.form.Checbox](wzk/ui/form/Checkbox.coffee)
   a HTML checkbox element.
 
