@@ -99,7 +99,10 @@ class wzk.ui.Input extends goog.ui.Control
   fixInternalElement: ->
     return if @isInput(@getElement())
     @wrapperEl = @getElement()
-    @setElementInternal(@dom_.getChildren(@getElement())[0])
+    if @isInput(@wrapperEl)
+      @setElementInternal(@wrapperEl)
+    else
+      @setElementInternal(@dom_.getChildren(@getElement())[0])
 
   ###*
     @protected
@@ -107,7 +110,7 @@ class wzk.ui.Input extends goog.ui.Control
     @return {boolean}
   ###
   isInput: (el) ->
-    el.tagName is goog.dom.TagName.INPUT
+    el.tagName is String(goog.dom.TagName.INPUT)
 
   ###*
     @param {boolean} required

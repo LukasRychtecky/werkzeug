@@ -59,7 +59,7 @@ class wzk.ui.form.Input extends wzk.ui.form.Field
     @return {boolean}
   ###
   isInput: (el) ->
-    el.tagName is goog.dom.TagName.INPUT
+    el.tagName is String(goog.dom.TagName.INPUT)
 
   ###*
     @param {boolean} required
