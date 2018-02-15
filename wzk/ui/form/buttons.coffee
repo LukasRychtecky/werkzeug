@@ -33,8 +33,8 @@ wzk.ui.form.buttons.enable = (btn, dom) ->
   @param {wzk.dom.DomHelper} dom
 ###
 wzk.ui.form.buttons.enableInForm = (form, dom) ->
-  for btn in dom.one(wzk.ui.form.buttons.BUTTON_SELECTOR, form)
-    wzk.ui.form.buttons.enable(btn)
+  for btn in dom.all(wzk.ui.form.buttons.BUTTON_SELECTOR, form)
+    wzk.ui.form.buttons.enable(btn, dom)
 
 
 ###*
