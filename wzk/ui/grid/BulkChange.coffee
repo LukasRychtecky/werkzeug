@@ -1,9 +1,13 @@
+goog.provide 'wzk.ui.grid.BulkChange'
+
 goog.require 'goog.dom.classes'
 goog.require 'goog.events'
 goog.require 'goog.json'
 goog.require 'goog.object'
 goog.require 'goog.string'
 
+goog.require 'wzk.array'
+goog.require 'wzk.dom.dataset'
 goog.require 'wzk.ui.Button'
 goog.require 'wzk.ui.dialog.SnippetModal'
 goog.require 'wzk.ui.form.buttons'
@@ -36,10 +40,11 @@ class wzk.ui.grid.BulkChange
   ###
   constructor: (@dom, @client, @grid, @reg, @flash) ->
     @btn = new wzk.ui.Button(dom: @dom)
-    @fieldsEl = {}
+    @fieldsToEls = {}
     @selectedInputs = {}
     @selectedRows = []
     @form = null
+    @fields = null
 
   ###*
     @protected
@@ -48,7 +53,7 @@ class wzk.ui.grid.BulkChange
   parseDataParams: (params) ->
     parsed = []
     for param in params
-      unparsed = goog.dom.dataset.get(@el, param)
+      unparsed = wzk.dom.dataset.get(@el, param)
       if unparsed
         parsed.push(String(unparsed))
       else
@@ -106,10 +111,69 @@ class wzk.ui.grid.BulkChange
   ###*
     @protected
     @param {Object} response
+    @return {string|null}
+  ###
+  composeBulkErrorMessage: (response) =>
+    errorIds = wzk.array.map(response['messages']?['errors'], (obj) -> obj['id'])
+
+    if wzk.array.isEmpty(errorIds)
+      null
+    else
+      goog.string.format(
+        wzk.dom.dataset.get(
+          @el,
+          'bulkErrorMessage',
+          String,
+          'Please fix errors for following objects: %s'
+        ),
+        errorIds.join(', ')
+      )
+
+  ###*
+    Removes errorlist element from DOM if exists
+    @protected
+    @param {Element} el
+  ###
+  removeErrorList: (el) =>
+    errorListEl = @dom.cls('errorlist', el)
+    if errorListEl?
+      @dom.removeNode(errorListEl)
+
+  ###*
+    Displays new errors or remove old ones.
+    @protected
+    @param {Object.<string, string>} allErrors
+  ###
+  displayOrRemoveFieldsErrors: (allErrors) =>
+    for field, el of @fieldsToEls
+      if goog.object.containsKey(allErrors, field)
+        goog.dom.classlist.add(el, 'error')
+        @removeErrorList(el)
+        @dom.appendChild(el, @dom.el('ul', 'errorlist', [@dom.el('li', null, allErrors[field])]))
+      else
+        goog.dom.classlist.remove(el, 'error')
+        @removeErrorList(el)
+
+  ###*
+    @protected
+    @param {Object} response
   ###
   handleError: (response) =>
-    for err in response['messages']['errors']
-      @flash.addError(err['_obj_name'])
+    if response['messages']?['error']?
+      @flash.addError(response['messages']['error'])
+
+    bulkErrorMessage = @composeBulkErrorMessage(response)
+    if bulkErrorMessage?
+      @flash.addError(bulkErrorMessage)
+
+    @displayOrRemoveFieldsErrors(
+      goog.array.reduce(
+        response['messages']['errors'],
+        (acc, field) -> wzk.obj.merge(acc, field['errors']),
+        {}
+      )
+    )
+
     if @form?
       wzk.ui.form.buttons.enableInForm(@form, @dom)
 
@@ -138,16 +202,19 @@ class wzk.ui.grid.BulkChange
       @dom.setTextContent(summary, goog.string.format(@dom.getTextContent(summary), @selectedRows.length))
 
     for field in @dom.clss('field', content)
-      @fieldsEl[@decorateField(field).getId()] = field
+      target = @extractInputName(@findSelectedInput(field))
+      @decorateField(field, @extractInputName(@findSelectedInput(field)))
+      @fieldsToEls[target] = field
 
   ###*
     @protected
     @param {Element} field
   ###
-  decorateField: (field) ->
+  decorateField: (field, target) ->
     goog.dom.classes.add(field, wzk.ui.grid.BulkChange.CLS.UNSELECTED)
     checkbox = new wzk.ui.form.Checkbox(dom: @dom)
     checkbox.render(field)
+    wzk.dom.dataset.set(checkbox.getElement(), 'target', target)
     checkbox.listen(wzk.ui.form.Field.EVENTS.CHANGE, @handleSelect)
     return checkbox
 
@@ -167,7 +234,7 @@ class wzk.ui.grid.BulkChange
     @param {goog.events.Event} e
   ###
   handleSelect: (e) =>
-    field = @fieldsEl[e.currentTarget.getId()]
+    field = @fieldsToEls[wzk.dom.dataset.get(e.target.target, 'target')]
     unless field?
       @dom.getWindow().console.warn("Given an invalid checkbox ID #{e.target.getId()} for BulkChange")
       return
@@ -197,9 +264,10 @@ class wzk.ui.grid.BulkChange
   ###*
     @protected
     @param {Element} input
+    @return {string}
   ###
   extractInputName: (input) ->
-    return input.name.split('-')[-1..]
+    return wzk.array.last(input.name.split('-')[-1..])
 
   ###*
     @protected

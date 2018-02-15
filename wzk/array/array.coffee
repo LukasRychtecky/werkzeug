@@ -52,3 +52,32 @@ wzk.array.filterFirst = (arr, pred, implicit=null) ->
     arr[0]
   else
     wzk.array.filterFirst(wzk.array.rest(arr), pred, implicit)
+
+###*
+ Calls a function for each element in an array and inserts the result into a new array.
+ See {@link http://tinyurl.com/developer-mozilla-org-array-map}
+
+ This function is safe, it means when anything then array is passed, it returns empty array.
+
+ @param {IArrayLike<VALUE>|string|null} arr Array or array like object over which to iterate.
+ @param {function(this:THIS, VALUE, number, ?): RESULT} f The function to call
+     for every element. This function takes 3 arguments (the element,
+     the index and the array) and should return something. The result will be
+     inserted into a new array.
+ @param {THIS=} opt_obj The object to be used as the value of 'this' within f.
+ @return {!Array<RESULT>} a new array with the results from f.
+ @template THIS, VALUE, RESULT
+###
+wzk.array.map = (arr, f, opt_obj) ->
+  if goog.isArray(arr) then goog.array.map(arr, f, opt_obj) else []
+
+
+###*
+  Whether the array is empty.
+  This function is safe, it means when anything then array is passed, it returns false.
+
+  @param {IArrayLike<?>|string|null} arr The array to test.
+  @return {boolean} true if empty.
+###
+wzk.array.isEmpty = (arr) ->
+  if goog.isArray(arr) then goog.array.isEmpty(arr) else true
