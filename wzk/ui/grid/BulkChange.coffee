@@ -172,7 +172,7 @@ class wzk.ui.grid.BulkChange
       @dom.getWindow().console.warn("Given an invalid checkbox ID #{e.target.getId()} for BulkChange")
       return
 
-    checked = e.currentTarget.getValue()
+    checked = e.target.target.checked
     @swapClasses(field, checked)
 
     selectedInput = @findSelectedInput(field)
