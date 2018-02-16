@@ -1,8 +1,12 @@
-goog.require 'goog.string'
-goog.require 'wzk.ui.inlineform.FieldExpert'
-goog.require 'wzk.ui.inlineform.RowBuilder'
+goog.provide 'wzk.ui.inlineform.DynamicForm'
+
+goog.require 'goog.dom.classlist'
 goog.require 'goog.events'
 goog.require 'goog.events.EventType'
+goog.require 'goog.string'
+
+goog.require 'wzk.ui.inlineform.FieldExpert'
+goog.require 'wzk.ui.inlineform.RowBuilder'
 goog.require 'wzk.ui.inlineform.ConfigHandler'
 
 
@@ -66,10 +70,14 @@ class wzk.ui.inlineform.DynamicForm
   ###
   handleRowDelete: (e) =>
     el = (`/** @type {Element} */`) e.target
-    for fileInput in @dom.all wzk.ui.inlineform.DynamicForm.SELECTORS.FILE_INPUT, el
-      @dom.removeNode fileInput
-    goog.style.setElementShown el, false
-    @removeDutyFromHiddenInputs el
+
+    if goog.dom.classlist.contains(el, 'empty')
+      @dom.removeNode(el)
+    else
+      for fileInput in @dom.all(wzk.ui.inlineform.DynamicForm.SELECTORS.FILE_INPUT, el)
+        @dom.removeNode(fileInput)
+      goog.style.setElementShown(el, false)
+      @removeDutyFromHiddenInputs(el)
 
   ###*
     @protected
