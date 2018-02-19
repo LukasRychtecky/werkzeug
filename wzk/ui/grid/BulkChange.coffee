@@ -159,15 +159,12 @@ class wzk.ui.grid.BulkChange
     @param {Object} response
   ###
   handleError: (response) =>
-    if response['messages']?['error']?
-      @flash.addError(response['messages']['error'])
-
     bulkErrorMessage = @composeBulkErrorMessage(response)
     if bulkErrorMessage?
       @flash.addError(bulkErrorMessage)
 
     @displayOrRemoveFieldsErrors(
-      goog.array.reduce(
+      wzk.array.reduce(
         response['messages']['errors'],
         (acc, field) -> wzk.obj.merge(acc, field['errors']),
         {}
