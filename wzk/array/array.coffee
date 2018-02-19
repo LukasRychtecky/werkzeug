@@ -73,6 +73,36 @@ wzk.array.map = (arr, f, opt_obj) ->
 
 
 ###*
+ Passes every element of an array into a function and accumulates the result.
+
+ This function is safe, it means when anything then array is passed, it returns empty array.
+
+ See {@link http://tinyurl.com/developer-mozilla-org-array-reduce}
+
+ For example:
+ var a = [1, 2, 3, 4];
+ goog.array.reduce(a, function(r, v, i, arr) {return r + v;}, 0);
+ returns 10
+
+ @param {IArrayLike<T>|string} arr Array or array
+     like object over which to iterate.
+ @param {function(this:S, R, T, number, ?) : R} f The function to call for
+     every element. This function
+     takes 4 arguments (the function's previous result or the initial value,
+     the value of the current array element, the current array index, and the
+     array itself)
+     function(previousValue, currentValue, index, array).
+ @param {?} val The initial value to pass into the function on the first call.
+ @param {S=} opt_obj  The object to be used as the value of 'this'
+     within f.
+ @return {R} Result of evaluating f repeatedly across the values of the array.
+ @template T,S,R
+###
+wzk.array.reduce = (arr, f, val, opt_obj) ->
+  if goog.isArray(arr) then goog.array.reduce(arr, f, val, opt_obj) else []
+
+
+###*
   Whether the array is empty.
   This function is safe, it means when anything then array is passed, it returns false.
 
