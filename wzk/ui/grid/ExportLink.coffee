@@ -21,19 +21,6 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
     TYPE: 'type'
 
   ###*
-    @enum {string}
-  ###
-  @LOOKUP:
-    'csv': 'text/csv'
-    'xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    'xml': 'text/xml'
-    'json': 'application/json'
-    'yaml': 'application/x-yaml'
-    'picle': 'application/python-pickle'
-    'pdf': 'application/pdf'
-    'zip': 'application/zip'
-
-  ###*
     @param {Object} params
       watcher: {wzk.ui.grid.FilterWatcher}
       client: {wzk.resource.Client}
@@ -57,16 +44,6 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
 
   ###*
     @protected
-    @return {string}
-  ###
-  getType: ->
-    unless @type
-      LOOKUP = wzk.ui.grid.ExportLink.LOOKUP
-      @type = if LOOKUP[@getExtension()]? then LOOKUP[@getExtension()] else 'application/octet-stream'
-    @type
-
-  ###*
-    @protected
     @return {string|undefined}
   ###
   getExtension: ->
@@ -81,7 +58,6 @@ class wzk.ui.grid.ExportLink extends wzk.ui.Link
   buildUri: ->
     uri = @watcher.getQuery().cloneUri()
     uri.setPath(@origUri.getPath())
-    uri.setParameterValue '_accept', @getType()
     for k in @implicitUriParams.getKeys() when not uri.getParameterValue(k)?
       uri.setParameterValue k, @implicitUriParams.getValues(k)
     uri.toString()
