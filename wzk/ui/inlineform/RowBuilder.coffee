@@ -66,6 +66,28 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
     cloned
 
   ###*
+    Remove empty row and fixes indexes of lower rows.
+
+    @param {Element} row
+  ###
+  removeRow: (row) ->
+    @expert.prev()
+
+    nextRow = row
+    while nextRow = @dom.getNextElementSibling(nextRow)
+      goog.dom.classes.toggle(nextRow, @nextClass)
+      goog.dom.classes.toggle(nextRow, @prevClass)
+
+      for field in @dom.all 'input, select, textarea', nextRow
+        for attr in ['name', 'id', 'data-for']
+          if field[attr]?
+            splitAttr = field[attr].split('-')
+            splitAttr[splitAttr.length - 2] = parseInt(splitAttr[splitAttr.length - 2], 10) - 1
+            field[attr] = splitAttr.join('-')
+    @dom.removeNode(row)
+    @rotateClasses()
+
+  ###*
     @param {Element} row
     @param {boolean} processElements
   ###
@@ -130,17 +152,7 @@ class wzk.ui.inlineform.RowBuilder extends goog.events.EventTarget
   prepareClone: ->
     clone = @row.cloneNode(true)
     goog.dom.classes.remove(clone, @prevClass)
-    @removeValues(clone)
     clone
-
-  ###*
-    Cleans inputs in a row for cloning
-
-    @protected
-  ###
-  removeValues: (row) ->
-    for field in row.querySelectorAll('input')
-      field.value = field.getAttribute('value') if field.type isnt 'hidden'
 
   ###*
     @param {boolean} enabled
