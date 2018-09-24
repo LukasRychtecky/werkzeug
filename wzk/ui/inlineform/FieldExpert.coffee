@@ -25,6 +25,12 @@ class wzk.ui.inlineform.FieldExpert
     @start++
 
   ###*
+    Return back an internal ID counter
+  ###
+  prev: ->
+    @start--
+
+  ###*
     Returns ID for a given attribute according to an internal counter
 
     @param {string} attr

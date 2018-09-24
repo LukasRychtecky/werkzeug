@@ -72,7 +72,9 @@ class wzk.ui.inlineform.DynamicForm
     el = (`/** @type {Element} */`) e.target
 
     if goog.dom.classlist.contains(el, 'empty')
-      @dom.removeNode(el)
+      @formNum--
+      @config.store @formNum
+      @builder.removeRow(el)
     else
       for fileInput in @dom.all(wzk.ui.inlineform.DynamicForm.SELECTORS.FILE_INPUT, el)
         @dom.removeNode(fileInput)
