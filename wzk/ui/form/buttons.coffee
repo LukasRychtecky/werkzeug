@@ -8,7 +8,7 @@ goog.require 'wzk.events.lst'
 ###*
   @type {string}
 ###
-wzk.ui.form.buttons.BUTTON_SELECTOR = '.form-btns button.btn'
+wzk.ui.form.buttons.BUTTON_SELECTOR = '.form-btns button.btn.disable-on-submit'
 
 ###*
   @type {string}
