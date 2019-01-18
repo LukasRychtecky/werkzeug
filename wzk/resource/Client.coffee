@@ -21,6 +21,8 @@ class wzk.resource.Client
     TOTAL: 'X-Total'
     BASE: 'X-Base'
     OFFSET: 'X-Offset'
+    NEXT_OFFSET: 'X-Next-Offset'
+    PREV_OFFSET: 'X-Prev-Offset'
     ORDER: 'X-Order'
     REFERRER: 'X-Referer'
     EXTRA_FIELDS: 'X-Extra-Fields'
@@ -91,6 +93,8 @@ class wzk.resource.Client
       if onSuccess?
         result =
           total: parseInt xhr.getResponseHeader(X.TOTAL), 10
+          nextOffset: parseInt xhr.getResponseHeader(X.NEXT_OFFSET)
+          prevOffset: parseInt xhr.getResponseHeader(X.PREV_OFFSET)
         onSuccess @builder.build(xhr.getResponseJson()), result
 
     @listenOnError xhr, onError

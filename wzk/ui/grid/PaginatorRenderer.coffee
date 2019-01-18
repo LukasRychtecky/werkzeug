@@ -285,6 +285,10 @@ class wzk.ui.grid.PaginatorRenderer extends wzk.ui.ComponentRenderer
         if numberEl?
           @decorateResult(paginator, numberEl, @composeResult(paginator, @resultComposers[i]))
 
+    totalEl = dom.cls(C.RESULT_TOTAL, el)
+    if totalEl?
+      goog.style.setStyle(totalEl, 'display', (if paginator.hasTotal() then 'inline' else 'none'))
+
     D = wzk.ui.grid.PaginatorRenderer.DATA
 
     @pagingStyle = wzk.dom.dataset.get(
