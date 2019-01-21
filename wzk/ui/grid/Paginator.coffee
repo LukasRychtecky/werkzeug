@@ -81,9 +81,8 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @param {number} total
     @param {number} count
   ###
-  init: (@total, @count) ->
+  init: (@total, @count, @prevOffset, @nextOffset) ->
     @calculatePageCount()
-    @lastPage = @pageCount
     @count ?= @base
 
   ###*
@@ -91,7 +90,6 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   ###
   calculatePageCount: ->
     @pageCount = Math.ceil @total / @base
-    @lastPage = @pageCount
 
   ###*
     @override
@@ -115,13 +113,19 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @return {boolean}
   ###
   isFirst: ->
-    @page is @firstPage
+    isNaN @prevOffset
 
   ###*
     @return {boolean}
   ###
   isLast: ->
-    @page is @lastPage
+    isNaN @nextOffset
+
+  ###*
+    @return {boolean}
+  ###
+  hasTotal: ->
+    ! isNaN @total
 
   ###*
     @protected
@@ -138,7 +142,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
       offset: {number=}
   ###
   refresh: (result) ->
-    {@total, @count} = result
+    {@total, @count, @prevOffset, @nextOffset} = result
     @offset = result.offset if result.offset?
     @calculatePageCount()
     @renderer.clearPagingAndResult @

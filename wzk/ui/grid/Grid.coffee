@@ -110,7 +110,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
       @decorateWithSorting()
 
       if @paginator?
-        @paginator.init(result.total, result.count)
+        @paginator.init(result.total, result.count, result.prevOffset, result.nextOffset)
         @buildPaginator(paginatorEl)
 
       @dispatchLoaded(result)
