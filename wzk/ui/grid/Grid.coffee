@@ -170,9 +170,15 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
       @paginator.renderBefore(@table)
 
     @paginator.listen(wzk.ui.grid.Paginator.EventType.GO_TO, (e) =>
-      @buildBody(@buildQuery(e.target), (result) =>
-        @paginator.refresh(result)
-      )
+      opts = e.target
+      if opts.base != @query.base && @query.offset == 0
+        # URI will not be changed for this case, request must be invoked
+        @buildBody(@buildQuery(e.target), (result) =>
+          @paginator.refresh(result)
+        )
+      else
+        # URI will be changed therefore refresh will be called
+        @buildQuery(e.target)
     )
 
     @renderBottomPaginator()
