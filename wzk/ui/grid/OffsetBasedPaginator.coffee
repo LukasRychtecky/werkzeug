@@ -1,4 +1,4 @@
-goog.provide 'wzk.ui.grid.Paginator'
+goog.provide 'wzk.ui.grid.OffsetBasedPaginator'
 
 goog.require 'goog.dom.classes'
 goog.require 'goog.dom.forms'
@@ -9,48 +9,26 @@ goog.require 'goog.style'
 goog.require 'wzk.array'
 goog.require 'wzk.dom.dataset'
 goog.require 'wzk.num'
-goog.require 'wzk.ui.grid.PaginatorRenderer'
+goog.require 'wzk.ui.grid.OffsetBasedPaginatorRenderer'
+goog.require 'wzk.ui.grid.BasePaginator'
 
 
-class wzk.ui.grid.Paginator extends wzk.ui.Component
-
-  ###*
-    @enum {string}
-  ###
-  @DATA:
-    BASE: 'base'
-    FORCE_DISPLAY: 'forceDisplay'
-
-  ###*
-    @enum {string}
-  ###
-  @EventType:
-    GO_TO: 'go-to'
-
-  ###*
-    @enum {string}
-  ###
-  @CLASSES:
-    TOP: 'top'
-    BOTTOM: 'bottom'
-
-  ###*
-    @type {number}
-  ###
-  @BASE = 10
+class wzk.ui.grid.OffsetBasedPaginator extends wzk.ui.grid.BasePaginator
 
   ###*
     @param {Object} params
       renderer: {@link wzk.ui.grid.PaginatorRenderer}
-      base: {number|undefined}
-      page: {number}
+      stateHolder: {wzk.ui.grid.StateHolder}
   ###
   constructor: (params) ->
-    params.renderer ?= new wzk.ui.grid.PaginatorRenderer()
+    params.renderer ?= new wzk.ui.grid.OffsetBasedPaginatorRenderer()
     super params
-    {@base, @page} = params
+    {stateHolder} = params
 
-    @base = if @base >= 0 then @base else wzk.ui.grid.Paginator.BASE
+    @base = stateHolder.getBase()
+    @page = stateHolder.getPage()
+
+    @base = if @base >= 0 then @base else wzk.ui.grid.BasePaginator.BASE
     @page = if @page >= 0 then @page else 1
     @firstPage = 1
     @clones = []
@@ -67,21 +45,21 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @base
 
   baseOrDefault: (value) =>
-    wzk.array.filterFirst([@base, value], wzk.num.isPos, wzk.ui.grid.Paginator.BASE)
+    wzk.array.filterFirst([@base, value], wzk.num.isPos, wzk.ui.grid.BasePaginator.BASE)
 
   ###*
     @param {Element} el
   ###
   loadData: (el) ->
     @base = wzk.dom.dataset.get(
-      el, wzk.ui.grid.Paginator.DATA.BASE, goog.functions.compose(@baseOrDefault, wzk.num.parseDec))
+      el, wzk.ui.grid.BasePaginator.DATA.BASE, goog.functions.compose(@baseOrDefault, wzk.num.parseDec))
     @offsetFromPage()
 
   ###*
-    @param {number} total
-    @param {number} count
+    @param {Object} result
   ###
-  init: (@total, @count, @prevOffset, @nextOffset) ->
+  init: (result) ->
+    {@total, @count, @prevOffset, @nextOffset} = result
     @calculatePageCount()
     @count ?= @base
 
@@ -95,7 +73,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @override
   ###
   canDecorate: (el) ->
-    el? and goog.dom.classes.has el, wzk.ui.grid.PaginatorRenderer.CLASSES.PAGINATOR
+    el? and goog.dom.classes.has el, wzk.ui.grid.OffsetBasedPaginatorRenderer.CLASSES.PAGINATOR
 
   ###*
     @override
@@ -172,15 +150,15 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
     @offset = 0
     @page = 1
     @calculatePageCount()
-    @dispatchGoToPage()
+    @dispatchChanged()
 
   ###*
     @override
   ###
   decorateInternal: (el) ->
-    @forceDisplay = wzk.dom.dataset.get(el, wzk.ui.grid.Paginator.DATA.FORCE_DISPLAY) is 'true'
+    @forceDisplay = wzk.dom.dataset.get(el, wzk.ui.grid.BasePaginator.DATA.FORCE_DISPLAY) is 'true'
     unless @bases
-      switcherEl = el.querySelector '.' + wzk.ui.grid.PaginatorRenderer.CLASSES.BASE_SWITCHER
+      switcherEl = el.querySelector '.' + wzk.ui.grid.OffsetBasedPaginatorRenderer.CLASSES.BASE_SWITCHER
       @parseBases switcherEl
 
     @renderer.decorate @, el
@@ -215,7 +193,7 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
       @base = base
       @renderer.setBase(@base)
       @setPage page
-      @dispatchGoToPage()
+      @dispatchChanged()
 
   ###*
     @protected
@@ -226,16 +204,16 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
       if page?
         @page = wzk.num.parseDec page
         @offset = @offsetFromPage()
-        @dispatchGoToPage()
+        @dispatchChanged()
 
     @listeners.push listener
 
   ###*
     @protected
   ###
-  dispatchGoToPage: ->
+  dispatchChanged: ->
     @cleanListeners()
-    @dispatchEvent new goog.events.Event(wzk.ui.grid.Paginator.EventType.GO_TO, {offset: @offset, base: @base, page: @page})
+    @dispatchEvent new goog.events.Event(wzk.ui.grid.BasePaginator.EventType.CHANGED, {offset: @offset, base: @base, page: @page})
 
   ###*
     @protected
@@ -244,9 +222,9 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   clone: ->
     clone = @getElement().cloneNode(true)
     @hangPageListener(clone)
-    goog.dom.classes.add(@getElement(), wzk.ui.grid.Paginator.CLASSES.TOP)
-    goog.dom.classes.add(clone, wzk.ui.grid.Paginator.CLASSES.BOTTOM)
-    goog.dom.classes.remove(clone, wzk.ui.grid.Paginator.CLASSES.TOP)
+    goog.dom.classes.add(@getElement(), wzk.ui.grid.BasePaginator.CLASSES.TOP)
+    goog.dom.classes.add(clone, wzk.ui.grid.BasePaginator.CLASSES.BOTTOM)
+    goog.dom.classes.remove(clone, wzk.ui.grid.BasePaginator.CLASSES.TOP)
     @renderer.hangCustomerBaseInputListeners(@, clone)
     clone
 
@@ -287,3 +265,40 @@ class wzk.ui.grid.Paginator extends wzk.ui.Component
   showInternal: (visible) ->
     func = if visible then goog.dom.classes.remove else goog.dom.classes.add
     func(el, 'empty') for el in [@getElement()].concat(@clones)
+
+  ###*
+    Reset paginator
+    @param {wzk.resource.Query} query
+  ###
+  reset: (query) ->
+    @offset = 0
+    @page = 1
+    @buildQuery(query)
+
+  ###*
+    @param {wzk.resource.Query} query
+  ###
+  buildQuery: (query) ->
+    query.base = @base
+    query.offset = @offset
+
+  ###*
+    Clear data
+    @return {boolean}
+  ###
+  clearData: ->
+    true
+
+  ###*
+    Reload data with delete element
+    @return {boolean}
+  ###
+  reloadWithDelete: ->
+    true
+
+  ###*
+    Clear data with sort
+    @return {boolean}
+  ###
+  resetWithSort: ->
+    false

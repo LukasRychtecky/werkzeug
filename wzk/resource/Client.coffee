@@ -29,6 +29,8 @@ class wzk.resource.Client
     FIELDS: 'X-Fields'
     SERIALIZATION_FORMAT: 'X-Serialization-Format'
     REQUESTED_WITH: 'X-Requested-With'
+    NEXT_CURSOR: 'X-Next-Cursor'
+    CURSOR: 'X-Cursor'
 
   ###*
     @enum {string}
@@ -95,6 +97,7 @@ class wzk.resource.Client
           total: parseInt xhr.getResponseHeader(X.TOTAL), 10
           nextOffset: parseInt xhr.getResponseHeader(X.NEXT_OFFSET)
           prevOffset: parseInt xhr.getResponseHeader(X.PREV_OFFSET)
+          nextCursor: xhr.getResponseHeader(X.NEXT_CURSOR)
         onSuccess @builder.build(xhr.getResponseJson()), result
 
     @listenOnError xhr, onError
@@ -109,6 +112,7 @@ class wzk.resource.Client
       headers[X.REFERRER] = query.referer if query.referer?
       headers[X.FIELDS] = query.composeFields() if query.hasFields()
       headers[X.SERIALIZATION_FORMAT] = query.getSerFormat()
+      headers[X.CURSOR] = query.cursor if query.cursor?
       headers[wzk.resource.Client.HEADERS.ACCEPT] = query.getAccept()
 
     method = 'GET'

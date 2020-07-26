@@ -63,19 +63,12 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
       @base
 
   ###*
-    @param {wzk.ui.grid.Paginator} paginator
+    @param {wzk.ui.grid.BasePaginator} paginator
   ###
   handle: (@paginator, @watcher) ->
-    @paginator.listen wzk.ui.grid.Paginator.EventType.GO_TO, @handleGoTo
-    @history.listen goog.history.EventType.NAVIGATE, @uriChanged
+    @paginator.listen wzk.ui.grid.BasePaginator.EventType.CHANGED, @handlePaginatorChanged
     @watcher.listen wzk.ui.grid.FilterWatcher.EventType.CHANGED, @handleFilterChanged
-
-  ###*
-    @protected
-  ###
-  uriChanged: =>
-    @watcher.updateInitialState()
-    @dispatchChanged()
+    @watcher.listen wzk.ui.grid.FilterWatcher.EventType.RESET_PAGINATOR, @handleFilterResetPaginator
 
   ###*
     @protected
@@ -87,14 +80,20 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
     @protected
   ###
   handleFilterChanged: =>
-    @paginator.setPage wzk.ui.grid.StateHolder.DEF.PAGE
+    @paginator.reset(@getQuery())
     @updateStorage page: wzk.ui.grid.StateHolder.DEF.PAGE
+
+  ###*
+    @protected
+  ###
+  handleFilterResetPaginator: =>
+    @paginator.reset(@getQuery)
 
   ###*
     @protected
     @param {goog.events.Event} e
   ###
-  handleGoTo: (e) =>
+  handlePaginatorChanged: (e) =>
     @updateStorage e.target
 
   ###*
@@ -128,6 +127,7 @@ class wzk.ui.grid.StateHolder extends goog.events.EventTarget
 
     @ss.removeOld()
     @ss.setAll filterParams, true
+    @dispatchChanged()
 
   ###*
     @return {wzk.resource.Query}
