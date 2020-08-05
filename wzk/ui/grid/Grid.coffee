@@ -15,7 +15,7 @@ goog.require 'goog.object'
 goog.require 'goog.array'
 
 goog.require 'wzk.events.lst'
-goog.require 'wzk.ui.grid.Paginator'
+goog.require 'wzk.ui.grid.BasePaginator'
 goog.require 'wzk.ui.grid.Sorter'
 goog.require 'wzk.ui.ButtonRenderer'
 goog.require 'wzk.ui.Link'
@@ -57,7 +57,7 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {wzk.ui.grid.StateHolder} stateHolder
     @param {wzk.ui.dialog.ConfirmDialog} confirm
     @param {wzk.resource.Query} query
-    @param {wzk.ui.grid.Paginator} paginator
+    @param {wzk.ui.grid.BasePaginator} paginator
     @param {wzk.ui.Flash} flash
     @param {boolean=} rowSelectable default is `false`
   ###
@@ -85,14 +85,10 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @return {Object|null}
   ###
   setupPaginator: (paginatorEl) ->
-    paging = null
     if paginatorEl?
       @paginator.loadData(paginatorEl)
-      paging = {offset: (@paginator.page - 1) * @paginator.base}
     else
       @paginator = null
-
-    paging
 
   ###*
     @param {Element} table
@@ -100,17 +96,18 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   decorate: (@table) ->
     @rowBuilder = new wzk.ui.grid.RowBuilder(@dom, @rows, @cols, new wzk.ui.grid.CellFormatter(), @confirm, @rowSelectable)
     @stateHolder.listen wzk.ui.grid.StateHolder.EventType.CHANGED, @refresh
+
     unless @dom.cls(wzk.ui.grid.Grid.CLS.ACTIONS, @table)
       @showActions = false
     @removeBody()
 
     paginatorEl = @findPaginator()
-    paging = @setupPaginator(paginatorEl)
-    @buildBody(@buildQuery(paging), (result) =>
+    @setupPaginator(paginatorEl)
+    @buildBody(@buildQuery(), (result) =>
       @decorateWithSorting()
 
       if @paginator?
-        @paginator.init(result.total, result.count, result.prevOffset, result.nextOffset)
+        @paginator.init(result)
         @buildPaginator(paginatorEl)
 
       @dispatchLoaded(result)
@@ -142,21 +139,24 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {goog.events.Event} e
   ###
   handleDeleteItem: (e) =>
-    @repo.delete(e.target, =>
-      @buildBody(@buildQuery(), (result) =>
-        if @paginator?
-          @paginator.refresh result
+    if @paginator.reloadWithDelete()
+      @repo.delete(e.target, =>
+        @buildBody(@buildQuery(), (result) =>
+          if @paginator?
+            @paginator.refresh result
+        )
       )
-    )
+    else
+      @data = @data.filter (x) -> x != e.target
+      @rerender()
 
   ###*
     @protected
-    @param {Object|null=} opts
     @return {wzk.resource.Query}
   ###
-  buildQuery: (opts = {}) ->
-    @query.base = opts.base ? @paginator?.base
-    @query.offset = if opts.offset? then opts.offset else @paginator?.offset
+  buildQuery: ->
+    if @paginator?
+      @paginator.buildQuery(@query)
     @query
 
   ###*
@@ -169,24 +169,11 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     else
       @paginator.renderBefore(@table)
 
-    @paginator.listen(wzk.ui.grid.Paginator.EventType.GO_TO, (e) =>
-      opts = e.target
-      if opts.base != @query.base && @query.offset == 0
-        # URI will not be changed for this case, request must be invoked
-        @buildBody(@buildQuery(e.target), (result) =>
-          @paginator.refresh(result)
-        )
-      else
-        # URI will be changed therefore refresh will be called
-        @buildQuery(e.target)
-    )
-
     @renderBottomPaginator()
 
   refresh: =>
     @query = @getQuery()
-    @buildBody(@buildQuery({offset: @query.offset}), (result) =>
-      result.offset = @query.offset
+    @buildBody(@buildQuery(), (result) =>
       @paginator?.refresh(result)
     )
 
@@ -239,9 +226,13 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
     @param {Array.<Object>} data
     @param {Object} result
   ###
-  handleData: (@data, result) =>
+  handleData: (data, result) =>
+    if @paginator.clearData()
+      @data = data
+    else
+      @data = @data.concat data
     @rerender()
-    result.count = @data.length
+    result.count = data.length
     @doAfter result if @doAfter?
     @data
 
@@ -296,6 +287,10 @@ class wzk.ui.grid.Grid extends wzk.ui.Component
   handleSort: (e) =>
     header = (`/** @type {wzk.ui.grid.THeader} */`) e.target
     @query.sort(header.getName(), header.getDirection())
+
+    if @paginator.resetWithSort()
+      @paginator.reset(@query)
+
     @buildBody @buildQuery(), (result) =>
       @paginator.refresh result
 

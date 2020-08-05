@@ -21,6 +21,8 @@ goog.require 'wzk.net.XhrConfig'
 goog.require 'wzk.ui.grid.ExportLink'
 goog.require 'wzk.ui.grid.GridColumnsManager'
 goog.require 'wzk.ui.grid.BulkChange'
+goog.require 'wzk.ui.grid.OffsetBasedPaginator'
+goog.require 'wzk.ui.grid.CursorBasedPaginator'
 
 ###*
   @constructor
@@ -71,7 +73,10 @@ wzk.ui.grid.buildGrid = (table, dom, xhrFac, reg, ss, ctor, flash, params = new 
 
   stateHolder = new wzk.ui.grid.StateHolder(ss, table.id)
 
-  paginator = new wzk.ui.grid.Paginator(base: stateHolder.getBase(), page: stateHolder.getPage())
+  if dom.getParentElement(table)?.querySelector('.paginator.cursor-based-paginator')?
+    paginator = new wzk.ui.grid.CursorBasedPaginator(stateHolder: stateHolder)
+  else
+    paginator = new wzk.ui.grid.OffsetBasedPaginator(stateHolder: stateHolder)
 
   dialog = new wzk.ui.dialog.ConfirmDialog undefined, undefined, dom
 

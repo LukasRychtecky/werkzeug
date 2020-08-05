@@ -36,13 +36,15 @@ class wzk.resource.Query
   constructor: (uri = '') ->
     @sorting = new wzk.resource.Sorting()
     @base ?= 10
-    @offset ?= 0
+    @offset ?= null
+    @cursor ?= null
     @uri = new goog.Uri(uri)
     @extraFields = ['id']
     @serFormat = wzk.resource.Query.S_FORMAT.RAW
     @accept = 'application/json'
     @filters = new goog.Uri.QueryData()
     @defaultFilters = @parseDefaultFilters()
+    @
 
   putDefaultFields: ->
     @extraFields = ['id', '_obj_name', '_rest_links', '_actions', '_class_names', '_web_links', '_default_action']
